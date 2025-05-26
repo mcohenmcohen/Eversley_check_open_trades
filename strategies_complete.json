@@ -1,0 +1,414 @@
+{
+    "Ichimoku Cross Currency Futures Buy": {
+        "entry": {
+            "formula": {
+                "type": "high_offset_ticks",
+                "offset_by_symbol": {
+                    "A": 15,
+                    "C": 15,
+                    "B": 10,
+                    "E": 10,
+                    "S": 10
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "max_of_atr_or_low_offset",
+                "atr_length": 5,
+                "atr_multiplier": 1.4,
+                "offset_ticks": 10,
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "fixed_atr_target",
+                "atr_length": 5,
+                "direction": "buy"
+            }
+        },
+        "trigger_window_days": 2
+    },
+    "Double \"D\" Swing Currency Futures Buy": {
+        "entry": {
+            "formula": {
+                "type": "high_offset_ticks",
+                "offset_by_symbol": {
+                    "C": 10,
+                    "E": 10,
+                    "A": 15,
+                    "B": 15,
+                    "S": 15
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "low_offset_ticks",
+                "offset_ticks": 10,
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "fixed_atr_target",
+                "atr_length": 5,
+                "direction": "buy"
+            }
+        },
+        "trigger_window_days": 2
+    },
+    "Squeeze Play Currency Futures Buy": {
+        "entry": {
+            "formula": {
+                "type": "high_offset_ticks",
+                "offset_value": 15
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "max_of_atr_or_low_offset",
+                "atr_length": 5,
+                "atr_multiplier": 1.4,
+                "offset_ticks": 10,
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "fixed_atr_target",
+                "atr_length": 5,
+                "direction": "buy"
+            }
+        },
+        "trigger_window_days": 2
+    },
+    "TXD Trendline Currency Futures Buy": {
+        "entry": {
+            "formula": {
+                "type": "high_offset_ticks",
+                "offset_by_symbol": {
+                    "E": 10,
+                    "A": 15,
+                    "B": 15,
+                    "C": 15,
+                    "S": 15
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "low_offset_ticks",
+                "offset_by_symbol": {
+                    "A": 10,
+                    "B": 10,
+                    "C": 10,
+                    "S": 10,
+                    "E": 15
+                },
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "fixed_atr_target",
+                "atr_length": 5,
+                "direction": "buy"
+            }
+        },
+        "trigger_window_days": 2
+    },
+    "Super Bull Currency Futures Buy": {
+        "entry": {
+            "formula": {
+                "type": "high_offset_ticks",
+                "offset_by_symbol": {
+                    "E": 10,
+                    "A": 15,
+                    "B": 15,
+                    "C": 15,
+                    "S": 15
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "low_offset_ticks",
+                "offset_by_symbol": {
+                    "E": 15,
+                    "A": 15,
+                    "B": 15,
+                    "C": 15,
+                    "S": 15
+                },
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "fixed_atr_target",
+                "atr_length": 5,
+                "direction": "buy"
+            }
+        },
+        "trigger_window_days": 2
+    },
+    "Stochastics \"D\" Currency Futures Buy": {
+        "entry": {
+            "formula": {
+                "type": "high_offset_ticks",
+                "offset_by_symbol": {
+                    "C": 10,
+                    "A": 15,
+                    "B": 15,
+                    "E": 15,
+                    "S": 15
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "low_offset_ticks",
+                "offset_by_symbol": {
+                    "C": 10,
+                    "S": 10,
+                    "A": 15,
+                    "B": 15,
+                    "E": 15
+                },
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "fixed_atr_target",
+                "atr_length": 5,
+                "direction": "buy"
+            }
+        },
+        "trigger_window_days": 2
+    },
+    "Swing Trend Currency Futures Sell": {
+        "entry": {
+            "formula": {
+                "type": "low_offset_ticks",
+                "offset_by_symbol": {
+                    "A": 10,
+                    "B": 10,
+                    "E": 10,
+                    "C": 15,
+                    "S": 15
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "max_of_atr_or_high_offset",
+                "atr_length": 5,
+                "atr_multiplier": 1.4,
+                "offset_ticks": 10,
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "fixed_atr_target",
+                "atr_length": 5,
+                "direction": "sell"
+            }
+        },
+        "trigger_window_days": 2
+    },
+    "TNT 52 Currency Futures Sell": {
+        "entry": {
+            "formula": {
+            "type": "low_offset_ticks",
+            "offset_by_symbol": {
+                "A": 10,
+                "S": 10,
+                "B": 15,
+                "C": 15,
+                "E": 15
+            }
+            }
+        },
+        "stop": {
+            "formula": {
+            "type": "lookback_extreme_plus_offset",
+            "price_field": "High",
+            "agg_func": "max",
+            "lookback_days": 2,
+            "include_signal_day": true,
+            "offset_value": 10,
+            "tick_size": 0.0001
+            }
+        },
+        "target": {
+            "formula": {
+            "type": "fixed_atr_target",
+            "atr_length": 5,
+            "direction": "sell"
+            }
+        },
+        "trigger_window_days": 2
+    },
+
+    "Super Bear Currency Futures Sell": {
+        "entry": {
+            "formula": {
+                "type": "low_offset_ticks",
+                "offset_value": 15
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "high_offset_ticks",
+                "offset_value": 15,
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "fixed_atr_target",
+                "atr_length": 5,
+                "direction": "sell"
+            }
+        },
+        "trigger_window_days": 3
+    },
+    "Channel \"D\" Currency Futures Sell": {
+        "entry": {
+            "formula": {
+                "type": "low_offset_ticks",
+                "offset_by_symbol": {
+                    "A": 10,
+                    "C": 10,
+                    "S": 10,
+                    "B": 15,
+                    "E": 15
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "max_of_atr_or_high_offset",
+                "atr_length": 5,
+                "atr_multiplier": 1.4,
+                "offset_ticks": 10,
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "fixed_atr_target",
+                "atr_length": 5,
+                "direction": "sell"
+            }
+        },
+        "trigger_window_days": 2
+    },
+    "D2 Swing Currency Futures Sell": {
+        "entry": {
+            "formula": {
+                "type": "low_offset_ticks",
+                "offset_by_symbol": {
+                    "A": 10,
+                    "C": 10,
+                    "E": 10,
+                    "B": 15,
+                    "S": 15
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "high_offset_ticks",
+                "offset_value": 10,
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "fixed_atr_target",
+                "atr_length": 5,
+                "direction": "sell"
+            }
+        },
+        "trigger_window_days": 2
+    },
+    "Daily ETF Options Buy": {
+        "entry": {
+            "formula": {
+            "type": "open_or_better",
+            "direction": "buy"
+            }
+        },
+        "stop": null,
+        "target": {
+            "formula": {
+            "type": "atr_multiple",
+            "atr_length": 5,
+            "multiplier": 1.0
+            }
+        }
+    },
+    "Daily ETF Options Sell": {
+        "entry": {
+            "formula": {
+            "type": "open_or_better",
+            "direction": "sell"
+            }
+        },
+        "stop": null,
+        "target": {
+            "formula": {
+            "type": "atr_multiple",
+            "atr_length": 5,
+            "multiplier": 1.0
+            }
+        }
+    },
+    "Weekly ETF Options Buy": {
+        "entry": {
+            "formula": {
+            "type": "open_or_better",
+            "direction": "buy"
+            }
+        },
+        "stop": null,
+        "target": {
+            "formula": {
+            "type": "atr_multiple",
+            "atr_length": 5,
+            "multiplier": 1.0
+            }
+        }
+    },
+    "Weekly ETF Options Sell": {
+        "entry": {
+            "formula": {
+            "type": "open_or_better",
+            "direction": "sell"
+            }
+        },
+        "stop": null,
+        "target": {
+            "formula": {
+            "type": "atr_multiple",
+            "atr_length": 5,
+            "multiplier": 1.0
+            }
+        }
+    }
+}
