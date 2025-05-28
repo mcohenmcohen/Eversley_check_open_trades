@@ -15,7 +15,7 @@ client = RESTClient(api_key = POLYGON_API_KEY)
 print("Import succeeded!")
 fetched_data_cache = {}  # cache already-fetched symbols
 
-AV_API_KEY = 'IN8A22IKNXHRN9P5'  # Replace with your Alpha Vantage key
+# AV_API_KEY = 'IN8A22IKNXHRN9P5'  # Replace with your Alpha Vantage key
 TICK_SIZE = {
     # Currency futures
     "6A": 0.0001, "6B": 0.0001, "6C": 0.0001, "6E": 0.0001, "6S": 0.0001,
@@ -556,10 +556,15 @@ def main():
             print(f"⚠️ No price data available for {symbol}. Skipping.")
             continue
         df = all_data[symbol]
+        # print('sym data for',symbol)
+        # print(df.tail)
+        # print('Close:',df['Close'].iloc[-1])
         direction = row.get("buy or sell", "").strip().lower()
         result = simulate_trade(strategies[resolved_name], symbol, df, signal_date, resolved_name, direction=direction)
         entry_date = result.get("entry_date", "")
         exit_date = result.get("exit_date", "")
+        entry_price = result.get("entry", "")
+        last_close_price = df['Close'].iloc[-1]
         # print('entry_date:', entry_date)
         # print('exit_date:', exit_date)
         entry_date = datetime.strptime(entry_date, '%Y-%m-%d').date()
@@ -569,6 +574,14 @@ def main():
             exit_date = datetime.strptime(exit_date, '%Y-%m-%d').date()
             num_days_open = (exit_date - entry_date).days
         # print('\'num_days_open\'', num_days_open)
+
+        # If current close is better than the next day open, tgen still can enter
+        # for buy, close must be lower than next day open.  for sell must be higher
+        # positive number means trade is still valid to get in.
+        if direction == 'buy':
+            diff_from_entry = entry_price - last_close_price
+        else:    
+            diff_from_entry = last_close_price - entry_price
 
         results.append({
             "symbol": symbol,
@@ -580,6 +593,8 @@ def main():
             "entry_price": result.get("entry", ""),
             "stop_price": result.get("stop", ""),
             "target_price": result.get("target", ""),
+            "last_close_price": last_close_price,
+            "diff_from_entry": round(diff_from_entry, 2),
             "entry_date": result.get("entry_date", ""),
             "exit_date": result.get("exit_date", ""),
             "num_days_open": num_days_open

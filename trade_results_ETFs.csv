@@ -1,128 +1,128 @@
-symbol,strategy,direction,signal_date,status,entry_price,stop_price,target_price,entry_date,exit_date,num_days_open
-XLB,10.5 Sqz,buy,1/17/25,Closed - Target Hit,89.16,,90.43254,1/17/25,2/14/25,28
-XLE,10.5 Sqz,buy,1/17/25,Open,93.72,,95.20386,1/17/25,,open
-QQQ,Turbo Hook,buy,1/17/25,Closed - Target Hit,524.48,,534.13103,1/17/25,2/13/25,27
-XLB,10.5 Sqz,buy,1/17/25,Closed - Target Hit,89.16,,90.43254,1/17/25,2/14/25,28
-XLE,10.5 Sqz,buy,1/17/25,Open,93.72,,95.20386,1/17/25,,open
-QQQ,Turbo Hook,buy,1/17/25,Closed - Target Hit,524.48,,534.13103,1/17/25,2/13/25,27
-IBB,10.5 Sqz,buy,1/24/25,Closed - Target Hit,137.26,,139.66066,1/24/25,1/30/25,6
-EWG,Swing Trend 2,buy,1/24/25,Closed - Target Hit,34.37,,34.77971,1/24/25,1/29/25,5
-IBB,10.5 Sqz,buy,1/24/25,Closed - Target Hit,137.26,,139.66066,1/24/25,1/30/25,6
-EWG,Swing Trend 2,buy,1/24/25,Closed - Target Hit,34.37,,34.77971,1/24/25,1/29/25,5
-UNG,Ichimoku Sqz,sell,1/27/25,Closed - Target Hit,16.59,,15.54257,1/27/25,1/28/25,1
-USO,Ichimoku Sqz,sell,1/27/25,Closed - Target Hit,78.87,,77.11985,1/27/25,1/28/25,1
-UNG,Ichimoku Sqz,sell,1/27/25,Closed - Target Hit,16.59,,15.54257,1/27/25,1/28/25,1
-USO,Ichimoku Sqz,sell,1/27/25,Closed - Target Hit,78.87,,77.11985,1/27/25,1/28/25,1
-GDX,10.5 Sqz,buy,1/31/25,Closed - Target Hit,39.218,,40.20516,1/31/25,2/5/25,5
-IYR,10.5 Sqz,buy,1/31/25,Closed - Target Hit,93.83,,95.37952,1/31/25,2/5/25,5
-VNQ,10.5 Sqz,buy,1/31/25,Closed - Target Hit,89.75,,91.25248,1/31/25,2/5/25,5
-XOP,Swing,sell,1/31/25,Closed - Target Hit,133.99,,131.0671,1/31/25,2/3/25,3
-XLE,Swing Trend 1,buy,1/31/25,Closed - Target Hit,87.63,,89.2661,1/31/25,2/4/25,4
-XLI,Swing Trend 1,buy,1/31/25,Closed - Target Hit,135.93,,137.67299,1/31/25,2/3/25,3
-DIA,Swing Trend 2,buy,1/31/25,Closed - Target Hit,439.61,,444.00026,1/31/25,2/3/25,3
-GLD,Swing Trend 2,buy,1/31/25,Closed - Target Hit,259.75,,262.37481,1/31/25,2/4/25,4
-GDX,10.5 Sqz,buy,1/31/25,Closed - Target Hit,39.218,,40.20516,1/31/25,2/5/25,5
-IYR,10.5 Sqz,buy,1/31/25,Closed - Target Hit,93.83,,95.37952,1/31/25,2/5/25,5
-VNQ,10.5 Sqz,buy,1/31/25,Closed - Target Hit,89.75,,91.25248,1/31/25,2/5/25,5
-XOP,Swing,sell,1/31/25,Closed - Target Hit,133.99,,131.0671,1/31/25,2/3/25,3
-XLE,Swing Trend 1,buy,1/31/25,Closed - Target Hit,87.63,,89.2661,1/31/25,2/4/25,4
-XLI,Swing Trend 1,buy,1/31/25,Closed - Target Hit,135.93,,137.67299,1/31/25,2/3/25,3
-DIA,Swing Trend 2,buy,1/31/25,Closed - Target Hit,439.61,,444.00026,1/31/25,2/3/25,3
-GLD,Swing Trend 2,buy,1/31/25,Closed - Target Hit,259.75,,262.37481,1/31/25,2/4/25,4
-EWH,Swing Trend 1,buy,2/7/25,Closed - Target Hit,16.35,,16.57769,2/7/25,2/12/25,5
-SLV,Swing Trend 1,buy,2/7/25,Closed - Target Hit,29.15,,29.76519,2/7/25,2/14/25,7
-XHB,Swing Trend 1,buy,2/7/25,Open,105.82,,108.33075,2/7/25,,open
-EWH,Swing Trend 1,buy,2/7/25,Closed - Target Hit,16.35,,16.57769,2/7/25,2/12/25,5
-SLV,Swing Trend 1,buy,2/7/25,Closed - Target Hit,29.15,,29.76519,2/7/25,2/14/25,7
-XHB,Swing Trend 1,buy,2/7/25,Open,105.82,,108.33075,2/7/25,,open
-EEM,10.5 Sqz,buy,2/14/25,Closed - Target Hit,44.76,,45.24432,2/14/25,2/21/25,7
-EWH,10.5 Sqz,buy,2/14/25,Closed - Target Hit,16.93,,17.1912,2/14/25,2/21/25,7
-FXI,10.5 Sqz,buy,2/14/25,Closed - Target Hit,35.57,,36.45766,2/14/25,2/21/25,7
-EFA,Swing Trend 2,buy,2/14/25,Closed - Target Hit,82.47,,83.28177,2/14/25,3/3/25,17
-GDX,Swing Trend 2,buy,2/14/25,Closed - Target Hit,41.64,,42.75681,2/14/25,3/13/25,27
-XLV,Swing Trend 2,buy,2/14/25,Closed - Target Hit,143.92,,145.46887,2/14/25,2/19/25,5
-USO,Turbo Hook,buy,2/14/25,Closed - Target Hit,76.69,,78.0631,2/14/25,2/19/25,5
-EEM,10.5 Sqz,buy,2/14/25,Closed - Target Hit,44.76,,45.24432,2/14/25,2/21/25,7
-EWH,10.5 Sqz,buy,2/14/25,Closed - Target Hit,16.93,,17.1912,2/14/25,2/21/25,7
-FXI,10.5 Sqz,buy,2/14/25,Closed - Target Hit,35.57,,36.45766,2/14/25,2/21/25,7
-EFA,Swing Trend 2,buy,2/14/25,Closed - Target Hit,82.47,,83.28177,2/14/25,3/3/25,17
-GDX,Swing Trend 2,buy,2/14/25,Closed - Target Hit,41.64,,42.75681,2/14/25,3/13/25,27
-XLV,Swing Trend 2,buy,2/14/25,Closed - Target Hit,143.92,,145.46887,2/14/25,2/19/25,5
-USO,Turbo Hook,buy,2/14/25,Closed - Target Hit,76.69,,78.0631,2/14/25,2/19/25,5
-XLE,10.5 Sqz,buy,2/21/25,Closed - Target Hit,91.09,,92.85677,2/21/25,3/19/25,26
-EEM,Swing Trend 1 & 2,buy,2/21/25,Closed - Target Hit,44.65,,45.14185,2/21/25,3/17/25,24
-IBB,Turbo Hook,buy,2/21/25,Open,139.06,,141.09866,2/21/25,,open
-XLE,10.5 Sqz,buy,2/21/25,Closed - Target Hit,91.09,,92.85677,2/21/25,3/19/25,26
-EEM,Swing Trend 1 & 2,buy,2/21/25,Closed - Target Hit,44.65,,45.14185,2/21/25,3/17/25,24
-IBB,Turbo Hook,buy,2/21/25,Open,139.06,,141.09866,2/21/25,,open
-VWO,Swing Trend 1,buy,2/28/25,Closed - Target Hit,44.93,,45.59399,2/28/25,3/5/25,5
-VWO,Swing Trend 1,buy,2/28/25,Closed - Target Hit,44.93,,45.59399,2/28/25,3/5/25,5
-EWH,Swing Trend 2,buy,3/7/25,Closed - Target Hit,18.08,,18.40296,3/7/25,3/17/25,10
-EWH,Swing Trend 2,buy,3/7/25,Closed - Target Hit,18.08,,18.40296,3/7/25,3/17/25,10
-IBB,Weekly Swing Sell,sell,3/14/25,Closed - Target Hit,133.78,,131.24306,3/14/25,3/17/25,3
-IYR,Weekly Swing Buy Setup 1 and 2,buy,3/14/25,Closed - Target Hit,94.5,,96.46354,3/14/25,3/17/25,3
-VNQ,Weekly Swing Buy Setup 1 and 2,buy,3/14/25,Closed - Target Hit,90.04,,91.90766,3/14/25,3/17/25,3
-XLE,10.5 Sqz,buy,3/21/25,Closed - Target Hit,92.22,,93.9702,3/21/25,3/25/25,4
-XLE,10.5 Sqz,buy,3/21/25,Closed - Target Hit,92.22,,93.9702,3/21/25,3/25/25,4
-QQQ,Market Internals - Ichimoku Put/Call (Setup 2),buy,3/25/25,Closed - Target Hit,492.3,,501.29341,3/25/25,5/12/25,48
-SPY,Market Internals - Ichimoku Put/Call (Setup 2),buy,3/25/25,Closed - Target Hit,575.19,,583.51846,3/25/25,5/13/25,49
-XLK,Market Internals - Ichimoku Put/Call (Setup 2),buy,3/25/25,Closed - Target Hit,217.68,,221.76879,3/25/25,5/12/25,48
-QQQ,Market Internals - Stochastics Put/Call (Setup 4),buy,3/25/25,Closed - Target Hit,492.3,,501.29341,3/25/25,5/12/25,48
-DIA,Market Internals - 20.8 Put/Call (Setup 5),buy,3/25/25,Open,426.33,,431.85182,3/25/25,,open
-SPY,Market Internals - 20.8 Put/Call (Setup 5),buy,3/25/25,Closed - Target Hit,575.19,,583.51846,3/25/25,5/13/25,49
-XLI,Market Internals - 20.8 Put/Call (Setup 5),buy,3/25/25,Closed - Target Hit,134.7,,136.70987,3/25/25,5/8/25,44
-QQQ,Market Internals - Gap and Go Put/Call (Setup 6),buy,3/25/25,Closed - Target Hit,492.3,,501.29341,3/25/25,5/12/25,48
-XME,Donchian Hook Buy,buy,3/25/25,Closed - Target Hit,59.08,,60.45804,3/25/25,5/27/25,63
-IYR,Turbo Hook,buy,3/28/25,Closed - Target Hit,94.79,,96.17661,3/28/25,3/31/25,3
-IYR,Turbo Hook,buy,3/28/25,Closed - Target Hit,94.79,,96.17661,3/28/25,3/31/25,3
-EWH,Ichimoku Sqz,sell,3/31/25,Closed - Target Hit,17.6,,17.36776,3/31/25,4/1/25,1
-FXI,Ichimoku Sqz,sell,3/31/25,Closed - Target Hit,35.69,,35.02422,3/31/25,4/1/25,1
-EWH,Ichimoku Sqz,sell,3/31/25,Closed - Target Hit,17.6,,17.36776,3/31/25,4/1/25,1
-FXI,Ichimoku Sqz,sell,3/31/25,Closed - Target Hit,35.69,,35.02422,3/31/25,4/1/25,1
-IYR,10.5 Sqz,buy,4/17/25,Closed - Target Hit,91.15,,93.89767,4/17/25,4/30/25,13
-IYR,10.5 Sqz,buy,4/17/25,Closed - Target Hit,91.15,,93.89767,4/17/25,4/30/25,13
-QQQ,Market Internals - Ichimoku Put/Call (Setup 3),buy,4/22/25,Closed - Target Hit,458.17,,474.98229,4/22/25,4/29/25,7
-XLI,Market Internals - Ichimoku Put/Call (Setup 3),buy,4/22/25,Closed - Target Hit,128.03,,131.72673,4/22/25,5/1/25,9
-XLK,Market Internals - Ichimoku Put/Call (Setup 3),buy,4/22/25,Closed - Target Hit,199.84,,207.77713,4/22/25,4/25/25,3
-EFA,Donchian Hook Buy,buy,4/22/25,Closed - Target Hit,83.12,,85.03486,4/22/25,5/2/25,10
-IWM,10.5 Sqz,buy,4/25/25,Closed - Target Hit,194.5,,200.04433,4/25/25,5/2/25,7
-QQQ,10.5 Sqz,buy,4/25/25,Closed - Target Hit,473.03,,487.69309,4/25/25,5/2/25,7
-SPY,10.5 Sqz,buy,4/25/25,Closed - Target Hit,551.39,,566.12579,4/25/25,5/2/25,7
-XLK,10.5 Sqz,buy,4/25/25,Closed - Target Hit,208.2,,215.55473,4/25/25,5/1/25,6
-DIA,Swing Trend 1,buy,4/25/25,Closed - Target Hit,401.8,,411.5285,4/25/25,5/2/25,7
-IWM,10.5 Sqz,buy,4/25/25,Closed - Target Hit,194.5,,200.04433,4/25/25,5/2/25,7
-QQQ,10.5 Sqz,buy,4/25/25,Closed - Target Hit,473.03,,487.69309,4/25/25,5/2/25,7
-SPY,10.5 Sqz,buy,4/25/25,Closed - Target Hit,551.39,,566.12579,4/25/25,5/2/25,7
-XLK,10.5 Sqz,buy,4/25/25,Closed - Target Hit,208.2,,215.55473,4/25/25,5/1/25,6
-DIA,Swing Trend 1,buy,4/25/25,Closed - Target Hit,401.8,,411.5285,4/25/25,5/2/25,7
-EEM,Donchian Crossover Buy,buy,5/2/25,Closed - Target Hit,45.46,,46.13125,5/2/25,5/14/25,12
-EEM,Weekly Swing Buy Setup 1 and 2  (Options),buy,5/2/25,Closed - Target Hit,45.46,,46.13125,5/2/25,5/14/25,12
-IBB,Weekly Swing Buy Setup 1 and 2,buy,5/9/25,Closed - Target Hit,117.96,,121.59908,5/9/25,5/12/25,3
-XLV,Weekly Swing Buy Setup 1 and 2,buy,5/9/25,Closed - Target Hit,132.875,,135.18314,5/9/25,5/12/25,3
-IYR,Donchian Crossover Buy,buy,5/9/25,Open,95.52,,96.79615,5/9/25,,open
-XLF,Donchian Crossover Buy,buy,5/9/25,Open,51.11,,51.86571,5/9/25,,open
-IBB,Donchian T-Lines Buy/Sell,sell,5/9/25,Closed - Target Hit,117.96,,114.32092,5/9/25,5/12/25,3
-DIA,Donchian Crossover Buy,buy,5/12/25,Open,422.68,,429.55689,5/12/25,,open
-FXI,Donchian Crossover Buy,buy,5/12/25,Closed - Target Hit,35.61,,36.32351,5/12/25,5/14/25,2
-SPY,Donchian Crossover Buy,buy,5/12/25,Closed - Target Hit,583.41,,593.79394,5/12/25,5/16/25,4
-VNQ,Donchian Crossover Buy,buy,5/12/25,Open,89.58,,90.82679,5/12/25,,open
-XLB,Donchian Crossover Buy,buy,5/12/25,Open,86.56,,88.17871,5/12/25,,open
-DIA,Ichimoku Kijun 5 Hook Buy,buy,5/12/25,Open,422.68,,429.55689,5/12/25,,open
-IWM,Ichimoku Kijun 5 Hook Buy,buy,5/12/25,Open,208.93,,213.72432,5/12/25,,open
-XHB,Ichimoku Kijun 5 Hook Buy,buy,5/12/25,Open,101.55,,104.25864,5/12/25,,open
-XLI,Ichimoku Kijun 5 Hook Buy,buy,5/12/25,Closed - Target Hit,140.75,,143.34645,5/12/25,5/16/25,4
-XRT,Ichimoku Kijun 5 Hook Buy,buy,5/12/25,Closed - Target Hit,74.86,,76.93113,5/12/25,5/20/25,8
-EWH,Weekly Swing Buy Setup 1 and 2,buy,5/16/25,Closed - Target Hit,18.81,,19.02002,5/16/25,5/20/25,4
-QQQ,Weekly Swing Buy Setup 1 and 2,buy,5/16/25,Closed - Target Hit,514.24,,522.20006,5/16/25,5/19/25,3
-SPY,Weekly Swing Buy Setup 1 and 2,buy,5/16/25,Closed - Target Hit,588.1,,595.41689,5/16/25,5/19/25,3
-XLK,Weekly Swing Buy Setup 1 and 2,buy,5/16/25,Open,231.42,,235.54059,5/16/25,,open
-XLE,Weekly 10.5 Buy,buy,5/16/25,Open,84.77,,86.42988,5/16/25,,open
-XOP,Weekly 10.5 Buy,buy,5/16/25,Open,124.49,,127.73167,5/16/25,,open
-IWM,ETF Squeeze Sell,sell,5/19/25,Closed - Target Hit,208.66,,205.27902,5/19/25,5/20/25,1
-QQQ,ETF Squeeze Sell,sell,5/19/25,Closed - Target Hit,519.47,,511.44395,5/19/25,5/20/25,1
-XLI,ETF Squeeze Sell,sell,5/19/25,Closed - Target Hit,143.69,,141.63435,5/19/25,5/20/25,1
-IYR,Donchian T-Lines Buy/Sell,sell,5/21/25,Closed - Target Hit,92.66,,91.13815,5/21/25,5/22/25,1
-VNQ,Donchian T-Lines Buy/Sell,sell,5/21/25,Closed - Target Hit,87.46,,86.0291,5/21/25,5/22/25,1
-XRT,ETF Squeeze Sell,sell,5/21/25,Closed - Target Hit,74.56,,72.96688,5/21/25,5/22/25,1
-GDX,Donchian T-Lines Buy/Sell,buy,5/22/25,Open,50.35,,51.59588,5/22/25,,open
-XHB,Donchian T-Lines Buy/Sell,sell,5/22/25,Closed - Target Hit,94.05,,91.83944,5/22/25,5/23/25,1
+symbol,strategy,direction,signal_date,status,entry_price,stop_price,target_price,last_close_price,diff_from_entry,entry_date,exit_date,num_days_open
+XLB,10.5 Sqz,buy,01/17/25,Closed - Target Hit,89.16,,90.43254,86.42,2.74,2025-01-17,2025-02-14,28
+XLE,10.5 Sqz,buy,01/17/25,Open,93.72,,95.20386,82.32,11.4,2025-01-17,,open
+QQQ,Turbo Hook,buy,01/17/25,Closed - Target Hit,524.48,,534.13103,521.69,2.79,2025-01-17,2025-02-13,27
+XLB,10.5 Sqz,buy,01/17/25,Closed - Target Hit,89.16,,90.43254,86.42,2.74,2025-01-17,2025-02-14,28
+XLE,10.5 Sqz,buy,01/17/25,Open,93.72,,95.20386,82.32,11.4,2025-01-17,,open
+QQQ,Turbo Hook,buy,01/17/25,Closed - Target Hit,524.48,,534.13103,521.69,2.79,2025-01-17,2025-02-13,27
+IBB,10.5 Sqz,buy,01/24/25,Closed - Target Hit,137.26,,139.66066,122.15,15.11,2025-01-24,2025-01-30,6
+EWG,Swing Trend 2,buy,01/24/25,Closed - Target Hit,34.37,,34.77971,41.84,-7.47,2025-01-24,2025-01-29,5
+IBB,10.5 Sqz,buy,01/24/25,Closed - Target Hit,137.26,,139.66066,122.15,15.11,2025-01-24,2025-01-30,6
+EWG,Swing Trend 2,buy,01/24/25,Closed - Target Hit,34.37,,34.77971,41.84,-7.47,2025-01-24,2025-01-29,5
+UNG,Ichimoku Sqz,sell,01/27/25,Closed - Target Hit,16.59,,15.54257,16.1915,-0.4,2025-01-27,2025-01-28,1
+USO,Ichimoku Sqz,sell,01/27/25,Closed - Target Hit,78.87,,77.11985,68.41,-10.46,2025-01-27,2025-01-28,1
+UNG,Ichimoku Sqz,sell,01/27/25,Closed - Target Hit,16.59,,15.54257,16.1915,-0.4,2025-01-27,2025-01-28,1
+USO,Ichimoku Sqz,sell,01/27/25,Closed - Target Hit,78.87,,77.11985,68.41,-10.46,2025-01-27,2025-01-28,1
+GDX,10.5 Sqz,buy,01/31/25,Closed - Target Hit,39.218,,40.20516,50.05,-10.83,2025-01-31,2025-02-05,5
+IYR,10.5 Sqz,buy,01/31/25,Closed - Target Hit,93.83,,95.37952,93.585,0.25,2025-01-31,2025-02-05,5
+VNQ,10.5 Sqz,buy,01/31/25,Closed - Target Hit,89.75,,91.25248,88.46,1.29,2025-01-31,2025-02-05,5
+XOP,Swing,sell,01/31/25,Closed - Target Hit,133.99,,131.0671,122.09,-11.9,2025-01-31,2025-02-03,3
+XLE,Swing Trend 1,buy,01/31/25,Closed - Target Hit,87.63,,89.2661,82.32,5.31,2025-01-31,2025-02-04,4
+XLI,Swing Trend 1,buy,01/31/25,Closed - Target Hit,135.93,,137.67299,143.11,-7.18,2025-01-31,2025-02-03,3
+DIA,Swing Trend 2,buy,01/31/25,Closed - Target Hit,439.61,,444.00026,422.51,17.1,2025-01-31,2025-02-03,3
+GLD,Swing Trend 2,buy,01/31/25,Closed - Target Hit,259.75,,262.37481,304.0,-44.25,2025-01-31,2025-02-04,4
+GDX,10.5 Sqz,buy,01/31/25,Closed - Target Hit,39.218,,40.20516,50.05,-10.83,2025-01-31,2025-02-05,5
+IYR,10.5 Sqz,buy,01/31/25,Closed - Target Hit,93.83,,95.37952,93.585,0.25,2025-01-31,2025-02-05,5
+VNQ,10.5 Sqz,buy,01/31/25,Closed - Target Hit,89.75,,91.25248,88.46,1.29,2025-01-31,2025-02-05,5
+XOP,Swing,sell,01/31/25,Closed - Target Hit,133.99,,131.0671,122.09,-11.9,2025-01-31,2025-02-03,3
+XLE,Swing Trend 1,buy,01/31/25,Closed - Target Hit,87.63,,89.2661,82.32,5.31,2025-01-31,2025-02-04,4
+XLI,Swing Trend 1,buy,01/31/25,Closed - Target Hit,135.93,,137.67299,143.11,-7.18,2025-01-31,2025-02-03,3
+DIA,Swing Trend 2,buy,01/31/25,Closed - Target Hit,439.61,,444.00026,422.51,17.1,2025-01-31,2025-02-03,3
+GLD,Swing Trend 2,buy,01/31/25,Closed - Target Hit,259.75,,262.37481,304.0,-44.25,2025-01-31,2025-02-04,4
+EWH,Swing Trend 1,buy,02/07/25,Closed - Target Hit,16.35,,16.57769,18.825,-2.47,2025-02-07,2025-02-12,5
+SLV,Swing Trend 1,buy,02/07/25,Closed - Target Hit,29.15,,29.76519,30.035,-0.89,2025-02-07,2025-02-14,7
+XHB,Swing Trend 1,buy,02/07/25,Open,105.82,,108.33075,94.86,10.96,2025-02-07,,open
+EWH,Swing Trend 1,buy,02/07/25,Closed - Target Hit,16.35,,16.57769,18.825,-2.47,2025-02-07,2025-02-12,5
+SLV,Swing Trend 1,buy,02/07/25,Closed - Target Hit,29.15,,29.76519,30.035,-0.89,2025-02-07,2025-02-14,7
+XHB,Swing Trend 1,buy,02/07/25,Open,105.82,,108.33075,94.86,10.96,2025-02-07,,open
+EEM,10.5 Sqz,buy,02/14/25,Closed - Target Hit,44.76,,45.24432,45.965,-1.21,2025-02-14,2025-02-21,7
+EWH,10.5 Sqz,buy,02/14/25,Closed - Target Hit,16.93,,17.1912,18.825,-1.89,2025-02-14,2025-02-21,7
+FXI,10.5 Sqz,buy,02/14/25,Closed - Target Hit,35.57,,36.45766,35.31,0.26,2025-02-14,2025-02-21,7
+EFA,Swing Trend 2,buy,02/14/25,Closed - Target Hit,82.47,,83.28177,88.4,-5.93,2025-02-14,2025-03-03,17
+GDX,Swing Trend 2,buy,02/14/25,Closed - Target Hit,41.64,,42.75681,50.05,-8.41,2025-02-14,2025-03-13,27
+XLV,Swing Trend 2,buy,02/14/25,Closed - Target Hit,143.92,,145.46887,131.51,12.41,2025-02-14,2025-02-19,5
+USO,Turbo Hook,buy,02/14/25,Closed - Target Hit,76.69,,78.0631,68.41,8.28,2025-02-14,2025-02-19,5
+EEM,10.5 Sqz,buy,02/14/25,Closed - Target Hit,44.76,,45.24432,45.965,-1.21,2025-02-14,2025-02-21,7
+EWH,10.5 Sqz,buy,02/14/25,Closed - Target Hit,16.93,,17.1912,18.825,-1.89,2025-02-14,2025-02-21,7
+FXI,10.5 Sqz,buy,02/14/25,Closed - Target Hit,35.57,,36.45766,35.31,0.26,2025-02-14,2025-02-21,7
+EFA,Swing Trend 2,buy,02/14/25,Closed - Target Hit,82.47,,83.28177,88.4,-5.93,2025-02-14,2025-03-03,17
+GDX,Swing Trend 2,buy,02/14/25,Closed - Target Hit,41.64,,42.75681,50.05,-8.41,2025-02-14,2025-03-13,27
+XLV,Swing Trend 2,buy,02/14/25,Closed - Target Hit,143.92,,145.46887,131.51,12.41,2025-02-14,2025-02-19,5
+USO,Turbo Hook,buy,02/14/25,Closed - Target Hit,76.69,,78.0631,68.41,8.28,2025-02-14,2025-02-19,5
+XLE,10.5 Sqz,buy,02/21/25,Closed - Target Hit,91.09,,92.85677,82.32,8.77,2025-02-21,2025-03-19,26
+EEM,Swing Trend 1 & 2,buy,02/21/25,Closed - Target Hit,44.65,,45.14185,45.965,-1.32,2025-02-21,2025-03-17,24
+IBB,Turbo Hook,buy,02/21/25,Open,139.06,,141.09866,122.15,16.91,2025-02-21,,open
+XLE,10.5 Sqz,buy,02/21/25,Closed - Target Hit,91.09,,92.85677,82.32,8.77,2025-02-21,2025-03-19,26
+EEM,Swing Trend 1 & 2,buy,02/21/25,Closed - Target Hit,44.65,,45.14185,45.965,-1.32,2025-02-21,2025-03-17,24
+IBB,Turbo Hook,buy,02/21/25,Open,139.06,,141.09866,122.15,16.91,2025-02-21,,open
+VWO,Swing Trend 1,buy,02/28/25,Closed - Target Hit,44.93,,45.59399,47.4,-2.47,2025-02-28,2025-03-05,5
+VWO,Swing Trend 1,buy,02/28/25,Closed - Target Hit,44.93,,45.59399,47.4,-2.47,2025-02-28,2025-03-05,5
+EWH,Swing Trend 2,buy,03/07/25,Closed - Target Hit,18.08,,18.40296,18.825,-0.75,2025-03-07,2025-03-17,10
+EWH,Swing Trend 2,buy,03/07/25,Closed - Target Hit,18.08,,18.40296,18.825,-0.75,2025-03-07,2025-03-17,10
+IBB,Weekly Swing Sell,sell,03/14/25,Closed - Target Hit,133.78,,131.24306,122.15,-11.63,2025-03-14,2025-03-17,3
+IYR,Weekly Swing Buy Setup 1 and 2,buy,03/14/25,Closed - Target Hit,94.5,,96.46354,93.585,0.92,2025-03-14,2025-03-17,3
+VNQ,Weekly Swing Buy Setup 1 and 2,buy,03/14/25,Closed - Target Hit,90.04,,91.90766,88.46,1.58,2025-03-14,2025-03-17,3
+XLE,10.5 Sqz,buy,03/21/25,Closed - Target Hit,92.22,,93.9702,82.32,9.9,2025-03-21,2025-03-25,4
+XLE,10.5 Sqz,buy,03/21/25,Closed - Target Hit,92.22,,93.9702,82.32,9.9,2025-03-21,2025-03-25,4
+QQQ,Market Internals - Ichimoku Put/Call (Setup 2),buy,03/25/25,Closed - Target Hit,492.3,,501.29341,521.69,-29.39,2025-03-25,2025-05-12,48
+SPY,Market Internals - Ichimoku Put/Call (Setup 2),buy,03/25/25,Closed - Target Hit,575.19,,583.51846,590.14,-14.95,2025-03-25,2025-05-13,49
+XLK,Market Internals - Ichimoku Put/Call (Setup 2),buy,03/25/25,Closed - Target Hit,217.68,,221.76879,232.64,-14.96,2025-03-25,2025-05-12,48
+QQQ,Market Internals - Stochastics Put/Call (Setup 4),buy,03/25/25,Closed - Target Hit,492.3,,501.29341,521.69,-29.39,2025-03-25,2025-05-12,48
+DIA,Market Internals - 20.8 Put/Call (Setup 5),buy,03/25/25,Open,426.33,,431.85182,422.51,3.82,2025-03-25,,open
+SPY,Market Internals - 20.8 Put/Call (Setup 5),buy,03/25/25,Closed - Target Hit,575.19,,583.51846,590.14,-14.95,2025-03-25,2025-05-13,49
+XLI,Market Internals - 20.8 Put/Call (Setup 5),buy,03/25/25,Closed - Target Hit,134.7,,136.70987,143.11,-8.41,2025-03-25,2025-05-08,44
+QQQ,Market Internals - Gap and Go Put/Call (Setup 6),buy,03/25/25,Closed - Target Hit,492.3,,501.29341,521.69,-29.39,2025-03-25,2025-05-12,48
+XME,Donchian Hook Buy,buy,03/25/25,Closed - Target Hit,59.08,,60.45804,61.21,-2.13,2025-03-25,2025-05-27,63
+IYR,Turbo Hook,buy,03/28/25,Closed - Target Hit,94.79,,96.17661,93.585,1.21,2025-03-28,2025-03-31,3
+IYR,Turbo Hook,buy,03/28/25,Closed - Target Hit,94.79,,96.17661,93.585,1.21,2025-03-28,2025-03-31,3
+EWH,Ichimoku Sqz,sell,03/31/25,Closed - Target Hit,17.6,,17.36776,18.825,1.22,2025-03-31,2025-04-01,1
+FXI,Ichimoku Sqz,sell,03/31/25,Closed - Target Hit,35.69,,35.02422,35.31,-0.38,2025-03-31,2025-04-01,1
+EWH,Ichimoku Sqz,sell,03/31/25,Closed - Target Hit,17.6,,17.36776,18.825,1.22,2025-03-31,2025-04-01,1
+FXI,Ichimoku Sqz,sell,03/31/25,Closed - Target Hit,35.69,,35.02422,35.31,-0.38,2025-03-31,2025-04-01,1
+IYR,10.5 Sqz,buy,04/17/25,Closed - Target Hit,91.15,,93.89767,93.585,-2.43,2025-04-17,2025-04-30,13
+IYR,10.5 Sqz,buy,04/17/25,Closed - Target Hit,91.15,,93.89767,93.585,-2.43,2025-04-17,2025-04-30,13
+QQQ,Market Internals - Ichimoku Put/Call (Setup 3),buy,04/22/25,Closed - Target Hit,458.17,,474.98229,521.69,-63.52,2025-04-22,2025-04-29,7
+XLI,Market Internals - Ichimoku Put/Call (Setup 3),buy,04/22/25,Closed - Target Hit,128.03,,131.72673,143.11,-15.08,2025-04-22,2025-05-01,9
+XLK,Market Internals - Ichimoku Put/Call (Setup 3),buy,04/22/25,Closed - Target Hit,199.84,,207.77713,232.64,-32.8,2025-04-22,2025-04-25,3
+EFA,Donchian Hook Buy,buy,04/22/25,Closed - Target Hit,83.12,,85.03486,88.4,-5.28,2025-04-22,2025-05-02,10
+IWM,10.5 Sqz,buy,04/25/25,Closed - Target Hit,194.5,,200.04433,206.49,-11.99,2025-04-25,2025-05-02,7
+QQQ,10.5 Sqz,buy,04/25/25,Closed - Target Hit,473.03,,487.69309,521.69,-48.66,2025-04-25,2025-05-02,7
+SPY,10.5 Sqz,buy,04/25/25,Closed - Target Hit,551.39,,566.12579,590.14,-38.75,2025-04-25,2025-05-02,7
+XLK,10.5 Sqz,buy,04/25/25,Closed - Target Hit,208.2,,215.55473,232.64,-24.44,2025-04-25,2025-05-01,6
+DIA,Swing Trend 1,buy,04/25/25,Closed - Target Hit,401.8,,411.5285,422.51,-20.71,2025-04-25,2025-05-02,7
+IWM,10.5 Sqz,buy,04/25/25,Closed - Target Hit,194.5,,200.04433,206.49,-11.99,2025-04-25,2025-05-02,7
+QQQ,10.5 Sqz,buy,04/25/25,Closed - Target Hit,473.03,,487.69309,521.69,-48.66,2025-04-25,2025-05-02,7
+SPY,10.5 Sqz,buy,04/25/25,Closed - Target Hit,551.39,,566.12579,590.14,-38.75,2025-04-25,2025-05-02,7
+XLK,10.5 Sqz,buy,04/25/25,Closed - Target Hit,208.2,,215.55473,232.64,-24.44,2025-04-25,2025-05-01,6
+DIA,Swing Trend 1,buy,04/25/25,Closed - Target Hit,401.8,,411.5285,422.51,-20.71,2025-04-25,2025-05-02,7
+EEM,Donchian Crossover Buy,buy,05/02/25,Closed - Target Hit,45.46,,46.13125,45.965,-0.51,2025-05-02,2025-05-14,12
+EEM,Weekly Swing Buy Setup 1 and 2  (Options),buy,05/02/25,Closed - Target Hit,45.46,,46.13125,45.965,-0.51,2025-05-02,2025-05-14,12
+IBB,Weekly Swing Buy Setup 1 and 2,buy,05/09/25,Closed - Target Hit,117.96,,121.59908,122.15,-4.19,2025-05-09,2025-05-12,3
+XLV,Weekly Swing Buy Setup 1 and 2,buy,05/09/25,Closed - Target Hit,132.875,,135.18314,131.51,1.37,2025-05-09,2025-05-12,3
+IYR,Donchian Crossover Buy,buy,05/09/25,Open,95.52,,96.79615,93.585,1.94,2025-05-09,,open
+XLF,Donchian Crossover Buy,buy,05/09/25,Open,51.11,,51.86571,50.7745,0.34,2025-05-09,,open
+IBB,Donchian T-Lines Buy/Sell,sell,05/09/25,Closed - Target Hit,117.96,,114.32092,122.15,4.19,2025-05-09,2025-05-12,3
+DIA,Donchian Crossover Buy,buy,05/12/25,Open,422.68,,429.55689,422.51,0.17,2025-05-12,,open
+FXI,Donchian Crossover Buy,buy,05/12/25,Closed - Target Hit,35.61,,36.32351,35.31,0.3,2025-05-12,2025-05-14,2
+SPY,Donchian Crossover Buy,buy,05/12/25,Closed - Target Hit,583.41,,593.79394,590.14,-6.73,2025-05-12,2025-05-16,4
+VNQ,Donchian Crossover Buy,buy,05/12/25,Open,89.58,,90.82679,88.46,1.12,2025-05-12,,open
+XLB,Donchian Crossover Buy,buy,05/12/25,Open,86.56,,88.17871,86.42,0.14,2025-05-12,,open
+DIA,Ichimoku Kijun 5 Hook Buy,buy,05/12/25,Open,422.68,,429.55689,422.51,0.17,2025-05-12,,open
+IWM,Ichimoku Kijun 5 Hook Buy,buy,05/12/25,Open,208.93,,213.72432,206.49,2.44,2025-05-12,,open
+XHB,Ichimoku Kijun 5 Hook Buy,buy,05/12/25,Open,101.55,,104.25864,94.86,6.69,2025-05-12,,open
+XLI,Ichimoku Kijun 5 Hook Buy,buy,05/12/25,Closed - Target Hit,140.75,,143.34645,143.11,-2.36,2025-05-12,2025-05-16,4
+XRT,Ichimoku Kijun 5 Hook Buy,buy,05/12/25,Closed - Target Hit,74.86,,76.93113,76.4,-1.54,2025-05-12,2025-05-20,8
+EWH,Weekly Swing Buy Setup 1 and 2,buy,05/16/25,Closed - Target Hit,18.81,,19.02002,18.825,-0.02,2025-05-16,2025-05-20,4
+QQQ,Weekly Swing Buy Setup 1 and 2,buy,05/16/25,Closed - Target Hit,514.24,,522.20006,521.69,-7.45,2025-05-16,2025-05-19,3
+SPY,Weekly Swing Buy Setup 1 and 2,buy,05/16/25,Closed - Target Hit,588.1,,595.41689,590.14,-2.04,2025-05-16,2025-05-19,3
+XLK,Weekly Swing Buy Setup 1 and 2,buy,05/16/25,Open,231.42,,235.54059,232.64,-1.22,2025-05-16,,open
+XLE,Weekly 10.5 Buy,buy,05/16/25,Open,84.77,,86.42988,82.32,2.45,2025-05-16,,open
+XOP,Weekly 10.5 Buy,buy,05/16/25,Open,124.49,,127.73167,122.09,2.4,2025-05-16,,open
+IWM,ETF Squeeze Sell,sell,05/19/25,Closed - Target Hit,208.66,,205.27902,206.49,-2.17,2025-05-19,2025-05-20,1
+QQQ,ETF Squeeze Sell,sell,05/19/25,Closed - Target Hit,519.47,,511.44395,521.69,2.22,2025-05-19,2025-05-20,1
+XLI,ETF Squeeze Sell,sell,05/19/25,Closed - Target Hit,143.69,,141.63435,143.11,-0.58,2025-05-19,2025-05-20,1
+IYR,Donchian T-Lines Buy/Sell,sell,05/21/25,Closed - Target Hit,92.66,,91.13815,93.585,0.92,2025-05-21,2025-05-22,1
+VNQ,Donchian T-Lines Buy/Sell,sell,05/21/25,Closed - Target Hit,87.46,,86.0291,88.46,1.0,2025-05-21,2025-05-22,1
+XRT,ETF Squeeze Sell,sell,05/21/25,Closed - Target Hit,74.56,,72.96688,76.4,1.84,2025-05-21,2025-05-22,1
+GDX,Donchian T-Lines Buy/Sell,buy,05/22/25,Open,50.35,,51.59588,50.05,0.3,2025-05-22,,open
+XHB,Donchian T-Lines Buy/Sell,sell,05/22/25,Closed - Target Hit,94.05,,91.83944,94.86,0.81,2025-05-22,2025-05-23,1
