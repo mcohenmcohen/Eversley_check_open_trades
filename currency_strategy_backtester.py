@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 import yfinance as yf
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from pathlib import Path
 import time
 import os
@@ -519,12 +519,13 @@ def main():
             raw_name = str(row["strategy"]).strip()
             resolved_name = resolve_strategy_name(raw_name, list(strategies.keys()))
         else:
-            # ETFs: infer from 'buy or sell' and 'frequency' fields
+            # ETFs: infer direction from 'buy or sell' and 'frequency' fields (for daily or weekly)
             action = row["buy or sell"].strip().capitalize()  # e.g., "Buy" or "Sell"
             direction = str(row.get("buy or sell", "")).strip().lower()
             freq = row["frequency"].strip().capitalize()      # e.g., "Daily" or "Weekly"
             frequency = str(row.get("frequency", "")).strip().lower()
             resolved_name = f"{freq} ETF Options {action}"
+            # resolved_name = str(row["strategy"]).strip() # just get the actual strstegy name, not the reduced
 
         if not resolved_name or resolved_name not in strategies:
             print(f"⚠️ Could not resolve strategy name: '{resolved_name}'")
@@ -556,11 +557,20 @@ def main():
         df = all_data[symbol]
         direction = row.get("buy or sell", "").strip().lower()
         result = simulate_trade(strategies[resolved_name], symbol, df, signal_date, resolved_name, direction=direction)
-
+        entry_date = result.get("entry_date", "")
+        exit_date = result.get("exit_date", "")
+        entry_date = datetime.strptime(entry_date, '%Y-%m-%d').date()
+        if not exit_date:  # if exit_date is empty, not exited yet...
+            num_days_open = 'open'
+        else:
+            exit_date = datetime.strptime(exit_date, '%Y-%m-%d').date()
+            num_days_open = (exit_date - entry_date).days
+        print('\'num_days_open\'', num_days_open)
 
         results.append({
             "symbol": symbol,
-            "strategy": resolved_name,
+            # "strategy": resolved_name,
+            "strategy": str(row["strategy"]).strip(), # just get the actual strstegy name, not the reduced
             "direction": direction,
             "signal_date": signal_date.strftime('%m/%d/%y'),
             "status": result["status"],
@@ -568,7 +578,8 @@ def main():
             "stop_price": result.get("stop", ""),
             "target_price": result.get("target", ""),
             "entry_date": result.get("entry_date", ""),
-            "exit_date": result.get("exit_date", "")
+            "exit_date": result.get("exit_date", ""),
+            "num_days_open": num_days_open
         })
         
     print(f"Total processed signals: {len(results)}")

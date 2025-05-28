@@ -67,6 +67,15 @@ date,symbol,strategy,buy or sell,frequency
 3/14/25,VNQ,Swing Trend 1,Buy,Weekly
 3/21/25,XLE,10.5 Sqz,Buy,Daily
 3/21/25,XLE,10.5 Sqz,Buy,Weekly
+3/25/25,QQQ,Market Internals - Ichimoku Put/Call (Setup 2) ,Buy,Daily
+3/25/25,SPY,Market Internals - Ichimoku Put/Call (Setup 2) ,Buy,Daily
+3/25/25,XLK,Market Internals - Ichimoku Put/Call (Setup 2) ,Buy,Daily
+3/25/25,QQQ,Market Internals - Stochastics Put/Call (Setup 4) ,Buy,Daily
+3/25/25,DIA,Market Internals - 20.8 Put/Call (Setup 5) ,Buy,Daily
+3/25/25,SPY,Market Internals - 20.8 Put/Call (Setup 5) ,Buy,Daily
+3/25/25,XLI,Market Internals - 20.8 Put/Call (Setup 5) ,Buy,Daily
+3/25/25,QQQ,Market Internals - Gap and Go Put/Call (Setup 6) ,Buy,Daily
+3/25/25,XME,Donchian Hook Buy ,Buy,Daily
 3/28/25,IYR,Turbo Hook,Buy,Daily
 3/28/25,IYR,Turbo Hook,Buy,Weekly
 3/31/25,EWH,Ichimoku Sqz,Sell,Daily
