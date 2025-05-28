@@ -59,12 +59,9 @@ date,symbol,strategy,buy or sell,frequency
 2/28/25,VWO,Swing Trend 1,Buy,Weekly
 3/7/25,EWH,Swing Trend 2,Buy,Daily
 3/7/25,EWH,Swing Trend 2,Buy,Weekly
-3/14/25,IBB,Swing,Sell,Daily
-3/14/25,IYR,Swing Trend 1,Buy,Daily
-3/14/25,VNQ,Swing Trend 1,Buy,Daily
-3/14/25,IBB,Swing,Sell,Weekly
-3/14/25,IYR,Swing Trend 1,Buy,Weekly
-3/14/25,VNQ,Swing Trend 1,Buy,Weekly
+3/14/25,IBB,Weekly Swing Sell,Sell,Weekly
+3/14/25,IYR,Weekly Swing Buy Setup 1 and 2 ,Buy,Weekly
+3/14/25,VNQ,Weekly Swing Buy Setup 1 and 2 ,Buy,Weekly
 3/21/25,XLE,10.5 Sqz,Buy,Daily
 3/21/25,XLE,10.5 Sqz,Buy,Weekly
 3/25/25,QQQ,Market Internals - Ichimoku Put/Call (Setup 2) ,Buy,Daily
@@ -99,11 +96,12 @@ date,symbol,strategy,buy or sell,frequency
 4/25/25,XLK,10.5 Sqz,Buy,Weekly
 4/25/25,DIA,Swing Trend 1,Buy,Weekly
 5/2/25,EEM,Donchian Crossover Buy,Buy,Daily
-5/2/25,EEM,Weekly Swing Buy Setup 1 and 2  (Options) ,Buy,Daily
-5/9/25,IBB,Swing Trend 1,Buy,Daily
-5/9/25,XLV,Swing Trend 1,Buy,Daily
-5/9/25,IBB,Swing Trend 1,Buy,Weekly
-5/9/25,XLV,Swing Trend 1,Buy,Weekly
+5/2/25,EEM,Weekly Swing Buy Setup 1 and 2  (Options) ,Buy,Weekly
+5/9/25,IBB,Weekly Swing Buy Setup 1 and 2  ,Buy,Weekly
+5/9/25,XLV,Weekly Swing Buy Setup 1 and 2  ,Buy,Weekly
+5/9/25,IYR,Donchian Crossover Buy,Buy,Daily
+5/9/25,XLF,Donchian Crossover Buy,Buy,Daily
+5/9/25,IBB,Donchian T-Lines Buy/Sell  ,Sell,Daily
 5/12/25,DIA,Donchian Crossover Buy,Buy,Daily
 5/12/25,FXI,Donchian Crossover Buy,Buy,Daily
 5/12/25,SPY,Donchian Crossover Buy,Buy,Daily

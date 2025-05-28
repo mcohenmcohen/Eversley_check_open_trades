@@ -363,15 +363,16 @@ def evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, stra
     if direction in ("buy", "sell"):
         atr = wilders_atr(df, 5)
         atr_value = atr.loc[signal_date]  # ✅ ATR from the signal date only
-        print('atr_value:', atr_value)
-        print('direction:', direction)
-        print('entry_price:', entry_price)
-
+        
         if direction == "sell":
             target_price = entry_price - atr_value
         else:
             target_price = entry_price + atr_value
-        print('target_price:', target_price)
+        
+        # print('atr_value:', atr_value)
+        # print('direction:', direction)
+        # print('entry_price:', entry_price)
+        # print('target_price:', target_price)
 
         stop_price = None  # ETF options have no stop
         return stop_price, round(target_price, 5)
@@ -559,13 +560,15 @@ def main():
         result = simulate_trade(strategies[resolved_name], symbol, df, signal_date, resolved_name, direction=direction)
         entry_date = result.get("entry_date", "")
         exit_date = result.get("exit_date", "")
+        # print('entry_date:', entry_date)
+        # print('exit_date:', exit_date)
         entry_date = datetime.strptime(entry_date, '%Y-%m-%d').date()
         if not exit_date:  # if exit_date is empty, not exited yet...
             num_days_open = 'open'
         else:
             exit_date = datetime.strptime(exit_date, '%Y-%m-%d').date()
             num_days_open = (exit_date - entry_date).days
-        print('\'num_days_open\'', num_days_open)
+        # print('\'num_days_open\'', num_days_open)
 
         results.append({
             "symbol": symbol,
