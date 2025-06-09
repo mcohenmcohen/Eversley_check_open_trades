@@ -130,5 +130,8 @@ date,symbol,strategy,buy or sell,frequency
 5/30/25,QQQ,Weekly Swing Buy Setup 1 and 2,Buy,Daily
 6/2/25,DIA,Market Internals - 20.8 Put/Call (Setup 5) ,Buy,Daily
 6/2/25,XLI  ,Market Internals - 20.8 Put/Call (Setup 5) ,Buy,Daily
-6/3/25,IYR,T-Lines Buy/Sell  ,Buy,
-6/3/25,VNQ,T-Lines Buy/Sell  ,Buy,
+6/3/25,IYR,T-Lines Buy/Sell  ,Buy,Daily
+6/3/25,VNQ,T-Lines Buy/Sell  ,Buy,Daily
+6/5/25,XLI,Squeeze Play Sector Sell,Sell,Daily
+6/5/25,XLV,Donchian Hook Buy  ,Buy,Daily
+6/6/25,XLF,Weekly Swing Buy Setup 1 and 2,Buy,Weekly

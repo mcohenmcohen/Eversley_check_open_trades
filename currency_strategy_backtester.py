@@ -130,8 +130,15 @@ def get_price_data(symbol, mode, cache, start_date=datetime(2025, 1, 2)):
             return None
     else:  # ETF
         try:
-            all_data = fetch_price_data([symbol], start_date, datetime.today())
+            end_date = datetime.today() + timedelta(days=1)  # buffer in case you're running same-day
+            all_data = fetch_price_data([symbol], start_date, end_date)
+
+            if symbol not in all_data:
+                raise ValueError(f"{symbol} was not returned by fetch_price_data")
+
             df = all_data[symbol]
+            print(f"{symbol}: price range {df.index.min().date()} to {df.index.max().date()}")
+
         except Exception as e:
             print(f"❌ Failed to fetch ETF data for {symbol}: {e}")
             return None
@@ -158,6 +165,7 @@ def fetch_price_data(symbols, start_date, end_date):
         
         print(f"📡 Fetching {sym} from Polygon (Attempt 1)")
         success = False
+        df = None  # prevent unbound local error
         for attempt in range(10):
             if attempt > 0:
                 print(f"📡 Fetching {sym} from Polygon (Attempt {attempt + 1})")
@@ -185,12 +193,18 @@ def fetch_price_data(symbols, start_date, end_date):
                 } for bar in aggs])
 
                 df.set_index("Date", inplace=True)
-                df.index = pd.to_datetime(df.index).normalize()  # 👈 Normalize to remove time component
+                df.index = pd.to_datetime(df.index).normalize()
                 df.sort_index(inplace=True)
+
                 data[sym] = df
                 fetched_data_cache[sym] = df
+                print(f"{sym}: fetched {len(df)} rows from {df.index.min().date()} to {df.index.max().date()}")
                 success = True
                 break
+
+            except Exception as e:
+                print(f"❌ Failed to fetch ETF data for {sym}: {e}")
+                continue
 
             except Exception as e:
                 print(f"❌ Error fetching {sym} from Polygon: {e}")
