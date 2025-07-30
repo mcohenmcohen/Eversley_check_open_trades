@@ -1,0 +1,20 @@
+Donchian Crossover Buy
+Donchian T-Lines Buy/Sell
+Donchian Hook Buy
+Ichimoku Kijun 5 Hook Buy
+ETF Squeeze Sell
+Squeeze Play Sector Buy
+Squeeze Play Sector Sell
+
+Weekly Swing Trend Buy
+Weekly Turbo Hook Buy
+Weekly Ichimoku Squeeze Sell
+Weekly 10.5 Squeeze Buy
+Weekly Swing Sell
+
+Squeeze Put/Call Buy (Setup 1)
+Ichimoku Tenkan Hook Put/Call Buy (Setup 2)
+Ichimoku Tenkan Flat Put/Call Buy (Setup 3)
+Stochastics Hook Put/Call Buy (Setup 4)
+20.8 Trigger Lines Put/Call Buy (Setup 5)
+Gap and Go Put/Call Buy (Setup 6)

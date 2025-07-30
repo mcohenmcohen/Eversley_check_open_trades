@@ -436,8 +436,10 @@ def evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, stra
         # print('entry_price:', entry_price)
         # print('target_price:', target_price)
 
-        stop_price = None  # ETF options have no stop
-        return stop_price, round(target_price, 5)
+        # stop_price = None  # ETF options have no stop
+        # 🟡 Add expiration-based stop for ETFs
+        stop_price = util.get_final_expiration_date(signal_date, months_out=2)
+        return stop_price, round(target_price, 2)
 
     # Fallback for futures or other strategies
     stop_formula = strategy["stop"]["formula"]
@@ -454,95 +456,11 @@ def evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, stra
     return stop_price, target_price
 
 
-# Simulates a trade over time until it's triggered and closed or expires
-# def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction):
-#     formulas = {
-#         "entry": strategy["entry"]["formula"],
-#         "stop": (strategy.get("stop") or {}).get("formula"),
-#         "target": strategy["target"]["formula"]
-#     }
-
-#     max_days = strategy.get("trigger_window_days", 5)
-
-#     if signal_date not in df.index:
-#         return {"status": "Signal Date Missing in Data"}
-
-#     signal_idx = df.index.get_loc(signal_date)
-#     valid_dates = df.index[signal_idx : signal_idx + max_days]
-
-#     for test_date in valid_dates:
-#         triggered, entry_price = evaluate_entry(
-#             strategy['entry'],
-#             df,
-#             test_date,
-#             symbol,
-#             strategy_name,
-#             signal_date
-#         )
-
-#         if triggered:
-#             stop_price, target_price = evaluate_exit(strategy, formulas, df, test_date, symbol, 
-#                                                      entry_price, strategy_name, direction)
-#             post_entry = df[df.index > test_date]
-#             has_stop = stop_price is not None
-
-#             for i, row in post_entry.iterrows():
-#                 # Check target hit
-#                 if direction == "buy" and row["High"] >= target_price:
-#                     return {
-#                         "status": "Closed - Target Hit",
-#                         "entry": round(entry_price, 5),
-#                         "stop": round(stop_price, 5) if has_stop else "",
-#                         "target": round(target_price, 5),
-#                         "entry_date": test_date.strftime('%Y-%m-%d'),
-#                         "exit_date": i.strftime('%Y-%m-%d')
-#                     }
-#                 elif direction == "sell" and row["Low"] <= target_price:
-#                     return {
-#                         "status": "Closed - Target Hit",
-#                         "entry": round(entry_price, 5),
-#                         "stop": round(stop_price, 5) if has_stop else "",
-#                         "target": round(target_price, 5),
-#                         "entry_date": test_date.strftime('%Y-%m-%d'),
-#                         "exit_date": i.strftime('%Y-%m-%d')
-#                     }
-
-#                 # Check stop hit
-#                 if has_stop:
-#                     if direction == "buy" and row["Low"] <= stop_price:
-#                         return {
-#                             "status": "Closed - Stop Hit",
-#                             "entry": round(entry_price, 5),
-#                             "stop": round(stop_price, 5),
-#                             "target": round(target_price, 5),
-#                             "entry_date": test_date.strftime('%Y-%m-%d'),
-#                             "exit_date": i.strftime('%Y-%m-%d')
-#                         }
-#                     elif direction == "sell" and row["High"] >= stop_price:
-#                         return {
-#                             "status": "Closed - Stop Hit",
-#                             "entry": round(entry_price, 5),
-#                             "stop": round(stop_price, 5),
-#                             "target": round(target_price, 5),
-#                             "entry_date": test_date.strftime('%Y-%m-%d'),
-#                             "exit_date": i.strftime('%Y-%m-%d')
-#                         }
-
-#             # Still open
-#             return {
-#                 "status": "Open",
-#                 "entry": round(entry_price, 5),
-#                 "stop": round(stop_price, 5) if has_stop else "",
-#                 "target": round(target_price, 5),
-#                 "entry_date": test_date.strftime('%Y-%m-%d'),
-#                 "exit_date": ""
-#             }
-
-#     return {"status": "Expired - Entry Not Triggered"}
-
 def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=None):
     # print(f'simulate_trade: direction {direction}')
     # print('Enter simulate_trade')
+
+    print(f"simulate tade direction: {direction}")
 
     formulas = {
         "entry": strategy["entry"]["formula"],
@@ -610,7 +528,19 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                         "exit_date": i.strftime('%Y-%m-%d')
                     }
 
-                # Check stop hit
+                # Check stop_price hit for ETFs with stop as a date
+                if isinstance(stop_price, date):
+                    if i.date() >= stop_price:
+                        return {
+                            "status": "Closed - Stop Hit",
+                            "entry": round(entry_price, 5),
+                            "stop": "Expired",
+                            "target": round(target_price, 5),
+                            "entry_date": test_date.strftime('%Y-%m-%d'),
+                            "exit_date": i.strftime('%Y-%m-%d')
+                        }
+                    
+                # Check stop_price hit for futures with stop as a price
                 if has_stop:
                     if direction == "buy" and row["Low"] <= stop_price:
                         return {
@@ -633,11 +563,16 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
             return {
                 "status": "Open",
                 "entry": round(entry_price, 5),
-                "stop": round(stop_price, 5) if stop_price is not None else "",
+                "stop": (
+                    round(stop_price, 5) if isinstance(stop_price, (float, int))
+                    else "Active" if isinstance(stop_price, date)
+                    else ""
+                ),
                 "target": round(target_price, 5),
                 "entry_date": test_date.strftime('%Y-%m-%d'),
                 "exit_date": "",
             }
+
 
     # If not triggered, the for ETF that means there is no next day yet and the return dict values will be empty
     return {
@@ -677,8 +612,12 @@ def main():
         freq = str(freq_raw).strip().capitalize() if pd.notna(freq_raw) else "Daily"
 
         # Safely parse 'buy or sell' as direction
-        action_raw = row.get("buy or sell", "Buy")
-        direction = str(action_raw).strip().lower() if pd.notna(action_raw) else "buy"       
+        # print("row:", row)
+        # action_raw = row.get("buy or sell", "Buy")
+        # print('row.get("buy or sell":', row["direction"])
+        # direction = str(action_raw).strip().lower() if pd.notna(action_raw) else "buy"
+        direction = row["direction"].strip().lower()
+        print(f"main direction: {direction}")       
         
         resolved_name = f"{freq} ETF Options {direction.capitalize()}"
 

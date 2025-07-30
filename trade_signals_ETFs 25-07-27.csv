@@ -1,0 +1,196 @@
+date,symbol,strategy,buy or sell,frequency
+1/17/25,XLB,10.5 Sqz,Buy,Daily
+1/17/25,XLE,10.5 Sqz,Buy,Daily
+1/17/25,QQQ,Turbo Hook,Buy,Daily
+1/17/25,XLB,10.5 Sqz,Buy,Weekly
+1/17/25,XLE,10.5 Sqz,Buy,Weekly
+1/17/25,QQQ,Turbo Hook,Buy,Weekly
+1/24/25,IBB,10.5 Sqz,Buy,Daily
+1/24/25,EWG,Swing Trend 2,Buy,Daily
+1/24/25,IBB,10.5 Sqz,Buy,Weekly
+1/24/25,EWG,Swing Trend 2,Buy,Weekly
+1/27/25,UNG,Ichimoku Sqz,Sell,Daily
+1/27/25,USO,Ichimoku Sqz,Sell,Daily
+1/27/25,UNG,Ichimoku Sqz,Sell,Weekly
+1/27/25,USO,Ichimoku Sqz,Sell,Weekly
+1/31/25,GDX,10.5 Sqz,Buy,Daily
+1/31/25,IYR,10.5 Sqz,Buy,Daily
+1/31/25,VNQ,10.5 Sqz,Buy,Daily
+1/31/25,XOP,Swing,Sell,Daily
+1/31/25,XLE,Swing Trend 1,Buy,Daily
+1/31/25,XLI,Swing Trend 1,Buy,Daily
+1/31/25,DIA,Swing Trend 2,Buy,Daily
+1/31/25,GLD,Swing Trend 2,Buy,Daily
+1/31/25,GDX,10.5 Sqz,Buy,Weekly
+1/31/25,IYR,10.5 Sqz,Buy,Weekly
+1/31/25,VNQ,10.5 Sqz,Buy,Weekly
+1/31/25,XOP,Swing,Sell,Weekly
+1/31/25,XLE,Swing Trend 1,Buy,Weekly
+1/31/25,XLI,Swing Trend 1,Buy,Weekly
+1/31/25,DIA,Swing Trend 2,Buy,Weekly
+1/31/25,GLD,Swing Trend 2,Buy,Weekly
+2/7/25,EWH,Swing Trend 1,Buy,Daily
+2/7/25,SLV,Swing Trend 1,Buy,Daily
+2/7/25,XHB,Swing Trend 1,Buy,Daily
+2/7/25,EWH,Swing Trend 1,Buy,Weekly
+2/7/25,SLV,Swing Trend 1,Buy,Weekly
+2/7/25,XHB,Swing Trend 1,Buy,Weekly
+2/14/25,EEM,10.5 Sqz,Buy,Daily
+2/14/25,EWH,10.5 Sqz,Buy,Daily
+2/14/25,FXI,10.5 Sqz,Buy,Daily
+2/14/25,EFA,Swing Trend 2,Buy,Daily
+2/14/25,GDX,Swing Trend 2,Buy,Daily
+2/14/25,XLV,Swing Trend 2,Buy,Daily
+2/14/25,USO,Turbo Hook,Buy,Daily
+2/14/25,EEM,10.5 Sqz,Buy,Weekly
+2/14/25,EWH,10.5 Sqz,Buy,Weekly
+2/14/25,FXI,10.5 Sqz,Buy,Weekly
+2/14/25,EFA,Swing Trend 2,Buy,Weekly
+2/14/25,GDX,Swing Trend 2,Buy,Weekly
+2/14/25,XLV,Swing Trend 2,Buy,Weekly
+2/14/25,USO,Turbo Hook,Buy,Weekly
+2/21/25,XLE,10.5 Sqz,Buy,Daily
+2/21/25,EEM,Swing Trend 1 & 2,Buy,Daily
+2/21/25,IBB,Turbo Hook,Buy,Daily
+2/21/25,XLE,10.5 Sqz,Buy,Weekly
+2/21/25,EEM,Swing Trend 1 & 2,Buy,Weekly
+2/21/25,IBB,Turbo Hook,Buy,Weekly
+2/28/25,VWO,Swing Trend 1,Buy,Daily
+2/28/25,VWO,Swing Trend 1,Buy,Weekly
+3/7/25,EWH,Swing Trend 2,Buy,Daily
+3/7/25,EWH,Swing Trend 2,Buy,Weekly
+3/14/25,IBB,Weekly Swing Sell,Sell,Weekly
+3/14/25,IYR,Weekly Swing Buy Setup 1 and 2 ,Buy,Weekly
+3/14/25,VNQ,Weekly Swing Buy Setup 1 and 2 ,Buy,Weekly
+3/21/25,XLE,10.5 Sqz,Buy,Daily
+3/21/25,XLE,10.5 Sqz,Buy,Weekly
+3/25/25,QQQ,Market Internals - Ichimoku Put/Call (Setup 2) ,Buy,Daily
+3/25/25,SPY,Market Internals - Ichimoku Put/Call (Setup 2) ,Buy,Daily
+3/25/25,XLK,Market Internals - Ichimoku Put/Call (Setup 2) ,Buy,Daily
+3/25/25,QQQ,Market Internals - Stochastics Put/Call (Setup 4) ,Buy,Daily
+3/25/25,DIA,Market Internals - 20.8 Put/Call (Setup 5) ,Buy,Daily
+3/25/25,SPY,Market Internals - 20.8 Put/Call (Setup 5) ,Buy,Daily
+3/25/25,XLI,Market Internals - 20.8 Put/Call (Setup 5) ,Buy,Daily
+3/25/25,QQQ,Market Internals - Gap and Go Put/Call (Setup 6) ,Buy,Daily
+3/25/25,XME,Donchian Hook Buy ,Buy,Daily
+3/28/25,IYR,Turbo Hook,Buy,Daily
+3/28/25,IYR,Turbo Hook,Buy,Weekly
+3/31/25,EWH,Ichimoku Sqz,Sell,Daily
+3/31/25,FXI,Ichimoku Sqz,Sell,Daily
+3/31/25,EWH,Ichimoku Sqz,Sell,Weekly
+3/31/25,FXI,Ichimoku Sqz,Sell,Weekly
+4/17/25,IYR,10.5 Sqz,Buy,Daily
+4/17/25,IYR,10.5 Sqz,Buy,Weekly
+4/22/25,QQQ  ,Market Internals - Ichimoku Put/Call (Setup 3) ,Buy,Daily
+4/22/25,XLI  ,Market Internals - Ichimoku Put/Call (Setup 3) ,Buy,Daily
+4/22/25,XLK  ,Market Internals - Ichimoku Put/Call (Setup 3) ,Buy,Daily
+4/22/25,EFA,Donchian Hook Buy,Buy,Daily
+4/25/25,IWM,10.5 Sqz,Buy,Daily
+4/25/25,QQQ,10.5 Sqz,Buy,Daily
+4/25/25,SPY,10.5 Sqz,Buy,Daily
+4/25/25,XLK,10.5 Sqz,Buy,Daily
+4/25/25,DIA,Swing Trend 1,Buy,Daily
+4/25/25,IWM,10.5 Sqz,Buy,Weekly
+4/25/25,QQQ,10.5 Sqz,Buy,Weekly
+4/25/25,SPY,10.5 Sqz,Buy,Weekly
+4/25/25,XLK,10.5 Sqz,Buy,Weekly
+4/25/25,DIA,Swing Trend 1,Buy,Weekly
+5/2/25,EEM,Donchian Crossover Buy,Buy,Daily
+5/2/25,EEM,Weekly Swing Buy Setup 1 and 2  (Options) ,Buy,Weekly
+5/9/25,IBB,Weekly Swing Buy Setup 1 and 2  ,Buy,Weekly
+5/9/25,XLV,Weekly Swing Buy Setup 1 and 2  ,Buy,Weekly
+5/9/25,IYR,Donchian Crossover Buy,Buy,Daily
+5/9/25,XLF,Donchian Crossover Buy,Buy,Daily
+5/9/25,IBB,Donchian T-Lines Buy/Sell  ,Sell,Daily
+5/12/25,DIA,Donchian Crossover Buy,Buy,Daily
+5/12/25,FXI,Donchian Crossover Buy,Buy,Daily
+5/12/25,SPY,Donchian Crossover Buy,Buy,Daily
+5/12/25,VNQ,Donchian Crossover Buy,Buy,Daily
+5/12/25,XLB,Donchian Crossover Buy,Buy,Daily
+5/12/25,DIA,Ichimoku Kijun 5 Hook Buy ,Buy,Daily
+5/12/25,IWM,Ichimoku Kijun 5 Hook Buy ,Buy,Daily
+5/12/25,XHB,Ichimoku Kijun 5 Hook Buy ,Buy,Daily
+5/12/25,XLI  ,Ichimoku Kijun 5 Hook Buy ,Buy,Daily
+5/12/25,XRT,Ichimoku Kijun 5 Hook Buy ,Buy,Daily
+5/16/25,EWH,Weekly Swing Buy Setup 1 and 2,Buy,Weekly
+5/16/25,QQQ,Weekly Swing Buy Setup 1 and 2,Buy,Weekly
+5/16/25,SPY,Weekly Swing Buy Setup 1 and 2,Buy,Weekly
+5/16/25,XLK  ,Weekly Swing Buy Setup 1 and 2,Buy,Weekly
+5/16/25,XLE,Weekly 10.5 Buy ,Buy,Weekly
+5/16/25,XOP,Weekly 10.5 Buy ,Buy,Weekly
+5/19/25,IWM,ETF Squeeze Sell,Sell,Daily
+5/19/25,QQQ,ETF Squeeze Sell,Sell,Daily
+5/19/25,XLI  ,ETF Squeeze Sell,Sell,Daily
+5/21/25,IYR,Donchian T-Lines Buy/Sell,Sell,Daily
+5/21/25,VNQ,Donchian T-Lines Buy/Sell,Sell,Daily
+5/21/25,XRT,ETF Squeeze Sell,Sell,Daily
+5/22/25,GDX,Donchian T-Lines Buy/Sell,Buy,Daily
+5/22/25,XHB,Donchian T-Lines Buy/Sell,Sell,Daily
+5/29/25,XME,ETF Squeeze Sell   ,Sell,Daily
+5/30/25,QQQ,Weekly Swing Buy Setup 1 and 2,Buy,Daily
+6/2/25,DIA,Market Internals - 20.8 Put/Call (Setup 5) ,Buy,Daily
+6/2/25,XLI  ,Market Internals - 20.8 Put/Call (Setup 5) ,Buy,Daily
+6/3/25,IYR,T-Lines Buy/Sell  ,Buy,Daily
+6/3/25,VNQ,T-Lines Buy/Sell  ,Buy,Daily
+6/5/25,XLI,Squeeze Play Sector Sell,Sell,Daily
+6/5/25,XLV,Donchian Hook Buy  ,Buy,Daily
+6/6/25,XLF,Weekly Swing Buy Setup 1 and 2,Buy,Weekly
+6/10/25,DIA,Donchian T-Lines Buy/Sell,Buy,Daily
+6/11/25,XLE,Donchian T-Lines Buy/Sell,Buy,Daily
+6/11/25,XOP,Donchian T-Lines Buy/Sell,Buy,Daily
+6/11/25,XHB,Donchian Hook Buy  ,Buy,Daily
+6/12/25,XHB,Donchian T-Lines Buy/Sell  ,Buy,Daily
+6/14/25,FXI,ETF Squeeze Sell,Sell,Daily
+6/14/25,IBB,ETF Squeeze Sell,Sell,Daily
+6/14/25,VWO,ETF Squeeze Sell,Sell,Daily
+6/14/25,XLV,Ichimoku Kijun 5 Hook Buy,Buy,Daily
+6/14/25,DIA,Weekly Swing Buy Setup 1 and 2 (Options),Buy,Weekly
+6/14/25,XLV,Weekly 10.5 Buy ,Buy,Weekly
+6/14/25,EWG,Weekly Ichimoku Sell (Options),Buy,Weekly
+6/16/25,SLV,ETF Squeeze Sell,Sell,Daily
+6/22/25,XME,ETF Squeeze Sell,Sell,Daily
+6/22/25,EWH,Weekly Ichimoku Sell,Sell,Weekly
+6/23/25,XLV,Donchian T-Lines Buy/Sell  ,Sell,Daily
+6/23/25,USO,ETF Squeeze Sell,Sell,Daily
+6/25/25,DIA,Market Internals - 20.8 Put/Call(Setup 5) ,Buy,Daily
+6/25/25,XLI,Market Internals - 20.8 Put/Call(Setup 5) ,Buy,Daily
+6/25/25,DIA,Donchian T-Lines Buy/Sell,Buy,Daily
+6/25/25,XLF,Donchian T-Lines Buy/Sell,Buy,Daily
+6/25/25,EEM,Kijun 5 Hook Buy,Buy,Daily
+6/25/25,GDX,Kijun 5 Hook Buy,Buy,Daily
+6/25/25,IBB,Kijun 5 Hook Buy,Buy,Daily
+6/25/25,XLB,Kijun 5 Hook Buy,Buy,Daily
+6/25/25,XLV,Kijun 5 Hook Buy,Buy,Daily
+6/26/25,XLI,Donchian T-Lines Buy/Sell,Buy,Daily
+6/27/25,DIA,Weekly Turbo Hook Buy,Buy,Weekly
+6/27/25,EFA,Weekly Turbo Hook Buy,Buy,Weekly
+7/1/25,EWG,Donchian T-Lines Buy/Sell ,Buy,Daily
+7/1/25,XHB,Ichimoku Kijun 5 Hook Buy   ,Buy,Daily
+7/2/25,EFA,Donchian T-Lines Buy/Sell  ,Buy,Daily
+7/2/25,TLT,ETF Squeeze Sell,Sell,Daily
+7/3/25,IBB,Donchian T-Lines Buy/Sell,Buy,Daily
+7/3/25,IYR,Donchian T-Lines Buy/Sell,Buy,Daily
+7/7/25,XME,ETF Squeeze Sell,Sell,Daily
+7/9/25,EFA,Donchian Hook Buy,Buy,Daily
+7/10/25,IYR,Donchian T-Lines Buy,Buy,Daily
+7/10/25,SLV,Donchian T-Lines Buy,Buy,Daily
+7/10/25,XLE,Donchian T-Lines Buy,Buy,Daily
+7/11/25,EWG,Weekly Ichimoku Sell,Sell,Weekly
+7/14/25,VNQ,Donchian T-Lines Buy,Buy,Daily
+7/15/25,IBB,ETF Squeeze Sell ,Sell,Daily
+7/15/25,IWM,ETF Squeeze Sell ,Sell,Daily
+7/15/25,XHB,ETF Squeeze Sell ,Sell,Daily
+7/15/25,XLB,ETF Squeeze Sell ,Sell,Daily
+7/15/25,XLI,ETF Squeeze Sell ,Sell,Daily
+7/15/25,XLV,ETF Squeeze Sell ,Sell,Daily
+7/15/25,XRT,ETF Squeeze Sell ,Sell,Daily
+7/16/25,EFA,Donchian Crossover Buy,Buy,Daily
+7/17/25,XOP,Donchian T-Lines Buy/Sell,Buy,Daily
+7/17/25,IYR,Donchian Hook Buy ,Buy,Daily
+7/18/25,GDX,Donchian Hook Buy ,Buy,Daily
+7/18/25,EWH,ETF Squeeze Sell ,Sell,Daily
+7/18/25,VWO,ETF Squeeze Sell ,Sell,Daily
+7/21/25,GDX,Donchian T-Lines Buy/Sell   ,Buy,Daily
+7/25/25,XLF,Donchian T-Lines Buy/Sell   ,Buy,Daily
+7/25/25,SLV,ETF Squeeze Sell ,Sell,Daily
+7/25/25,EFA,Weekly Turbo Hook Buy,Buy,Weekly

@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 import calendar
+import holidays
 import os
 import json
 import pandas as pd
@@ -57,7 +59,9 @@ def get_option_expiration_date(year, month):
     """
 
     # Calculate the 3rd Friday of the month
-    third_friday_date = get_third_friday(year, month)
+    third_friday = get_third_friday(year, month)
+    return third_friday - timedelta(days=1) if is_holiday(third_friday) else third_friday
+
 
     # Check if the 3rd Friday is a holiday (replace with your actual holiday checking logic)
     if is_holiday(third_friday_date):
@@ -65,6 +69,58 @@ def get_option_expiration_date(year, month):
         return third_friday_date - timedelta(days=1)
     else:
         return third_friday_date
+    
+
+# def get_final_expiration_date(signal_date):
+#     """
+#     Given a trade signal date, calculates the options expiration date two full cycles later.
+#     This is typically the 3rd Friday of the month two *after* the month of the first expiration.
+
+#     Example:
+#         Signal: May 1 2025 → May expiration = May 17 2025
+#         Two full expirations = June + July → Final expiry = July 18 2025
+
+#     Returns:
+#         A datetime.date object representing the final expiration.
+#     """
+#     # Get first expiration date
+#     first_exp = get_option_expiration_date(signal_date.year, signal_date.month)
+
+#     # Advance by two months
+#     second_month = first_exp + relativedelta(months=1)
+#     third_month = second_month + relativedelta(months=1)
+
+#     # Get final expiration
+#     return get_option_expiration_date(third_month.year, third_month.month)
+
+from dateutil.relativedelta import relativedelta
+
+def get_final_expiration_date(signal_date, months_out=2):
+    """
+    Given a trade signal date, calculates the options expiration date a specified number of
+    full expiration months after the first expiration month.
+
+    Example:
+        Signal: May 1, 2025 → First expiration: May 16, 2025
+        Two full expirations (months_out=2): June + July → Final: July 18, 2025
+
+    Args:
+        signal_date (datetime.date): The trade entry/signal date.
+        months_out (int): Number of full expiration months after the first.
+
+    Returns:
+        datetime.date: The final expiration date.
+    """
+    # Get first expiration date
+    first_exp = get_option_expiration_date(signal_date.year, signal_date.month)
+
+    # Step forward N full months after first expiration
+    future_month = first_exp + relativedelta(months=months_out)
+    final_exp = get_option_expiration_date(future_month.year, future_month.month)
+
+    return final_exp
+
+
 
 def get_third_friday(year, month):
     """
@@ -88,27 +144,18 @@ def get_third_friday(year, month):
     third_friday = first_friday + timedelta(weeks=2)
     return third_friday
 
-def is_holiday(date):
+def is_holiday(date_in):
     """
-    Checks if a given date is a trading holiday.
+    Checks if a given date is a US financial market holiday (NYSE calendar).
 
     Args:
-        date: A datetime.date object.
+        date_in (datetime.date): The date to check.
 
     Returns:
-        True if the date is a holiday, False otherwise.
+        bool: True if the date is a recognized NYSE trading holiday, False otherwise.
     """
-    # Replace this with your actual holiday checking logic.
-    # This example assumes a specific list of holidays.
-    holidays = [
-        datetime(2025, 1, 1).date(),  # New Year's Day
-        datetime(2025, 7, 4).date(),  # Independence Day
-        datetime(2025, 9, 1).date(),  # Labor Day
-        datetime(2025, 11, 27).date(),  # Thanksgiving
-        datetime(2025, 12, 25).date()   # Christmas Day
-    ]
+    return date_in in holidays.financial_holidays("NYSE", years=date_in.year)
 
-    return date in holidays
 
 # Example usage:
 year = 2025
