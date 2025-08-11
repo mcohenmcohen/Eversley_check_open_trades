@@ -18,8 +18,11 @@ fetched_data_cache = {}  # cache already-fetched symbols
 
 # AV_API_KEY = 'IN8A22IKNXHRN9P5'  # Replace with your Alpha Vantage key
 TICK_SIZE = {
-    # Currency futures
+    # Futures
     "6A": 0.0001, "6B": 0.0001, "6C": 0.0001, "6E": 0.0001, "6S": 0.0001,
+    
+    # Index futures
+    "ES": 0.25, "NQ": 0.25, "RTY": 0.10, "YM": 1.00,
 
     # Common ETFs
     "DIA": 0.01, "EEM": 0.01, "EFA": 0.01, "EWG": 0.01, "EWH": 0.01,
@@ -31,15 +34,21 @@ TICK_SIZE = {
 }
 
 # # Maps internal CME futures symbols to 
-# Yahoo Finance ticker symbols (for currencies, not needed now since i'm downloading them from ninjatrader)
+# Yahoo Finance ticker symbols (for futures, not needed now since i'm downloading them from ninjatrader)
 # ETF tickers from Alpha Vantage
 symbol_map = {
-    # Currency futures
+    # Futures
     "6A": "6A=F",
     "6B": "6B=F",
     "6C": "6C=F",
     "6E": "6E=F",
     "6S": "6S=F",
+    
+    # Index futures
+    "ES": "ES=F",
+    "NQ": "NQ=F",
+    "RTY": "RTY=F",
+    "YM": "YM=F",
 
     # ETFs
     "DIA": "DIA",
@@ -241,7 +250,10 @@ def wilders_atr(df, period):
 # Evaluates a calculation rule such as entry thresholds, ATRs, or stop offsets
 def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_price=None):
     # Symbol map and tick size
-    symbol_code_map = {"6A": "A", "6B": "B", "6C": "C", "6E": "E", "6S": "S"}
+    symbol_code_map = {
+        "6A": "A", "6B": "B", "6C": "C", "6E": "E", "6S": "S",
+        "ES": "ES", "NQ": "NQ", "RTY": "RTY", "YM": "YM"
+    }
     code = symbol_code_map.get(symbol, symbol)
     tick_size = TICK_SIZE.get(symbol, 0.01)
 
@@ -393,7 +405,7 @@ def evaluate_entry(entry_conf, df, test_date, symbol, strategy_name, signal_date
             next_day_idx = df.index.get_loc(signal_date) + 1
             next_day = df.index[next_day_idx]
         except IndexError:
-            print('evaluate_entry: Next day open has not occured yet.')
+            # print('evaluate_entry: Next day open has not occured yet.')
             return False, None
         
         open_price = df.loc[next_day]["Open"]
@@ -408,7 +420,7 @@ def evaluate_entry(entry_conf, df, test_date, symbol, strategy_name, signal_date
             triggered = price <= open_price if direction == "buy" else price >= open_price
 
             print(f"[{symbol}] {strategy_name} on {test_date.strftime('%Y-%m-%d (%a)')} - Price: {price:.5f}, Open: {open_price:.5f}, Triggered: {triggered}")
-            return triggered, price if triggered else None, None
+            return triggered, price if triggered else None
 
     else:
         threshold = evaluate_formula(formula, df, signal_date, symbol)
@@ -426,6 +438,7 @@ def evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, stra
         atr = wilders_atr(df, 5)
         atr_value = atr.loc[signal_date]  # ✅ ATR from the signal date only
         
+        # Th target is 1x ATR(5)
         if direction == "sell":
             target_price = entry_price - atr_value
         else:
@@ -456,11 +469,25 @@ def evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, stra
     return stop_price, target_price
 
 
+def get_target_type(strategy):
+    """Extract target type information for display purposes."""
+    try:
+        target_formula = strategy.get("target", {}).get("formula", {})
+        if target_formula.get("type") == "atr_multiple":
+            atr_length = target_formula.get("atr_length", 5)
+            multiplier = target_formula.get("multiplier", 1.0)
+            return f"ATR{atr_length} x {multiplier}"
+        elif target_formula.get("type") == "fixed_atr_target":
+            atr_length = target_formula.get("atr_length", 5)
+            return f"ATR{atr_length} x 0.6"  # fixed_atr_target uses 0.6 multiplier
+        else:
+            return target_formula.get("type", "Unknown")
+    except:
+        return "Unknown"
+
 def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=None):
     # print(f'simulate_trade: direction {direction}')
     # print('Enter simulate_trade')
-
-    print(f"simulate tade direction: {direction}")
 
     formulas = {
         "entry": strategy["entry"]["formula"],
@@ -510,7 +537,7 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                 # Buy: price must rise to or above target
                 if direction == "buy" and row["High"] >= target_price:
                     return {
-                        "status": "Closed - Target Hit",
+                        "status": "Target Hit",
                         "entry": round(entry_price, 5),
                         "stop": round(stop_price, 5) if has_stop else "",
                         "target": round(target_price, 5),
@@ -520,7 +547,7 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                 # Sell: price must fall to or below target
                 elif direction == "sell" and row["Low"] <= target_price:
                     return {
-                        "status": "Closed - Target Hit",
+                        "status": "Target Hit",
                         "entry": round(entry_price, 5),
                         "stop": round(stop_price, 5) if has_stop else "",
                         "target": round(target_price, 5),
@@ -532,7 +559,7 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                 if isinstance(stop_price, date):
                     if i.date() >= stop_price:
                         return {
-                            "status": "Closed - Stop Hit",
+                            "status": "Expired",
                             "entry": round(entry_price, 5),
                             "stop": "Expired",
                             "target": round(target_price, 5),
@@ -544,7 +571,7 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                 if has_stop:
                     if direction == "buy" and row["Low"] <= stop_price:
                         return {
-                            "status": "Closed - Stop Hit",
+                            "status": "Stopped out",
                             "entry": round(entry_price, 5),
                             "stop": round(stop_price, 5),
                             "target": round(target_price, 5),
@@ -553,7 +580,7 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                         }
                     elif direction == "sell" and row["High"] >= stop_price:
                         return {
-                            "status": "Closed - Stop Hit",
+                            "status": "Stopped out",
                             "entry": round(entry_price, 5),
                             "stop": round(stop_price, 5),
                             "target": round(target_price, 5),
@@ -587,7 +614,7 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="Currency Futures Strategy Backtester")
+    parser = argparse.ArgumentParser(description="Futures Strategy Backtester")
     parser.add_argument("--mode", choices=["futures", "etfs"], required=True, help="Which type of trades to backtest")
     parser.add_argument("--debug", action="store_true", help="Enable debug output for matched strategy names")
     args = parser.parse_args()
@@ -599,6 +626,10 @@ def main():
 
     strategies = load_strategies(strategy_path)
     df_signals = pd.read_csv(input_file, encoding="ISO-8859-1")
+    
+    # Filter out empty rows (Excel often adds millions of empty rows)
+    df_signals = df_signals.dropna(how='all')  # Remove completely empty rows
+    df_signals = df_signals.dropna(subset=['symbol', 'strategy'])  # Remove rows missing key columns
 
     results = []
 
@@ -612,14 +643,29 @@ def main():
         freq = str(freq_raw).strip().capitalize() if pd.notna(freq_raw) else "Daily"
 
         # Safely parse 'buy or sell' as direction
-        # print("row:", row)
-        # action_raw = row.get("buy or sell", "Buy")
-        # print('row.get("buy or sell":', row["direction"])
-        # direction = str(action_raw).strip().lower() if pd.notna(action_raw) else "buy"
-        direction = row["direction"].strip().lower()
-        print(f"main direction: {direction}")       
+        direction_raw = row.get("direction", "")
+        if pd.isna(direction_raw) or not direction_raw:
+            print(f"❌ Invalid or missing direction for row: {row.name}")
+            continue
+        direction = str(direction_raw).strip().lower()
+
+        # For ETFs, try to use actual strategy name first, then fall back to generic
+        raw_strategy_name = str(row.get("strategy", "")).strip()
         
-        resolved_name = f"{freq} ETF Options {direction.capitalize()}"
+        # List of known daily ETF strategy patterns that should map to generic daily strategies
+        daily_etf_patterns = [
+            "Donchian", "Ichimoku", "ETF Squeeze", "Squeeze Play", "Stochastics", 
+            "20.8 Trigger", "Gap and Go", "Put/Call Buy"
+        ]
+        
+        # Check if raw name matches any daily pattern and frequency is Daily
+        is_daily_strategy = freq.lower() == "daily" and any(pattern in raw_strategy_name for pattern in daily_etf_patterns)
+        
+        if is_daily_strategy:
+            resolved_name = f"{freq} ETF Options {direction.capitalize()}"
+        else:
+            # Use actual name for Weekly strategies or exact matches
+            resolved_name = raw_strategy_name if raw_strategy_name else f"{freq} ETF Options {direction.capitalize()}"
 
         try:
             # signal_date = pd.to_datetime(row['date'], format='%m/%d/%y')
@@ -637,6 +683,11 @@ def main():
                 "entry_date": "",
                 "exit_date": ""
             })
+            continue
+
+        # Check the signal date is actually a trading day.  if not, it's a mistake in the input file.
+        if not util.is_trading_day(signal_date):
+            print(f"⚠️ {symbol} signal date on {signal_date} is not a trading day. Skipping.")
             continue
 
         # Convert alt futures symbol codes
@@ -686,6 +737,7 @@ def main():
         # print(df.tail)
         # print('Close:',df['Close'].iloc[-1])
         result = simulate_trade(strategies[resolved_name], symbol, df, signal_date, resolved_name, direction=direction)
+        target_type = get_target_type(strategies[resolved_name])
 
         entry_date_str = result.get("entry_date", "")
         entry_date = datetime.strptime(entry_date_str, '%Y-%m-%d').date() if entry_date_str else None
@@ -715,6 +767,9 @@ def main():
         else:    
             diff_from_entry = entry_price - last_close_price 
 
+        # Calculate expiration date for ETF options (2 full months out)
+        expiration_date = util.get_final_expiration_date(signal_date, months_out=2)
+        
         results.append({
             "symbol": symbol,
             # "strategy": resolved_name,
@@ -722,8 +777,9 @@ def main():
             "direction": direction,
             "signal_date": signal_date.strftime('%m/%d/%y'),
             "status": result["status"],
+            "expiration": expiration_date.strftime('%m/%d/%y') if expiration_date else "",
+            "target_type": target_type,
             "entry_price": result.get("entry", ""),
-            "stop_price": result.get("stop", ""),
             "target_price": result.get("target", ""),
             "last_close_price": last_close_price,
             "diff_from_entry": round(diff_from_entry, 2),

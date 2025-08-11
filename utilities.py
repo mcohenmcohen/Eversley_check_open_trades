@@ -156,6 +156,25 @@ def is_holiday(date_in):
     """
     return date_in in holidays.financial_holidays("NYSE", years=date_in.year)
 
+def is_trading_day(date_in):
+    """
+    Checks if a given date is open for trading in the US financial market.
+
+    Args:
+        date_in (datetime.date): The date to check.
+
+    Returns:
+        bool: True if the date is a recognized NYSE trading holiday, False otherwise.
+    """
+    # Check if it's a weekday (Monday to Friday)
+    is_weekday = date_in.weekday() < 5 
+
+    # Check if it's a NYSE financial holiday
+    is_holiday = date_in in holidays.financial_holidays("NYSE", years=date_in.year) 
+
+    # It's a trading day if it's a weekday and not a holiday
+    return is_weekday and not is_holiday
+
 
 # Example usage:
 year = 2025

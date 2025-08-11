@@ -8,7 +8,11 @@
                     "C": 15,
                     "B": 10,
                     "E": 10,
-                    "S": 10
+                    "S": 10,
+                    "ES": 4,
+                    "NQ": 4,
+                    "RTY": 8,
+                    "YM": 2
                 }
             }
         },
@@ -40,7 +44,11 @@
                     "E": 10,
                     "A": 15,
                     "B": 15,
-                    "S": 15
+                    "S": 15,
+                    "ES": 4,
+                    "NQ": 4,
+                    "RTY": 8,
+                    "YM": 2
                 }
             }
         },
@@ -379,7 +387,7 @@
             }
         }
     },
-    "Weekly ETF Options Buy": {
+    "Weekly Swing Trend Buy": {
         "entry": {
             "formula": {
             "type": "open_or_better",
@@ -391,11 +399,63 @@
             "formula": {
             "type": "atr_multiple",
             "atr_length": 5,
-            "multiplier": 1.0
+            "multiplier": 0.55,
+            "timeframe": "weekly"
             }
         }
     },
-    "Weekly ETF Options Sell": {
+    "Weekly Turbo Hook Buy": {
+        "entry": {
+            "formula": {
+            "type": "open_or_better",
+            "direction": "buy"
+            }
+        },
+        "stop": null,
+        "target": {
+            "formula": {
+            "type": "atr_multiple",
+            "atr_length": 5,
+            "multiplier": 0.55,
+            "timeframe": "weekly"
+            }
+        }
+    },
+    "Weekly Ichimoku Squeeze Sell": {
+        "entry": {
+            "formula": {
+            "type": "open_or_better",
+            "direction": "sell"
+            }
+        },
+        "stop": null,
+        "target": {
+            "formula": {
+            "type": "atr_multiple",
+            "atr_length": 20,
+            "multiplier": 1.0,
+            "timeframe": "daily"
+            }
+        }
+    },
+    "Weekly 10.5 Squeeze Buy": {
+        "entry": {
+            "formula": {
+            "type": "open_or_better",
+            "direction": "buy"
+            }
+        },
+        "stop": null,
+        "target": {
+            "formula": {
+            "type": "atr_multiple",
+            "atr_length": 5,
+            "multiplier": 0.55,
+            "timeframe": "weekly"
+            }
+        }
+    },
+    "Weekly Swing Sell": {
         "entry": {
             "formula": {
             "type": "open_or_better",
@@ -407,7 +467,8 @@
             "formula": {
             "type": "atr_multiple",
             "atr_length": 5,
-            "multiplier": 1.0
+            "multiplier": 0.55,
+            "timeframe": "weekly"
             }
         }
     }
