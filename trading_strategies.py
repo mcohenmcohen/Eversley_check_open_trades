@@ -130,6 +130,17 @@ class FuturesTradingStrategy(TradingStrategy):
             elif target_formula.get("type") == "fixed_atr_target":
                 atr_length = target_formula.get("atr_length", 5)
                 return f"ATR{atr_length} x 0.6"
+            elif target_formula.get("type") == "atr_percentage":
+                atr_length = target_formula.get("atr_length", 5)
+                percentage = target_formula.get("percentage", 0.6)
+                return f"ATR{atr_length} x {percentage}"
+            elif target_formula.get("type") == "entry_stop_percentage":
+                percentage = target_formula.get("percentage", 0.4)
+                return f"Entry-Stop x {percentage}"
+            elif target_formula.get("type") == "multi_target":
+                target_rank = target_formula.get("target_rank", 1)
+                num_options = len(target_formula.get("target_options", []))
+                return f"Multi-Target Rank {target_rank}/{num_options}"
             else:
                 return target_formula.get("type", "Unknown")
         except:

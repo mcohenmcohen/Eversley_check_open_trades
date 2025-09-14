@@ -373,6 +373,51 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
         risk = entry_price - stop_price
         return [entry_price + risk * m for m in formula["multipliers"]]
     
+    elif formula["type"] == "atr_percentage":
+        # ATR-based targets: configurable percentage of ATR (60%, 70%) with configurable ATR length (5, 20)
+        atr_length = formula.get("atr_length", 5)
+        percentage = formula.get("percentage", 0.6)  # default 60%
+        direction = formula.get("direction", "buy")
+        
+        atr_values = wilders_atr(df, atr_length)
+        signal_idx = df.index.get_loc(signal_date)
+        atr_value = atr_values.iloc[signal_idx]
+        
+        if direction == "buy":
+            return entry_price + (atr_value * percentage)
+        else:  # sell
+            return entry_price - (atr_value * percentage)
+    
+    elif formula["type"] == "entry_stop_percentage":
+        # Percentage of entry-to-stop difference: configurable % (40%, 45%, 50%)
+        if entry_price is None or stop_price is None:
+            raise ValueError("entry_price and stop_price required for entry_stop_percentage")
+        
+        percentage = formula.get("percentage", 0.4)  # default 40%
+        direction = formula.get("direction", "buy")
+        
+        entry_stop_diff = abs(entry_price - stop_price)
+        
+        if direction == "buy":
+            return entry_price + (entry_stop_diff * percentage)
+        else:  # sell
+            return entry_price - (entry_stop_diff * percentage)
+    
+    elif formula["type"] == "multi_target":
+        # Calculate specified target options, rank by ticks, and select by rank
+        if entry_price is None or stop_price is None:
+            raise ValueError("entry_price and stop_price required for multi_target")
+        
+        target_rank = formula.get("target_rank", 1)  # default to smallest target
+        direction = formula.get("direction", "buy")
+        target_options = formula.get("target_options", [])
+        
+        if not target_options:
+            raise ValueError("target_options array required for multi_target")
+        
+        result = calculate_multi_targets_custom(df, signal_date, symbol, entry_price, stop_price, direction, target_rank, target_options)
+        return result["target_price"]
+    
     elif formula["type"] == "open_or_better":
         # Entry trigger is simply the open price of the next trading day
         next_day_idx = df.index.get_loc(signal_date) + 1
@@ -385,6 +430,180 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
 
     else:
         raise ValueError(f"Unknown formula type: {formula['type']}")
+
+
+def calculate_multi_targets(df, signal_date, symbol, entry_price, stop_price, direction="buy", target_rank=1):
+    """
+    Calculate all 5 target options, rank by tick count, and return selected target.
+    
+    Args:
+        df: Price dataframe
+        signal_date: Signal date
+        symbol: Trading symbol
+        entry_price: Entry price
+        stop_price: Stop loss price  
+        direction: "buy" or "sell"
+        target_rank: Which target to select (1=smallest ticks, 2=2nd smallest, etc.)
+    
+    Returns:
+        dict: {"target_price": float, "target_type": str, "tick_count": int}
+    """
+    tick_size = TICK_SIZE.get(symbol, 0.0001)
+    
+    # Define all 5 target calculations
+    target_configs = [
+        {"type": "atr_percentage", "atr_length": 5, "percentage": 0.6, "label": "ATR5 x 0.6"},
+        {"type": "atr_percentage", "atr_length": 5, "percentage": 0.7, "label": "ATR5 x 0.7"},
+        {"type": "atr_percentage", "atr_length": 20, "percentage": 0.6, "label": "ATR20 x 0.6"},
+        {"type": "atr_percentage", "atr_length": 20, "percentage": 0.7, "label": "ATR20 x 0.7"},
+        {"type": "entry_stop_percentage", "percentage": 0.4, "label": "Entry-Stop x 0.4"},
+        {"type": "entry_stop_percentage", "percentage": 0.45, "label": "Entry-Stop x 0.45"},
+        {"type": "entry_stop_percentage", "percentage": 0.5, "label": "Entry-Stop x 0.5"}
+    ]
+    
+    targets = []
+    
+    for config in target_configs:
+        try:
+            # Create formula dict for evaluate_formula
+            formula = {
+                "type": config["type"],
+                "direction": direction
+            }
+            
+            if config["type"] == "atr_percentage":
+                formula["atr_length"] = config["atr_length"]
+                formula["percentage"] = config["percentage"]
+            elif config["type"] == "entry_stop_percentage":
+                formula["percentage"] = config["percentage"]
+            
+            # Calculate target price
+            target_price = evaluate_formula(formula, df, signal_date, symbol, 
+                                          entry_price=entry_price, stop_price=stop_price)
+            
+            # Calculate tick count from entry to target
+            price_diff = abs(target_price - entry_price)
+            tick_count = round(price_diff / tick_size)
+            
+            targets.append({
+                "target_price": target_price,
+                "target_type": config["label"],
+                "tick_count": tick_count,
+                "config": config
+            })
+            
+        except Exception as e:
+            print(f"⚠️  Error calculating {config['label']}: {e}")
+            continue
+    
+    if not targets:
+        raise ValueError("No valid targets could be calculated")
+    
+    # Sort by tick count (ascending - smallest first)
+    targets.sort(key=lambda x: x["tick_count"])
+    
+    # Select the target by rank (1-based indexing)
+    if target_rank < 1 or target_rank > len(targets):
+        print(f"⚠️  Target rank {target_rank} out of range (1-{len(targets)}), using rank 1")
+        target_rank = 1
+    
+    selected_target = targets[target_rank - 1]
+    
+    # Debug output - will be controlled by main debug flag
+    print(f"🎯 Multi-target analysis for {symbol}:")
+    for i, target in enumerate(targets, 1):
+        marker = "👈 SELECTED" if i == target_rank else ""
+        print(f"   {i}. {target['target_type']}: ${target['target_price']:.5f} ({target['tick_count']} ticks) {marker}")
+    
+    return selected_target
+
+
+def calculate_multi_targets_custom(df, signal_date, symbol, entry_price, stop_price, direction="buy", target_rank=1, target_options=None):
+    """
+    Calculate custom target options, rank by tick count, and return selected target.
+    
+    Args:
+        df: Price dataframe
+        signal_date: Signal date
+        symbol: Trading symbol
+        entry_price: Entry price
+        stop_price: Stop loss price  
+        direction: "buy" or "sell"
+        target_rank: Which target to select (1=smallest ticks, 2=2nd smallest, etc.)
+        target_options: Array of target option dicts from JSON config
+    
+    Returns:
+        dict: {"target_price": float, "target_type": str, "tick_count": int}
+    """
+    if not target_options:
+        raise ValueError("target_options required")
+    
+    tick_size = TICK_SIZE.get(symbol, 0.0001)
+    targets = []
+    
+    for i, option in enumerate(target_options):
+        try:
+            # Create formula dict for evaluate_formula
+            formula = {
+                "type": option["type"],
+                "direction": direction
+            }
+            
+            # Copy all option parameters to formula
+            for key, value in option.items():
+                if key != "type":
+                    formula[key] = value
+            
+            # Calculate target price
+            target_price = evaluate_formula(formula, df, signal_date, symbol, 
+                                          entry_price=entry_price, stop_price=stop_price)
+            
+            # Calculate tick count from entry to target
+            price_diff = abs(target_price - entry_price)
+            tick_count = round(price_diff / tick_size)
+            
+            # Generate label for display
+            if option["type"] == "atr_percentage":
+                atr_length = option.get("atr_length", 5)
+                percentage = option.get("percentage", 0.6)
+                label = f"ATR{atr_length} x {percentage}"
+            elif option["type"] == "entry_stop_percentage":
+                percentage = option.get("percentage", 0.4)
+                label = f"Entry-Stop x {percentage}"
+            else:
+                label = f"{option['type']} #{i+1}"
+            
+            targets.append({
+                "target_price": target_price,
+                "target_type": label,
+                "tick_count": tick_count,
+                "config": option
+            })
+            
+        except Exception as e:
+            print(f"⚠️  Error calculating target option {i+1}: {e}")
+            continue
+    
+    if not targets:
+        raise ValueError("No valid targets could be calculated from target_options")
+    
+    # Sort by tick count (ascending - smallest first)
+    targets.sort(key=lambda x: x["tick_count"])
+    
+    # Select the target by rank (1-based indexing)
+    if target_rank < 1 or target_rank > len(targets):
+        print(f"⚠️  Target rank {target_rank} out of range (1-{len(targets)}), using rank 1")
+        target_rank = 1
+    
+    selected_target = targets[target_rank - 1]
+    
+    # Debug output showing all calculated targets
+    print(f"🎯 Multi-target analysis for {symbol} ({len(targets)} options):")
+    for i, target in enumerate(targets, 1):
+        marker = "👈 SELECTED" if i == target_rank else ""
+        print(f"   {i}. {target['target_type']}: ${target['target_price']:.5f} ({target['tick_count']} ticks) {marker}")
+    
+    return selected_target
 
 
 # Checks if an entry condition is met on a given signal date
