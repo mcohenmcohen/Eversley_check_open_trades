@@ -1,0 +1,10 @@
+{
+    "data_sources": {
+        "etf_data_source": "insightsentry",
+        "futures_data_source": "insightsentry"
+    },
+    "api_settings": {
+        "timeout": 30,
+        "max_concurrent_requests": 5
+    }
+}

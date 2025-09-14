@@ -2,6 +2,14 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Environment Setup
+
+Required environment variables in your `.zshrc` or `.bashrc`:
+```bash
+export POLYGON_API_KEY="your_polygon_api_key_here"
+export INSIGHTSENTRY_API_KEY="your_insightsentry_api_key_here"  # Optional for futures
+```
+
 ## Common Commands
 
 Navigate to the main project directory:
@@ -26,7 +34,12 @@ jupyter notebook test_bench.ipynb
 jupyter notebook symbol_source_tests.ipynb
 ```
 
-Test Polygon.io API integration:
+Test data sources integration:
+```bash
+python test_data_sources.py
+```
+
+Test individual Polygon.io API:
 ```bash
 python test_polygon_import.py --symbol QQQ --start_date 2023-10-27 --end_date 2023-10-30
 ```
@@ -59,7 +72,7 @@ This is a currency futures and ETF trading strategy backtesting system housed in
 
 **Price Data Sources:**
 - ETFs: Downloaded via Polygon.io API
-- Futures: Local CSV files in `data/` directory (6A.csv, 6B.csv, 6C.csv, 6E.csv, 6S.csv, ES.csv, NQ.csv, RTY.csv, YM.csv)
+- Futures: InsightSentry API (primary) with fallback to local CSV files in `data/` directory (6A.csv, 6B.csv, 6C.csv, 6E.csv, 6S.csv, ES.csv, NQ.csv, RTY.csv, YM.csv)
 
 **Input/Output Files:**
 - `trade_signals_*.csv` - Input files containing ticker, strategy name, signal date
@@ -72,12 +85,21 @@ This is a currency futures and ETF trading strategy backtesting system housed in
 
 **ETFs:** 20+ ETFs including SPY, QQQ, GLD, DIA, IWM with proper tick size mappings
 
+### Data Sources Module
+
+**data_sources.py** - Unified data source management:
+- `DataSourceManager` class coordinates between different APIs
+- `PolygonDataSource` handles ETF data via Polygon.io API
+- `InsightSentryDataSource` handles futures data via InsightSentry API
+- Automatic fallback to local CSV files for futures if API unavailable
+- Concurrent data fetching for improved performance
+
 ### Key Dependencies
 
 Required Python packages:
 - pandas (data manipulation)
 - polygon-api-client (Polygon.io data for ETFs)
-- alpha_vantage (Alpha Vantage API - backup data source)
+- requests (InsightSentry API integration)
 - rapidfuzz (fuzzy string matching for strategy names)
 - dateutil (date calculations)
 - holidays (trading calendar)

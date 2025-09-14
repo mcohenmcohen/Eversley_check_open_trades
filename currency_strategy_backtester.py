@@ -10,10 +10,20 @@ from rapidfuzz import process
 from alpha_vantage.timeseries import TimeSeries
 import utilities as util
 
-from polygon.rest import RESTClient
-POLYGON_API_KEY = 'qFTWmhmyAj2pJqpx0Pwxp2AyShKFVPv9'
-client = RESTClient(api_key = POLYGON_API_KEY)
-print("Import succeeded!")
+from data_sources import DataSourceManager, load_futures_data_from_csv
+from trading_strategies import StrategyFactory
+
+# API Keys
+POLYGON_API_KEY = os.getenv('POLYGON_API_KEY')
+INSIGHTSENTRY_API_KEY = os.getenv('INSIGHTSENTRY_API_KEY')  # Add to your environment variables
+
+
+# Initialize data source manager
+data_manager = DataSourceManager(
+    polygon_api_key=POLYGON_API_KEY,
+    insightsentry_api_key=INSIGHTSENTRY_API_KEY
+)
+print("Data sources initialized!")
 fetched_data_cache = {}  # cache already-fetched symbols
 
 # AV_API_KEY = 'IN8A22IKNXHRN9P5'  # Replace with your Alpha Vantage key
@@ -91,6 +101,20 @@ def load_strategies(path):
     with open(path) as f:
         return json.load(f)
 
+# Load configuration settings
+def load_config(path="config.json"):
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"⚠️ Config file {path} not found, using defaults")
+        return {
+            "data_sources": {
+                "etf_data_source": "insightsentry",
+                "futures_data_source": "insightsentry"
+            }
+        }
+
 # Downloads yfinance historical OHLC data for all required symbols
 # def fetch_price_data(symbols, start_date, end_date):
 #     data = {}
@@ -128,39 +152,59 @@ def load_strategies(path):
 
 
 # Call the right source for getting price data, depending on if etfs or futures
-def get_price_data(symbol, mode, cache, start_date=datetime(2025, 1, 2)):
+def get_price_data(symbol, mode, cache, start_date=None, etf_source="insightsentry"):
+    # For ETFs, only fetch 3 months of data (max 2 expiration cycles + current month)
+    if start_date is None:
+        if mode == "etfs":
+            start_date = datetime.now() - timedelta(days=90)  # 3 months
+        else:
+            start_date = datetime(2025, 1, 2)  # Futures need more history
     if symbol in cache:
         return cache[symbol]
 
-    if mode == "futures":
-        df = load_futures_data(symbol)
-        if df is None:
-            print(f"❌ Could not load data for futures symbol {symbol}")
-            return None
-    else:  # ETF
-        try:
-            end_date = datetime.today() + timedelta(days=1)  # buffer in case you're running same-day
-            all_data = fetch_price_data([symbol], start_date, end_date)
-
-            if symbol not in all_data:
-                raise ValueError(f"{symbol} was not returned by fetch_price_data")
-
-            df = all_data[symbol]
+    try:
+        end_date = datetime.today() + timedelta(days=1)  # buffer in case you're running same-day
+        
+        if mode == "futures":
+            # Try InsightSentry first, fallback to local CSV
+            if data_manager.is_source_available('insightsentry'):
+                df = data_manager.get_futures_data(symbol, start_date, end_date)
+                if df.empty:
+                    print(f"⚠️ No InsightSentry data for {symbol}, trying local CSV")
+                    df = load_futures_data_from_csv(symbol)
+            else:
+                print(f"📂 InsightSentry not available, using local CSV for {symbol}")
+                df = load_futures_data_from_csv(symbol)
+            
+            if df.empty:
+                print(f"❌ Could not load data for futures symbol {symbol}")
+                return None
+                
+        else:  # ETF mode
+            df = data_manager.get_etf_data(symbol, start_date, end_date, source=etf_source)
+            if df.empty:
+                print(f"❌ No ETF data returned for {symbol}")
+                return None
+                
             print(f"{symbol}: price range {df.index.min().date()} to {df.index.max().date()}")
 
-        except Exception as e:
-            print(f"❌ Failed to fetch ETF data for {symbol}: {e}")
-            return None
+    except Exception as e:
+        print(f"❌ Failed to fetch data for {symbol}: {e}")
+        return None
 
     cache[symbol] = df
     return df
 
-# Get the ticker data from Polygon 
-def fetch_price_data(symbols, start_date, end_date):
+# Get the ticker data from Polygon (now handled by data_sources module)
+def fetch_price_data(symbols, start_date=None, end_date=None):
+    # Optimize date range for ETFs (3 months max)
+    if start_date is None:
+        start_date = datetime.now() - timedelta(days=90)  # 3 months for ETFs
+    if end_date is None:
+        end_date = datetime.now() + timedelta(days=1)
+    """Backwards compatible wrapper for existing ETF data fetching."""
     global fetched_data_cache
     data = {}
-
-    # print('Start fetch_price_data. Symbols:', symbols)
 
     # At the moment, this array will only be 1 symbol
     for sym in symbols:
@@ -169,71 +213,28 @@ def fetch_price_data(symbols, start_date, end_date):
         if clean_sym in fetched_data_cache:
             print(f"✅ Using cached data for {clean_sym}")
             data[clean_sym] = fetched_data_cache[clean_sym]
-            # print(data)
             continue
         
-        print(f"📡 Fetching {sym} from Polygon (Attempt 1)")
-        success = False
-        df = None  # prevent unbound local error
-        for attempt in range(10):
-            if attempt > 0:
-                print(f"📡 Fetching {sym} from Polygon (Attempt {attempt + 1})")
-                time.sleep(2)
-
-            try:
-                aggs = client.get_aggs(
-                    ticker=sym,
-                    multiplier=1,
-                    timespan="day",
-                    from_=start_date.strftime('%Y-%m-%d'),
-                    to=end_date.strftime('%Y-%m-%d'),
-                    limit=50000
-                )
-
-                if not aggs:
-                    raise ValueError("Empty response")
-
-                df = pd.DataFrame([{
-                    "Date": pd.to_datetime(bar.timestamp, unit='ms'),
-                    "Open": bar.open,
-                    "High": bar.high,
-                    "Low": bar.low,
-                    "Close": bar.close
-                } for bar in aggs])
-
-                df.set_index("Date", inplace=True)
-                df.index = pd.to_datetime(df.index).normalize()
-                df.sort_index(inplace=True)
-
-                data[sym] = df
-                fetched_data_cache[sym] = df
-                print(f"{sym}: fetched {len(df)} rows from {df.index.min().date()} to {df.index.max().date()}")
-                success = True
-                break
-
-            except Exception as e:
-                print(f"❌ Failed to fetch ETF data for {sym}: {e}")
+        try:
+            df = data_manager.get_etf_data(clean_sym, start_date, end_date)
+            
+            if df.empty:
+                print(f"⚠️ No price data available for {sym}. Skipping.")
                 continue
+                
+            data[sym] = df
+            fetched_data_cache[sym] = df
+            
+        except Exception as e:
+            print(f"❌ Error fetching {sym} from data sources: {e}")
 
-            except Exception as e:
-                print(f"❌ Error fetching {sym} from Polygon: {e}")
-
-        if not success:
-            print(f"⚠️ No price data available for {sym}. Skipping.")
-
-    # print('Exit fetch_price_data')
     return data
 
-# Load futures data from local files from ninja trader
+# Load futures data from local files from ninja trader (now handled by data_sources module)
 def load_futures_data(symbol):
-    file_path = f"./data/{symbol}.csv"
-    try:
-        df = pd.read_csv(file_path, parse_dates=["Date"])
-        df.set_index("Date", inplace=True)
-        return df
-    except Exception as e:
-        print(f"Error loading futures data from {file_path}: {e}")
-        return None
+    """Backwards compatible wrapper for local futures data loading."""
+    return load_futures_data_from_csv(symbol)
+
 
  
 # Computes Wilder's ATR based on historical OHLC data
@@ -431,30 +432,14 @@ def evaluate_entry(entry_conf, df, test_date, symbol, strategy_name, signal_date
         return triggered, price if triggered else None
 
 
-def evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, strategy_name, direction):
-    # Handle ETF logic using provided direction
-    # print(f'evaluate_exit, direction {direction}')
-    if direction in ("buy", "sell"):
-        atr = wilders_atr(df, 5)
-        atr_value = atr.loc[signal_date]  # ✅ ATR from the signal date only
-        
-        # Th target is 1x ATR(5)
-        if direction == "sell":
-            target_price = entry_price - atr_value
-        else:
-            target_price = entry_price + atr_value
-        
-        # print('atr_value:', atr_value)
-        # print('direction:', direction)
-        # print('entry_price:', entry_price)
-        # print('target_price:', target_price)
-
-        # stop_price = None  # ETF options have no stop
-        # 🟡 Add expiration-based stop for ETFs
-        stop_price = util.get_final_expiration_date(signal_date, months_out=2)
-        return stop_price, round(target_price, 2)
-
-    # Fallback for futures or other strategies
+# This function is now handled by trading strategy classes
+# Kept for backwards compatibility during refactoring
+def evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, strategy_name, direction, trading_strategy=None):
+    """Legacy function - now delegated to trading strategy classes."""
+    if trading_strategy:
+        return trading_strategy.evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, strategy_name, direction)
+    
+    # Fallback to original logic if no trading_strategy provided
     stop_formula = strategy["stop"]["formula"]
     stop_price = evaluate_formula(stop_formula, df, signal_date, symbol, entry_price=entry_price)
 
@@ -469,8 +454,12 @@ def evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, stra
     return stop_price, target_price
 
 
-def get_target_type(strategy):
+def get_target_type(strategy, trading_strategy=None):
     """Extract target type information for display purposes."""
+    if trading_strategy:
+        return trading_strategy.get_target_type(strategy)
+    
+    # Fallback to original logic
     try:
         target_formula = strategy.get("target", {}).get("formula", {})
         if target_formula.get("type") == "atr_multiple":
@@ -485,7 +474,7 @@ def get_target_type(strategy):
     except:
         return "Unknown"
 
-def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=None):
+def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=None, trading_strategy=None):
     # print(f'simulate_trade: direction {direction}')
     # print('Enter simulate_trade')
 
@@ -527,36 +516,57 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
 
         if triggered:
             stop_price, target_price = evaluate_exit(
-                strategy, formulas, df, test_date, symbol, entry_price, strategy_name, direction
+                strategy, formulas, df, test_date, symbol, entry_price, strategy_name, direction, trading_strategy
             )
 
             post_entry = df[df.index > test_date]
 
             for i, row in post_entry.iterrows():
-                # Check target hit
-                # Buy: price must rise to or above target
-                if direction == "buy" and row["High"] >= target_price:
+                # Check target hit using trading strategy
+                if trading_strategy and trading_strategy.check_target_hit(row, target_price, direction):
                     return {
                         "status": "Target Hit",
                         "entry": round(entry_price, 5),
-                        "stop": round(stop_price, 5) if has_stop else "",
+                        "stop": round(stop_price, 5) if isinstance(stop_price, (float, int)) else ("Expired" if isinstance(stop_price, date) else ""),
                         "target": round(target_price, 5),
                         "entry_date": test_date.strftime('%Y-%m-%d'),
                         "exit_date": i.strftime('%Y-%m-%d')
                     }
-                # Sell: price must fall to or below target
-                elif direction == "sell" and row["Low"] <= target_price:
-                    return {
-                        "status": "Target Hit",
-                        "entry": round(entry_price, 5),
-                        "stop": round(stop_price, 5) if has_stop else "",
-                        "target": round(target_price, 5),
-                        "entry_date": test_date.strftime('%Y-%m-%d'),
-                        "exit_date": i.strftime('%Y-%m-%d')
-                    }
+                # Fallback to original logic
+                elif not trading_strategy:
+                    if direction == "buy" and row["High"] >= target_price:
+                        return {
+                            "status": "Target Hit",
+                            "entry": round(entry_price, 5),
+                            "stop": round(stop_price, 5) if has_stop else "",
+                            "target": round(target_price, 5),
+                            "entry_date": test_date.strftime('%Y-%m-%d'),
+                            "exit_date": i.strftime('%Y-%m-%d')
+                        }
+                    elif direction == "sell" and row["Low"] <= target_price:
+                        return {
+                            "status": "Target Hit",
+                            "entry": round(entry_price, 5),
+                            "stop": round(stop_price, 5) if has_stop else "",
+                            "target": round(target_price, 5),
+                            "entry_date": test_date.strftime('%Y-%m-%d'),
+                            "exit_date": i.strftime('%Y-%m-%d')
+                        }
 
-                # Check stop_price hit for ETFs with stop as a date
-                if isinstance(stop_price, date):
+                # Check stop hit using trading strategy
+                if trading_strategy:
+                    stop_result = trading_strategy.check_stop_hit(row, stop_price, direction, has_stop, i)
+                    if stop_result["hit"]:
+                        return {
+                            "status": stop_result["status"],
+                            "entry": round(entry_price, 5),
+                            "stop": stop_result["stop_display"],
+                            "target": round(target_price, 5),
+                            "entry_date": test_date.strftime('%Y-%m-%d'),
+                            "exit_date": i.strftime('%Y-%m-%d')
+                        }
+                # Fallback to original stop logic
+                elif isinstance(stop_price, date):
                     if i.date() >= stop_price:
                         return {
                             "status": "Expired",
@@ -566,9 +576,7 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                             "entry_date": test_date.strftime('%Y-%m-%d'),
                             "exit_date": i.strftime('%Y-%m-%d')
                         }
-                    
-                # Check stop_price hit for futures with stop as a price
-                if has_stop:
+                elif has_stop:
                     if direction == "buy" and row["Low"] <= stop_price:
                         return {
                             "status": "Stopped out",
@@ -617,7 +625,31 @@ def main():
     parser = argparse.ArgumentParser(description="Futures Strategy Backtester")
     parser.add_argument("--mode", choices=["futures", "etfs"], required=True, help="Which type of trades to backtest")
     parser.add_argument("--debug", action="store_true", help="Enable debug output for matched strategy names")
+    parser.add_argument("--etf-source", choices=["polygon", "insightsentry"], help="Data source for ETF data (overrides config)")
+    parser.add_argument("--test-auth", action="store_true", help="Test authentication for the selected data source and exit")
     args = parser.parse_args()
+
+    # Load configuration
+    config = load_config()
+    
+    # Determine data source to use
+    if args.mode == "etfs":
+        etf_source = args.etf_source or config["data_sources"]["etf_data_source"]
+        print(f"📊 Using {etf_source} for ETF data")
+    else:
+        etf_source = "polygon"  # Not used for futures mode
+    
+    # Test authentication if requested
+    if args.test_auth:
+        source_to_test = etf_source if args.mode == "etfs" else config["data_sources"]["futures_data_source"]
+        print(f"🔐 Testing authentication for {source_to_test}...")
+        auth_result = data_manager.test_authentication(source_to_test)
+        if auth_result.get(source_to_test, False):
+            print("✅ Authentication successful!")
+            return
+        else:
+            print("❌ Authentication failed!")
+            return
 
     # Choose file based on mode
     input_file = "trade_signals_futures.csv" if args.mode == "futures" else "trade_signals_ETFs.csv"
@@ -626,6 +658,17 @@ def main():
 
     strategies = load_strategies(strategy_path)
     df_signals = pd.read_csv(input_file, encoding="ISO-8859-1")
+    
+    # Create appropriate trading strategy based on mode
+    trading_strategy = StrategyFactory.create_strategy(
+        mode=args.mode, 
+        symbol_mappings=symbol_map, 
+        tick_sizes=TICK_SIZE
+    )
+    
+    # For futures, set the evaluate_formula function
+    if args.mode == "futures":
+        trading_strategy.set_evaluate_formula_function(evaluate_formula)
     
     # Filter out empty rows (Excel often adds millions of empty rows)
     df_signals = df_signals.dropna(how='all')  # Remove completely empty rows
@@ -726,7 +769,7 @@ def main():
                     print(f"❌ Could not load data for futures symbol {symbol}")
                     continue
             else:
-                df = get_price_data(symbol, args.mode, fetched_data_cache)
+                df = get_price_data(symbol, args.mode, fetched_data_cache, etf_source=etf_source)
                 if df is None:
                     print(f"⚠️ No price data available for {symbol}. Skipping.")
                     continue
@@ -736,8 +779,8 @@ def main():
         # print('sym data for',symbol)
         # print(df.tail)
         # print('Close:',df['Close'].iloc[-1])
-        result = simulate_trade(strategies[resolved_name], symbol, df, signal_date, resolved_name, direction=direction)
-        target_type = get_target_type(strategies[resolved_name])
+        result = simulate_trade(strategies[resolved_name], symbol, df, signal_date, resolved_name, direction=direction, trading_strategy=trading_strategy)
+        target_type = get_target_type(strategies[resolved_name], trading_strategy=trading_strategy)
 
         entry_date_str = result.get("entry_date", "")
         entry_date = datetime.strptime(entry_date_str, '%Y-%m-%d').date() if entry_date_str else None
@@ -762,10 +805,13 @@ def main():
         # If current close is better than the next day open, then still can enter
         # for buy, close must be lower than next day open.  for sell, close must e high
         # a negative number means the trade is still valid to get in.
-        if direction == 'buy':
-            diff_from_entry = last_close_price - entry_price
-        else:    
-            diff_from_entry = entry_price - last_close_price 
+        if entry_price and isinstance(entry_price, (int, float)):
+            if direction == 'buy':
+                diff_from_entry = last_close_price - entry_price
+            else:    
+                diff_from_entry = entry_price - last_close_price
+        else:
+            diff_from_entry = "" 
 
         # Calculate expiration date for ETF options (2 full months out)
         expiration_date = util.get_final_expiration_date(signal_date, months_out=2)
@@ -782,7 +828,7 @@ def main():
             "entry_price": result.get("entry", ""),
             "target_price": result.get("target", ""),
             "last_close_price": last_close_price,
-            "diff_from_entry": round(diff_from_entry, 2),
+            "diff_from_entry": round(diff_from_entry, 2) if isinstance(diff_from_entry, (int, float)) else diff_from_entry,
             "entry_date": result.get("entry_date", ""),
             "exit_date": result.get("exit_date", ""),
             "num_days_open": num_days_open
