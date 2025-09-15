@@ -225,3 +225,54 @@ date,symbol,strategy,direction,frequency
 8/8/25,XME,Donchian T-Lines Buy/Sell,Buy,Daily
 8/8/25,EEM,Weekly Turbo Hook Buy,Buy,Weekly
 8/8/25,EFA,Weekly Turbo Hook Buy,Buy,Weekly
+8/14/25,DIA,20.8 Trigger Lines Put/Call Buy (Setup 5),Buy,Daily
+8/14/25,XLI,20.8 Trigger Lines Put/Call Buy (Setup 5),Buy,Daily
+8/14/25,DIA,Donchian T-Lines Buy/Sell,Buy,Daily
+8/15/25,XLV,Donchian Hook Buy ,Buy,Daily
+ ,EWH,ETF Squeeze Sell ,Sell,Daily
+8/15/25,DIA,Weekly Turbo Hook Buy,Buy,Weekly
+8/15/25,XRT,Weekly Swing Trend Buy,Buy,Weekly
+8/15/25,XLI,Weekly Ichimoku Squeeze Sell,Sell,Weekly
+8/18/25,XLB,Donchian T-Lines Buy/Sell,Buy,Daily
+8/18/25,XHB,ETF Squeeze Sell ,Sell,Daily
+8/19/25,XLF,Donchian T-Lines Buy/Sell,Buy,Daily
+8/19/25,QQQ,ETF Squeeze Sell ,Sell,Daily
+8/19/25,SPY,ETF Squeeze Sell ,Sell,Daily
+8/19/25,XME,ETF Squeeze Sell ,Sell,Daily
+8/20/25,SLV,Donchian T-Lines Buy/Sell,Buy,Daily
+8/20/25,IYR,Donchian Hook Buy ,Buy,Daily
+8/20/25,SLV,Donchian Hook Buy ,Buy,Daily
+8/21/25,IYR,Donchian T-Lines Buy/Sell,Buy,Daily
+8/21/25,XLB,Donchian Hook Buy ,Buy,Daily
+8/21/25,XLF,Donchian Hook Buy ,Buy,Daily
+8/21/25,XLI,Donchian Hook Buy ,Buy,Daily
+8/21/25,XHB,ETF Squeeze Sell,Sell,Daily
+8/22/25,XLE,Donchian T-Lines Buy/Sell,Buy,Daily
+8/22/25,XLI,Donchian T-Lines Buy/Sell,Buy,Daily
+8/22/25,XOP,Donchian T-Lines Buy/Sell,Buy,Daily
+8/22/25,XLE,Donchian Hook Buy ,Buy,Daily
+8/22/25,XOP,Donchian Hook Buy ,Buy,Daily
+8/25/25,IBB,ETF Squeeze Sell,Sell,Daily
+8/26/25,QQQ,Donchian T-Lines Buy/Sell,Buy,Daily
+8/27/25,USO,Donchian T-Lines Buy/Sell,Buy,Daily
+8/27/25,FXI,ETF Squeeze Sell,Sell,Daily
+8/27/25,VWO,ETF Squeeze Sell,Sell,Daily
+8/27/25,XHB,ETF Squeeze Sell,Sell,Daily
+8/28/25,XLV,Donchian Crossover Buy,Buy,Daily
+8/28/25,XLK  ,Donchian T-Lines Buy/Sell,Buy,Daily
+8/28/25,IBB,ETF Squeeze Sell,Sell,Daily
+8/28/25,XLV,ETF Squeeze Sell,Sell,Daily
+8/28/25,XRT,ETF Squeeze Sell,Sell,Daily
+8/29/25,QQQ,Squeeze Play Sector Sell,Sell,Daily
+8/29/25,XLK  ,Squeeze Play Sector Sell,Sell,Daily
+8/29/25,IWM,ETF Squeeze Sell,Sell,Daily
+8/29/25,XLK  ,Weekly Turbo Hook Buy,Buy,Weekly
+9/5/25,GLD,Weekly Swing Trend Buy,Buy,Weekly
+9/5/25,XOP,Weekly Swing Sell,Sell,Weekly
+9/8/25,VNQ,ETF Squeeze Sell,Sell,Daily
+9/9/25,QQQ,Donchian T-Lines Buy/Sell,Buy,Daily
+9/9/25,XHB,ETF Squeeze Sell,Sell,Daily
+9/10/25,FXI,ETF Squeeze Sell,Sell,Daily
+9/11/25,EFA,Donchian T-Lines Buy/Sell,Buy,Daily
+9/11/25,XLB,Donchian T-Lines Buy/Sell,Buy,Daily
+9/12/25,XLK  ,Weekly Turbo Hook Buy,Buy,Weekly

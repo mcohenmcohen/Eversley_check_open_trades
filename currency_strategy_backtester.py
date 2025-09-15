@@ -865,7 +865,35 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
             }
 
 
-    # If not triggered, the for ETF that means there is no next day yet and the return dict values will be empty
+    # If not triggered, calculate what the target type would have been for multi-target strategies
+    selected_target_type_for_non_triggered = None
+    
+    # For multi-target strategies, we still want to show what target would have been selected
+    target_formula = strategy.get("target", {}).get("formula", {})
+    if target_formula.get("type") == "multi_target":
+        # We need a hypothetical entry price to calculate the target type
+        # Use the first valid date's high/low as a proxy
+        if len(valid_dates) > 0:
+            first_date = valid_dates[0]
+            if direction == "buy":
+                proxy_entry_price = df.loc[first_date]["High"]  # Conservative estimate for buy
+            else:
+                proxy_entry_price = df.loc[first_date]["Low"]   # Conservative estimate for sell
+            
+            # Calculate stop price with proxy entry
+            if has_stop:
+                stop_formula = strategy["stop"]["formula"]
+                try:
+                    proxy_stop_price = evaluate_formula(stop_formula, df, signal_date, symbol, entry_price=proxy_entry_price)
+                    
+                    # Calculate target result to get the selected target type
+                    target_result = evaluate_formula(target_formula, df, signal_date, symbol, entry_price=proxy_entry_price, stop_price=proxy_stop_price)
+                    if isinstance(target_result, dict) and "target_type" in target_result:
+                        selected_target_type_for_non_triggered = target_result["target_type"]
+                except:
+                    # If calculation fails, leave as None
+                    pass
+    
     return {
         "status": "Expired - Entry Not Triggered",
         "entry": "",
@@ -873,7 +901,7 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
         "target": "",
         "entry_date": "",
         "exit_date": "",
-        "selected_target_type": None
+        "selected_target_type": selected_target_type_for_non_triggered
     }
 
 
