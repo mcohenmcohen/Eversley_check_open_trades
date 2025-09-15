@@ -258,12 +258,16 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
     code = symbol_code_map.get(symbol, symbol)
     tick_size = TICK_SIZE.get(symbol, 0.01)
 
+    # Auto-detect if this is an index future (uses points) vs currency future (uses ticks)
+    is_index_future = symbol in ["ES", "YM", "NQ", "RTY"]
+    offset_multiplier = 1.0 if is_index_future else tick_size
+
     # Resolve offset_ticks safely
     offset_ticks = None
     needs_offset = formula["type"] in {
         "lookback_extreme_plus_offset",
-        "high_offset_ticks",
-        "low_offset_ticks",
+        "high_offset",
+        "low_offset",
         "max_of_atr_or_low_offset",
     }
 
@@ -288,7 +292,7 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
         )
         return base + offset_ticks * formula["tick_size"]
 
-    elif formula["type"] == "high_offset_ticks":
+    elif formula["type"] == "high_offset":
         days = formula.get("lookback_days", 1)
         include_signal = formula.get("include_signal_day", True)
         end_idx = df.index.get_loc(signal_date)
@@ -297,10 +301,10 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
         sub_df = df.iloc[start_idx:end_idx + 1] if include_signal else df.iloc[start_idx:end_idx]
         base_high = sub_df["High"].max()
 
-        threshold = base_high + offset_ticks * tick_size
+        threshold = base_high + offset_ticks * offset_multiplier
         return threshold
 
-    elif formula["type"] == "low_offset_ticks":
+    elif formula["type"] == "low_offset":
         days = formula.get("lookback_days", 1)
         include_signal = formula.get("include_signal_day", True)
         end_idx = df.index.get_loc(signal_date)
@@ -309,7 +313,7 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
         sub_df = df.iloc[start_idx:end_idx + 1] if include_signal else df.iloc[start_idx:end_idx]
         base_low = sub_df["Low"].min()
 
-        threshold = base_low - offset_ticks * tick_size
+        threshold = base_low - offset_ticks * offset_multiplier
         return threshold
     
     elif formula["type"] == "max_of_atr_or_high_offset":
@@ -320,14 +324,13 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
         atr_mult = formula.get("atr_multiplier", 1.4)
 
         base_high = df.loc[signal_date]["High"]
-        offset_stop = base_high + offset_ticks * tick_size
+        offset_stop = base_high + offset_ticks * offset_multiplier
 
         atr = wilders_atr(df, atr_length).loc[signal_date]
         atr_stop = entry_price + atr * atr_mult
 
         # For short trades: use the *higher* stop to give more room above
         return max(offset_stop, atr_stop)
-
 
     elif formula["type"] == "max_of_atr_or_low_offset":
         if entry_price is None:
@@ -337,7 +340,7 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
         atr_mult = formula.get("atr_multiplier", 1.4)
 
         base_low = df.loc[signal_date]["Low"]
-        offset_stop = base_low - offset_ticks * tick_size
+        offset_stop = base_low - offset_ticks * offset_multiplier
 
         atr = wilders_atr(df, atr_length).loc[signal_date]
         atr_stop = entry_price - atr * atr_mult
@@ -982,16 +985,11 @@ def main():
         if symbol in fetched_data_cache:
             df = fetched_data_cache[symbol]
         else:
-            if args.mode == "futures":
-                df = util.get_price_data_from_file(symbol)
-                if df is None:
-                    print(f"❌ Could not load data for futures symbol {symbol}")
-                    continue
-            else:
-                df = get_price_data(symbol, args.mode, fetched_data_cache, etf_source=etf_source)
-                if df is None:
-                    print(f"⚠️ No price data available for {symbol}. Skipping.")
-                    continue
+            # Use unified data fetching for both ETFs and futures
+            df = get_price_data(symbol, args.mode, fetched_data_cache, etf_source=etf_source)
+            if df is None:
+                print(f"⚠️ No price data available for {symbol}. Skipping.")
+                continue
 
             fetched_data_cache[symbol] = df
         
