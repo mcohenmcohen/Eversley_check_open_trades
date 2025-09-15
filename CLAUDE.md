@@ -59,7 +59,7 @@ This is a currency futures and ETF trading strategy backtesting system housed in
 **strategies_complete.json** - Strategy configuration file defining:
 - Entry trigger formulas (high/low offset calculations with tick adjustments)
 - Stop loss rules (ATR-based or fixed offset calculations)
-- Target price formulas
+- Target price formulas (including multi-target system for optimal target selection)
 - Trigger window parameters (2-3 day windows)
 
 **utilities.py** - Shared utility functions for:
@@ -109,10 +109,55 @@ Required Python packages:
 - Entry triggers within configurable windows (2-3 days) after signal dates
 - Dynamic entry pricing using high/low offsets with symbol-specific tick adjustments
 - Multi-layered stop loss: ATR-based calculations with minimum offset floors
-- Target calculations using ATR multiples or fixed ratios
+- **Multi-target system**: Evaluates multiple target options (ATR percentages, entry-stop percentages) and automatically selects the target with fewest ticks for optimal probability
 - Position tracking until stop/target hit or options expiration
 - Comprehensive trade metrics including candlestick pattern analysis
 
+### Multi-Target System
+
+The system supports sophisticated target selection for futures strategies:
+
+**Target Types:**
+- `atr_percentage`: ATR-based targets (e.g., ATR5 x 0.6, ATR5 x 0.7)
+- `entry_stop_percentage`: Entry-stop difference percentages (e.g., Entry-Stop x 0.4, Entry-Stop x 0.45)
+- `multi_target`: Evaluates multiple target options and selects by rank (1=closest target)
+
+**Configuration Example:**
+```json
+"target": {
+    "formula": {
+        "type": "multi_target",
+        "target_rank": 1,
+        "direction": "buy",
+        "target_options": [
+            {"type": "atr_percentage", "atr_length": 5, "percentage": 0.6},
+            {"type": "atr_percentage", "atr_length": 5, "percentage": 0.7},
+            {"type": "entry_stop_percentage", "percentage": 0.4},
+            {"type": "entry_stop_percentage", "percentage": 0.45}
+        ]
+    }
+}
+```
+
+**Auto-Detection:**
+- Index futures (ES, YM, NQ, RTY): Use points for calculations
+- Currency futures (6A, 6B, 6C, 6E, 6S): Use tick-adjusted calculations
+- Results show specific target type selected (e.g., "ATR5 x 0.6", "Entry-Stop x 0.4")
+
 ## Development Notes
 
-The system uses Polygon.io API for ETF data and local CSV files for futures data, with built-in caching for performance. The backtesting engine handles different execution rules for futures vs ETF strategies, supporting both intraday and daily timeframes with realistic slippage and commission modeling.
+The system uses Polygon.io API for ETF data and InsightSentry API for futures data, with built-in caching for performance. The backtesting engine handles different execution rules for futures vs ETF strategies, supporting both intraday and daily timeframes with realistic slippage and commission modeling.
+
+### Recent Updates
+
+**Multi-Target Implementation (2025):**
+- Added sophisticated multi-target evaluation system for futures strategies
+- Supports ATR-based and entry-stop percentage target calculations
+- Automatic target selection based on tick count optimization (selects closest/most probable target)
+- Generic formula naming system with auto-detection of points vs ticks based on symbol type
+- Target type results show specific selected target (e.g., "ATR5 x 0.6") instead of generic labels
+
+**Key Files Modified:**
+- `currency_strategy_backtester.py`: Added multi-target calculation and selection logic
+- `trading_strategies.py`: Enhanced target type detection and polymorphic formula handling
+- `strategies_complete.json`: Updated to support flexible multi-target configurations per strategy

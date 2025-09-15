@@ -112,7 +112,13 @@ class FuturesTradingStrategy(TradingStrategy):
         target_formula = strategy["target"]["formula"]
         target_result = self.evaluate_formula_func(target_formula, df, signal_date, symbol, entry_price=entry_price, stop_price=stop_price)
         
-        if isinstance(target_result, list):
+        # Handle different target result types
+        if isinstance(target_result, dict) and "target_price" in target_result and "target_type" in target_result:
+            # Multi-target result with specific target type
+            target_price = target_result["target_price"]
+            target_type = target_result["target_type"]
+            return stop_price, target_price, target_type
+        elif isinstance(target_result, list):
             target_price = max(target_result)
         else:
             target_price = target_result

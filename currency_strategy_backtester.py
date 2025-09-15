@@ -275,10 +275,8 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
         offset_ticks = formula["offset_value"]
     elif "offset_by_symbol" in formula and code in formula["offset_by_symbol"]:
         offset_ticks = formula["offset_by_symbol"][code]
-    elif "offset_ticks" in formula:
-        offset_ticks = formula["offset_ticks"]
     elif needs_offset:
-        raise ValueError(f"Missing offset_value, offset_by_symbol, or offset_ticks for {symbol} in formula: {formula}")
+        raise ValueError(f"Missing offset_value or offset_by_symbol for {symbol} in formula: {formula}")
 
     # === Formula Logic ===
     if formula["type"] == "lookback_extreme_plus_offset":
@@ -314,6 +312,17 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
         base_low = sub_df["Low"].min()
 
         threshold = base_low - offset_ticks * offset_multiplier
+        return threshold
+    
+    elif formula["type"] == "range_retrace":
+        # Calculate percentage retrace of signal day range: Low + (High - Low) × percentage
+        percentage = formula.get("percentage", 0.30)  # default 30%
+        signal_row = df.loc[signal_date]
+        day_low = signal_row["Low"]
+        day_high = signal_row["High"]
+        day_range = day_high - day_low
+        
+        threshold = day_low + (day_range * percentage)
         return threshold
     
     elif formula["type"] == "max_of_atr_or_high_offset":
@@ -419,7 +428,7 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
             raise ValueError("target_options array required for multi_target")
         
         result = calculate_multi_targets_custom(df, signal_date, symbol, entry_price, stop_price, direction, target_rank, target_options)
-        return result["target_price"]
+        return result  # Return full dict with target_price, target_type, and tick_count
     
     elif formula["type"] == "open_or_better":
         # Entry trigger is simply the open price of the next trading day
@@ -606,7 +615,12 @@ def calculate_multi_targets_custom(df, signal_date, symbol, entry_price, stop_pr
         marker = "👈 SELECTED" if i == target_rank else ""
         print(f"   {i}. {target['target_type']}: ${target['target_price']:.5f} ({target['tick_count']} ticks) {marker}")
     
-    return selected_target
+    # Return the selected target with its specific label (not generic "Multi-Target Rank X/Y")
+    return {
+        "target_price": selected_target["target_price"],
+        "target_type": selected_target["target_type"],  # Use specific label like "ATR5 x 0.6"
+        "tick_count": selected_target["tick_count"]
+    }
 
 
 # Checks if an entry condition is met on a given signal date
@@ -659,7 +673,12 @@ def evaluate_entry(entry_conf, df, test_date, symbol, strategy_name, signal_date
 def evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, strategy_name, direction, trading_strategy=None):
     """Legacy function - now delegated to trading strategy classes."""
     if trading_strategy:
-        return trading_strategy.evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, strategy_name, direction)
+        result = trading_strategy.evaluate_exit(strategy, formulas, df, signal_date, symbol, entry_price, strategy_name, direction)
+        # Handle both 2-tuple and 3-tuple returns
+        if len(result) == 3:
+            return result  # (stop_price, target_price, target_type)
+        else:
+            return result  # (stop_price, target_price)
     
     # Fallback to original logic if no trading_strategy provided
     stop_formula = strategy["stop"]["formula"]
@@ -720,7 +739,7 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
     df.index = pd.to_datetime(df.index).normalize()
 
     if signal_date not in df.index:
-        return {"status": "Signal Date Missing in Data"}
+        return {"status": "Signal Date Missing in Data", "selected_target_type": None}
 
     signal_idx = df.index.get_loc(signal_date)
     valid_dates = df.index[signal_idx: signal_idx + max_days]
@@ -737,9 +756,16 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
         )
 
         if triggered:
-            stop_price, target_price = evaluate_exit(
+            exit_result = evaluate_exit(
                 strategy, formulas, df, test_date, symbol, entry_price, strategy_name, direction, trading_strategy
             )
+            
+            # Handle both 2-tuple and 3-tuple returns from evaluate_exit
+            if len(exit_result) == 3:
+                stop_price, target_price, selected_target_type = exit_result
+            else:
+                stop_price, target_price = exit_result
+                selected_target_type = None
 
             post_entry = df[df.index > test_date]
 
@@ -752,7 +778,8 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                         "stop": round(stop_price, 5) if isinstance(stop_price, (float, int)) else ("Expired" if isinstance(stop_price, date) else ""),
                         "target": round(target_price, 5),
                         "entry_date": test_date.strftime('%Y-%m-%d'),
-                        "exit_date": i.strftime('%Y-%m-%d')
+                        "exit_date": i.strftime('%Y-%m-%d'),
+                        "selected_target_type": selected_target_type
                     }
                 # Fallback to original logic
                 elif not trading_strategy:
@@ -763,7 +790,8 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                             "stop": round(stop_price, 5) if has_stop else "",
                             "target": round(target_price, 5),
                             "entry_date": test_date.strftime('%Y-%m-%d'),
-                            "exit_date": i.strftime('%Y-%m-%d')
+                            "exit_date": i.strftime('%Y-%m-%d'),
+                            "selected_target_type": selected_target_type
                         }
                     elif direction == "sell" and row["Low"] <= target_price:
                         return {
@@ -772,7 +800,8 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                             "stop": round(stop_price, 5) if has_stop else "",
                             "target": round(target_price, 5),
                             "entry_date": test_date.strftime('%Y-%m-%d'),
-                            "exit_date": i.strftime('%Y-%m-%d')
+                            "exit_date": i.strftime('%Y-%m-%d'),
+                            "selected_target_type": selected_target_type
                         }
 
                 # Check stop hit using trading strategy
@@ -785,7 +814,8 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                             "stop": stop_result["stop_display"],
                             "target": round(target_price, 5),
                             "entry_date": test_date.strftime('%Y-%m-%d'),
-                            "exit_date": i.strftime('%Y-%m-%d')
+                            "exit_date": i.strftime('%Y-%m-%d'),
+                            "selected_target_type": selected_target_type
                         }
                 # Fallback to original stop logic
                 elif isinstance(stop_price, date):
@@ -796,7 +826,8 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                             "stop": "Expired",
                             "target": round(target_price, 5),
                             "entry_date": test_date.strftime('%Y-%m-%d'),
-                            "exit_date": i.strftime('%Y-%m-%d')
+                            "exit_date": i.strftime('%Y-%m-%d'),
+                            "selected_target_type": selected_target_type
                         }
                 elif has_stop:
                     if direction == "buy" and row["Low"] <= stop_price:
@@ -806,7 +837,8 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                             "stop": round(stop_price, 5),
                             "target": round(target_price, 5),
                             "entry_date": test_date.strftime('%Y-%m-%d'),
-                            "exit_date": i.strftime('%Y-%m-%d')
+                            "exit_date": i.strftime('%Y-%m-%d'),
+                            "selected_target_type": selected_target_type
                         }
                     elif direction == "sell" and row["High"] >= stop_price:
                         return {
@@ -815,7 +847,8 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                             "stop": round(stop_price, 5),
                             "target": round(target_price, 5),
                             "entry_date": test_date.strftime('%Y-%m-%d'),
-                            "exit_date": i.strftime('%Y-%m-%d')
+                            "exit_date": i.strftime('%Y-%m-%d'),
+                            "selected_target_type": selected_target_type
                         }
             return {
                 "status": "Open",
@@ -828,6 +861,7 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                 "target": round(target_price, 5),
                 "entry_date": test_date.strftime('%Y-%m-%d'),
                 "exit_date": "",
+                "selected_target_type": selected_target_type
             }
 
 
@@ -838,7 +872,8 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
         "stop": "",
         "target": "",
         "entry_date": "",
-        "exit_date": ""
+        "exit_date": "",
+        "selected_target_type": None
     }
 
 
@@ -997,7 +1032,12 @@ def main():
         # print(df.tail)
         # print('Close:',df['Close'].iloc[-1])
         result = simulate_trade(strategies[resolved_name], symbol, df, signal_date, resolved_name, direction=direction, trading_strategy=trading_strategy)
-        target_type = get_target_type(strategies[resolved_name], trading_strategy=trading_strategy)
+        
+        # Use selected target type from multi-target result if available, otherwise use default strategy target type
+        if "selected_target_type" in result and result["selected_target_type"]:
+            target_type = result["selected_target_type"]
+        else:
+            target_type = get_target_type(strategies[resolved_name], trading_strategy=trading_strategy)
 
         entry_date_str = result.get("entry_date", "")
         entry_date = datetime.strptime(entry_date_str, '%Y-%m-%d').date() if entry_date_str else None
