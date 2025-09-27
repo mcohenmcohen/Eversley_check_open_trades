@@ -417,7 +417,7 @@ class InsightSentryDataSource:
                 params = {
                     'bar_type': 'hour',
                     'bar_interval': 1,
-                    'dp': 6000,  # ~250 days * 24 hours (full year)
+                    'dp': 12000,  # ~500 days * 24 hours (more than a year to ensure current data)
                     'extended': False,
                     'dadj': False,  # dividend adjustment - not relevant for futures
                     'badj': True,   # back adjustment
@@ -428,7 +428,7 @@ class InsightSentryDataSource:
                 params = {
                     'bar_type': 'day',
                     'bar_interval': 1,
-                    'dp': 250,  # ~250 days (full year of trading days)
+                    'dp': 500,  # ~500 days (more than a year to ensure current data)
                     'extended': False,
                     'dadj': True,   # dividend adjustment for stocks
                     'badj': False,  # back adjustment

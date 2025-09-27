@@ -229,7 +229,6 @@ date,symbol,strategy,direction,frequency
 8/14/25,XLI,20.8 Trigger Lines Put/Call Buy (Setup 5),Buy,Daily
 8/14/25,DIA,Donchian T-Lines Buy/Sell,Buy,Daily
 8/15/25,XLV,Donchian Hook Buy ,Buy,Daily
- ,EWH,ETF Squeeze Sell ,Sell,Daily
 8/15/25,DIA,Weekly Turbo Hook Buy,Buy,Weekly
 8/15/25,XRT,Weekly Swing Trend Buy,Buy,Weekly
 8/15/25,XLI,Weekly Ichimoku Squeeze Sell,Sell,Weekly
@@ -276,3 +275,15 @@ date,symbol,strategy,direction,frequency
 9/11/25,EFA,Donchian T-Lines Buy/Sell,Buy,Daily
 9/11/25,XLB,Donchian T-Lines Buy/Sell,Buy,Daily
 9/12/25,XLK  ,Weekly Turbo Hook Buy,Buy,Weekly
+9/16/25,EWH,Squeeze Play Sector Sell,Sell,Daily
+9/17/25,SLV,"Squeeze Play Sector Sell	Sell	Daily",Sell,
+9/17/25,XME,Squeeze Play Sector Sell,Sell,Daily
+9/18/25,XLK  ,Gap and Go Put/Call Buy (Setup 6),Buy,Daily
+9/18/25,QQQ,Gap and Go Put/Call Buy (Setup 6),Buy,Daily
+9/18/25,XLI,Squeeze Play Sector Sell,Sell,Daily
+9/18/25,TLT,Squeeze Play Sector Sell,Sell,Daily
+9/19/25,XLI,Donchian Hook Buy,Buy,Daily
+9/19/25,FXI,ETF Squeeze Sell ,Sell,Daily
+9/19/25,VWO,ETF Squeeze Sell ,Sell,Daily
+9/19/25,USO,Ichimoku Kijun 5 Hook Buy,Buy,Daily
+9/19/25,IYR,Weekly Swing Sell,Sell,Weekly

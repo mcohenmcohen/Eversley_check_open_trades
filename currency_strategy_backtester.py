@@ -153,12 +153,12 @@ def load_config(path="config.json"):
 
 # Call the right source for getting price data, depending on if etfs or futures
 def get_price_data(symbol, mode, cache, start_date=None, etf_source="insightsentry"):
-    # For ETFs, only fetch 3 months of data (max 2 expiration cycles + current month)
+    # Set appropriate date ranges: ETFs need full year, futures need 3 months
     if start_date is None:
         if mode == "etfs":
-            start_date = datetime.now() - timedelta(days=90)  # 3 months
+            start_date = datetime(2025, 1, 2)  # ETFs need full year to cover all signals
         else:
-            start_date = datetime(2025, 1, 2)  # Futures need more history
+            start_date = datetime.now() - timedelta(days=90)  # Futures need 3 months
     if symbol in cache:
         return cache[symbol]
 
@@ -665,7 +665,8 @@ def evaluate_entry(entry_conf, df, test_date, symbol, strategy_name, signal_date
         triggered = price <= threshold if is_sell else price >= threshold
 
         print(f"[{symbol}] {strategy_name} on {test_date.strftime('%Y-%m-%d (%a)')} - Price: {price:.5f}, Threshold: {threshold:.5f}, Triggered: {triggered}")
-        return triggered, price if triggered else None
+        # Return the threshold as entry price, not the day's high/low price
+        return triggered, threshold if triggered else None
 
 
 # This function is now handled by trading strategy classes
@@ -741,8 +742,16 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
     if signal_date not in df.index:
         return {"status": "Signal Date Missing in Data", "selected_target_type": None}
 
-    signal_idx = df.index.get_loc(signal_date)
-    valid_dates = df.index[signal_idx: signal_idx + max_days]
+    # Get trading days only within the trigger window
+    valid_dates = []
+    current_idx = df.index.get_loc(signal_date)
+
+    while len(valid_dates) < max_days and current_idx < len(df):
+        test_date = df.index[current_idx]
+        if util.is_trading_day(test_date.date()):
+            valid_dates.append(test_date)
+        current_idx += 1
+
     # print('valid_dates:',valid_dates)
 
     for test_date in valid_dates:
@@ -919,7 +928,8 @@ def main():
     
     # Determine data source to use
     if args.mode == "etfs":
-        etf_source = args.etf_source or config["data_sources"]["etf_data_source"]
+        # Default to polygon for ETFs when no explicit source specified
+        etf_source = args.etf_source or "polygon"
         print(f"📊 Using {etf_source} for ETF data")
     else:
         etf_source = "polygon"  # Not used for futures mode
@@ -1098,8 +1108,11 @@ def main():
         else:
             diff_from_entry = "" 
 
-        # Calculate expiration date for ETF options (2 full months out)
-        expiration_date = util.get_final_expiration_date(signal_date, months_out=2)
+        # Calculate expiration date for ETF options (2 full months out), but not for futures
+        if args.mode == "etfs":
+            expiration_date = util.get_final_expiration_date(signal_date, months_out=2)
+        else:
+            expiration_date = ""  # Futures don't have expiration dates
         
         results.append({
             "symbol": symbol,
@@ -1113,7 +1126,7 @@ def main():
             "entry_price": result.get("entry", ""),
             "target_price": result.get("target", ""),
             "last_close_price": last_close_price,
-            "diff_from_entry": round(diff_from_entry, 2) if isinstance(diff_from_entry, (int, float)) else diff_from_entry,
+            "diff_from_entry": diff_from_entry if isinstance(diff_from_entry, (int, float)) else diff_from_entry,
             "entry_date": result.get("entry_date", ""),
             "exit_date": result.get("exit_date", ""),
             "num_days_open": num_days_open
