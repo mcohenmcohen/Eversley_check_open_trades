@@ -66,7 +66,19 @@ class ETFTradingStrategy(TradingStrategy):
         return stop_price, round(target_price, 2)
     
     def get_target_type(self, strategy):
-        """ETF options always use ATR5 x 1.0 target."""
+        """Generate target type based on actual strategy configuration."""
+        target_formula = strategy.get("target", {}).get("formula", {})
+
+        if target_formula.get("type") == "atr_multiple":
+            atr_length = target_formula.get("atr_length", 5)
+            multiplier = target_formula.get("multiplier", 1.0)
+            timeframe = target_formula.get("timeframe", "daily")
+
+            # Show weekly vs daily timeframe
+            timeframe_prefix = "Weekly " if timeframe.lower() == "weekly" else ""
+            return f"{timeframe_prefix}ATR{atr_length} x {multiplier}"
+
+        # Default fallback
         return "ATR5 x 1.0"
     
     def check_stop_hit(self, row, stop_price, direction, has_stop, i):

@@ -248,6 +248,22 @@ def wilders_atr(df, period):
     return tr.ewm(alpha=1/period, adjust=False).mean()
 
 
+def count_trading_days(start_date, end_date):
+    """Count trading days between two dates (inclusive of start, exclusive of end)."""
+    if start_date >= end_date:
+        return 0
+
+    current_date = start_date
+    trading_days = 0
+
+    while current_date < end_date:
+        if util.is_trading_day(current_date):
+            trading_days += 1
+        current_date += timedelta(days=1)
+
+    return trading_days
+
+
 # Evaluates a calculation rule such as entry thresholds, ATRs, or stop offsets
 def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_price=None):
     # Symbol map and tick size
@@ -359,8 +375,24 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
 
 
     elif formula["type"] == "atr_multiple":
-        atr = wilders_atr(df, formula["atr_length"])
-        return atr.loc[signal_date] * formula["multiplier"]
+        timeframe = formula.get("timeframe", "daily").lower()
+        atr_length = formula["atr_length"]
+        multiplier = formula["multiplier"]
+
+        if timeframe == "weekly":
+            # Convert to weekly data and calculate weekly ATR
+            df_weekly = df.resample('W-FRI').agg({
+                'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last'
+            }).dropna()
+            atr = wilders_atr(df_weekly, atr_length)
+            # Use the most recent weekly ATR value
+            atr_value = atr.iloc[-1] if len(atr) > 0 else 0
+        else:
+            # Default daily ATR
+            atr = wilders_atr(df, atr_length)
+            atr_value = atr.loc[signal_date]
+
+        return atr_value * multiplier
 
     elif formula["type"] == "atr_offset_range":
         atr = wilders_atr(df, formula["atr_length"])
@@ -373,6 +405,22 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
         atr_length = formula.get("atr_length", 5)
         atr = wilders_atr(df, atr_length).loc[signal_date]
         direction = formula.get("direction", "buy").lower()
+
+        # DEBUG: Calculate weekly ATR for comparison
+        if symbol == "DIA" and "2025-10-17" in str(signal_date):
+            df_weekly = df.resample('W-FRI').agg({
+                'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last'
+            }).dropna()
+            weekly_atr = wilders_atr(df_weekly, atr_length)
+            latest_weekly_atr = weekly_atr.iloc[-1] if len(weekly_atr) > 0 else 0
+
+            print(f"🔍 DIA ATR DEBUG on {signal_date}:")
+            print(f"   Daily ATR{atr_length}: {atr:.4f}")
+            print(f"   Weekly ATR{atr_length}: {latest_weekly_atr:.4f}")
+            print(f"   Entry Price: {entry_price}")
+            print(f"   Daily Target: {entry_price + atr:.2f}")
+            print(f"   Weekly Target: {entry_price + latest_weekly_atr:.2f}")
+            print(f"   Difference: {latest_weekly_atr - atr:.4f}")
 
         if direction == "sell":
             return entry_price - atr * 0.6
@@ -657,7 +705,7 @@ def evaluate_entry(entry_conf, df, test_date, symbol, strategy_name, signal_date
             triggered = price <= open_price if direction == "buy" else price >= open_price
 
             print(f"[{symbol}] {strategy_name} on {test_date.strftime('%Y-%m-%d (%a)')} - Price: {price:.5f}, Open: {open_price:.5f}, Triggered: {triggered}")
-            return triggered, price if triggered else None
+            return triggered, open_price if triggered else None
 
     else:
         threshold = evaluate_formula(formula, df, signal_date, symbol)
@@ -1083,12 +1131,13 @@ def main():
             print(f"⚠️ {symbol} signal date on {signal_date} is the most recent date.  No next day open price yet. Skipping.")
             continue
 
-        # Checks if exit_date is non-empty before parsing, falls back to 'open' if no exit has occurred, and 
-        # adds a small safeguard: if for some reason entry_date is None, it won’t crash when trying to calculate num_days_open.
+        # Checks if exit_date is non-empty before parsing, falls back to 'open' if no exit has occurred, and
+        # adds a small safeguard: if for some reason entry_date is None, it won't crash when trying to calculate num_days_open.
         exit_date_str = result.get("exit_date", "")
         if exit_date_str:
             exit_date = datetime.strptime(exit_date_str, '%Y-%m-%d').date()
-            num_days_open = (exit_date - entry_date).days if entry_date else "?"
+            # Calculate trading days between entry and exit (inclusive of entry, exclusive of exit)
+            num_days_open = count_trading_days(entry_date, exit_date) if entry_date else "?"
         else:
             exit_date = None
             num_days_open = 'open'
@@ -1108,12 +1157,36 @@ def main():
         else:
             diff_from_entry = "" 
 
+        # Calculate ATR value for the signal date
+        strategy_config = strategies[resolved_name]
+        target_formula = strategy_config.get("target", {}).get("formula", {})
+        atr_value = ""
+
+        if target_formula.get("type") == "atr_multiple":
+            atr_length = target_formula.get("atr_length", 5)
+            timeframe = target_formula.get("timeframe", "daily").lower()
+
+            try:
+                if timeframe == "weekly":
+                    # Calculate weekly ATR
+                    df_weekly = df.resample('W-FRI').agg({
+                        'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last'
+                    }).dropna()
+                    atr_series = wilders_atr(df_weekly, atr_length)
+                    atr_value = round(atr_series.iloc[-1], 4) if len(atr_series) > 0 else ""
+                else:
+                    # Calculate daily ATR
+                    atr_series = wilders_atr(df, atr_length)
+                    atr_value = round(atr_series.loc[signal_date], 4)
+            except (KeyError, IndexError):
+                atr_value = ""
+
         # Calculate expiration date for ETF options (2 full months out), but not for futures
         if args.mode == "etfs":
             expiration_date = util.get_final_expiration_date(signal_date, months_out=2)
         else:
             expiration_date = ""  # Futures don't have expiration dates
-        
+
         results.append({
             "symbol": symbol,
             # "strategy": resolved_name,
@@ -1123,6 +1196,7 @@ def main():
             "status": result["status"],
             "expiration": expiration_date.strftime('%m/%d/%y') if expiration_date else "",
             "target_type": target_type,
+            "atr_value": atr_value,
             "entry_price": result.get("entry", ""),
             "target_price": result.get("target", ""),
             "last_close_price": last_close_price,
