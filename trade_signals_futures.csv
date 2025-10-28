@@ -80,3 +80,16 @@ date,symbol,strategy,direction
 9/9/25,NQ,T-Lines Index Futures Buy,Buy
 9/15/25,CD,TXD Trendlines Currency Futures Buy,Buy
 9/15/25,CD,Ichimoku Cross Currency Futures Buy,Buy
+9/22/25,CD,Super Bear Currency Futures Sell,Sell
+9/24/25,CD,D2 Swing Currency Futures Sell,Sell
+9/25/25,BP,D2 Swing Currency Futures Sell,Sell
+9/25/25,CD,Swing Trend Currency Futures Sell,Sell
+10/10/25,RTY,TXD Trendlines Index Futures Sell,Sell
+10/16/25,EC,Super Bull Currency Futures Buy ,Buy
+10/16/25,SF,Super Bull Currency Futures Buy ,Buy
+10/20/25,SF,Ichimoku Cross Currency Futures Buy,Buy
+10/20/25,NQ,T-Lines Index Futures Buy,Buy
+10/21/25,YM,T-Lines Index Futures Buy,Buy
+10/23/25,SF,Squeeze Play Currency Futures Buy,Buy
+10/24/25,ES,T-Lines Index Futures Buy,Buy
+10/27/25,AD,TXD Trendlines Currency Futures Buy,Buy

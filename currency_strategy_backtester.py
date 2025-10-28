@@ -392,7 +392,19 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
             atr = wilders_atr(df, atr_length)
             atr_value = atr.loc[signal_date]
 
-        return atr_value * multiplier
+        atr_offset = atr_value * multiplier
+
+        # If entry_price is provided, calculate actual stop price (for stops)
+        # Otherwise return the offset value (for targets)
+        if entry_price is not None:
+            # Determine direction - assume buy if not specified
+            direction = formula.get("direction", "buy").lower()
+            if direction == "buy":
+                return entry_price - atr_offset  # Stop below entry for buy
+            else:
+                return entry_price + atr_offset  # Stop above entry for sell
+        else:
+            return atr_offset
 
     elif formula["type"] == "atr_offset_range":
         atr = wilders_atr(df, formula["atr_length"])
@@ -1157,13 +1169,14 @@ def main():
         else:
             diff_from_entry = "" 
 
-        # Calculate ATR value for the signal date
+        # Calculate ATR target value for the signal date
         strategy_config = strategies[resolved_name]
         target_formula = strategy_config.get("target", {}).get("formula", {})
-        atr_value = ""
+        atr_target = ""
 
         if target_formula.get("type") == "atr_multiple":
             atr_length = target_formula.get("atr_length", 5)
+            multiplier = target_formula.get("multiplier", 1.0)
             timeframe = target_formula.get("timeframe", "daily").lower()
 
             try:
@@ -1173,13 +1186,15 @@ def main():
                         'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last'
                     }).dropna()
                     atr_series = wilders_atr(df_weekly, atr_length)
-                    atr_value = round(atr_series.iloc[-1], 4) if len(atr_series) > 0 else ""
+                    atr_raw = atr_series.iloc[-1] if len(atr_series) > 0 else 0
+                    atr_target = round(atr_raw * multiplier, 4) if atr_raw else ""
                 else:
                     # Calculate daily ATR
                     atr_series = wilders_atr(df, atr_length)
-                    atr_value = round(atr_series.loc[signal_date], 4)
+                    atr_raw = atr_series.loc[signal_date]
+                    atr_target = round(atr_raw * multiplier, 4)
             except (KeyError, IndexError):
-                atr_value = ""
+                atr_target = ""
 
         # Calculate expiration date for ETF options (2 full months out), but not for futures
         if args.mode == "etfs":
@@ -1196,9 +1211,10 @@ def main():
             "status": result["status"],
             "expiration": expiration_date.strftime('%m/%d/%y') if expiration_date else "",
             "target_type": target_type,
-            "atr_value": atr_value,
+            "atr_target": atr_target,
             "entry_price": result.get("entry", ""),
             "target_price": result.get("target", ""),
+            "stop_price": result.get("stop", ""),
             "last_close_price": last_close_price,
             "diff_from_entry": diff_from_entry if isinstance(diff_from_entry, (int, float)) else diff_from_entry,
             "entry_date": result.get("entry_date", ""),

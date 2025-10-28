@@ -54,19 +54,19 @@ class PolygonDataSource:
             Polygon formatted symbol
         """
         if self._is_futures_symbol(symbol):
-            # Polygon futures symbols need =F suffix
+            # Polygon futures symbols use product codes directly (per Sept 2025 spreadsheet)
             futures_mappings = {
-                '6A': '6A=F',   # Australian Dollar
-                '6B': '6B=F',   # British Pound  
-                '6C': '6C=F',   # Canadian Dollar
-                '6E': '6E=F',   # Euro
-                '6S': '6S=F',   # Swiss Franc
-                'ES': 'ES=F',   # S&P 500 E-mini
-                'NQ': 'NQ=F',   # Nasdaq 100 E-mini
-                'RTY': 'RTY=F', # Russell 2000 E-mini
-                'YM': 'YM=F',   # Dow Jones E-mini
+                '6A': '6A',   # Australian Dollar
+                '6B': '6B',   # British Pound
+                '6C': '6C',   # Canadian Dollar
+                '6E': '6E',   # Euro
+                '6S': '6S',   # Swiss Franc
+                'ES': 'ES',   # S&P 500 E-mini
+                'NQ': 'NQ',   # Nasdaq 100 E-mini
+                'RTY': 'RTY', # Russell 2000 E-mini
+                'YM': 'YM',   # Dow Jones E-mini
             }
-            return futures_mappings.get(symbol, f"{symbol}=F")
+            return futures_mappings.get(symbol, symbol)
         else:
             # Polygon stocks/ETFs use the symbol as-is
             return symbol
@@ -782,28 +782,40 @@ class DataSourceManager:
             else:  # insightsentry
                 return data_source.get_multiple_stocks(symbols, start_date, end_date)
     
-    def get_futures_data(self, symbols: Union[str, List[str]], start_date: datetime, 
+    def get_futures_data(self, symbols: Union[str, List[str]], start_date: datetime,
                         end_date: datetime) -> Union[pd.DataFrame, Dict[str, pd.DataFrame]]:
         """
-        Get futures data from InsightSentry.
-        
+        Get futures data from InsightSentry with Polygon fallback.
+
         Args:
             symbols: Single symbol or list of symbols
             start_date: Start date as datetime
             end_date: End date as datetime
-            
+
         Returns:
             DataFrame for single symbol, Dict for multiple symbols
         """
-        if 'insightsentry' not in self.sources:
-            raise DataSourceError("InsightSentry data source not available")
-        
-        insightsentry_source = self.sources['insightsentry']
-        
-        if isinstance(symbols, str):
-            return insightsentry_source.get_futures_data(symbols, start_date, end_date)
+        # Try InsightSentry first
+        if 'insightsentry' in self.sources:
+            insightsentry_source = self.sources['insightsentry']
+
+            if isinstance(symbols, str):
+                return insightsentry_source.get_futures_data(symbols, start_date, end_date)
+            else:
+                return insightsentry_source.get_multiple_futures(symbols, start_date, end_date)
+
+        # Fall back to Polygon if InsightSentry not available
+        elif 'polygon' in self.sources:
+            print("⚠️  InsightSentry not available, using Polygon for futures data")
+            polygon_source = self.sources['polygon']
+
+            if isinstance(symbols, str):
+                return polygon_source.get_stock_data(symbols, start_date, end_date)
+            else:
+                return polygon_source.get_multiple_stocks(symbols, start_date, end_date)
+
         else:
-            return insightsentry_source.get_multiple_futures(symbols, start_date, end_date)
+            raise DataSourceError("No futures data source available (tried InsightSentry and Polygon)")
     
     def get_price_data(self, symbol: str, mode: str, start_date: datetime, 
                       end_date: datetime = None) -> pd.DataFrame:
