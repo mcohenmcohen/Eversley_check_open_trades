@@ -385,8 +385,9 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
                 'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last'
             }).dropna()
             atr = wilders_atr(df_weekly, atr_length)
-            # Use the most recent weekly ATR value
-            atr_value = atr.iloc[-1] if len(atr) > 0 else 0
+            # FIX: Use ATR as of signal date, not most recent week
+            atr_at_signal = atr[atr.index <= signal_date]
+            atr_value = atr_at_signal.iloc[-1] if len(atr_at_signal) > 0 else 0
         else:
             # Default daily ATR
             atr = wilders_atr(df, atr_length)
@@ -1186,7 +1187,10 @@ def main():
                         'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last'
                     }).dropna()
                     atr_series = wilders_atr(df_weekly, atr_length)
-                    atr_raw = atr_series.iloc[-1] if len(atr_series) > 0 else 0
+                    # FIX: Use ATR as of signal date, not most recent week
+                    # Get the ATR for the week containing or before the signal date
+                    atr_at_signal = atr_series[atr_series.index <= signal_date]
+                    atr_raw = atr_at_signal.iloc[-1] if len(atr_at_signal) > 0 else 0
                     atr_target = round(atr_raw * multiplier, 4) if atr_raw else ""
                 else:
                     # Calculate daily ATR

@@ -52,15 +52,36 @@ class ETFTradingStrategy(TradingStrategy):
     
     def evaluate_exit(self, strategy, formulas, df, signal_date, symbol, entry_price, strategy_name, direction):
         """Calculate ETF options exit conditions using ATR targets and expiration dates."""
-        atr = self.wilders_atr(df, 5)
-        atr_value = atr.loc[signal_date]
-        
-        # Target is 1x ATR(5)
-        if direction == "sell":
-            target_price = entry_price - atr_value
+        # Get target configuration from strategy JSON
+        target_formula = strategy.get("target", {}).get("formula", {})
+        atr_length = target_formula.get("atr_length", 5)
+        multiplier = target_formula.get("multiplier", 1.0)
+        timeframe = target_formula.get("timeframe", "daily").lower()
+
+        # Calculate ATR based on timeframe (weekly or daily)
+        if timeframe == "weekly":
+            # Resample to weekly and calculate weekly ATR
+            df_weekly = df.resample('W-FRI').agg({
+                'Open': 'first', 'High': 'max', 'Low': 'min', 'Close': 'last'
+            }).dropna()
+            atr = self.wilders_atr(df_weekly, atr_length)
+            # Use ATR as of signal date, not future data
+            atr_at_signal = atr[atr.index <= signal_date]
+            atr_value = atr_at_signal.iloc[-1] if len(atr_at_signal) > 0 else 0
         else:
-            target_price = entry_price + atr_value
-        
+            # Use daily ATR
+            atr = self.wilders_atr(df, atr_length)
+            atr_value = atr.loc[signal_date]
+
+        # Apply the multiplier from config (e.g., 0.55 for Weekly strategies)
+        atr_offset = atr_value * multiplier
+
+        # Calculate target price based on direction
+        if direction == "sell":
+            target_price = entry_price - atr_offset
+        else:
+            target_price = entry_price + atr_offset
+
         # ETF options expire 2 months out
         stop_price = util.get_final_expiration_date(signal_date, months_out=2)
         return stop_price, round(target_price, 2)

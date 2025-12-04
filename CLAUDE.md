@@ -150,6 +150,22 @@ The system uses Polygon.io API for ETF data and InsightSentry API for futures da
 
 ### Recent Updates
 
+**Weekly ATR Look-Ahead Bias Fix (December 2024):**
+- **CRITICAL BUG FIX:** Fixed look-ahead bias in weekly ATR calculations
+- Weekly strategies were using future data (most recent week's ATR) instead of ATR as of signal date
+- Fixed hardcoded ETF target calculations that ignored strategy configuration
+- Now correctly uses strategy JSON config for timeframe (weekly vs daily) and multiplier (e.g., 0.55)
+- Results are now consistent and reproducible regardless of when backtest is run
+
+**Impact:**
+- Weekly strategies now use correct ATR values (e.g., GLD 11/28: $15.59 instead of $14.03)
+- Target prices accurately reflect strategy config (e.g., GLD: $399.19 instead of $395.92)
+- Eliminates look-ahead bias that made historical backtests unreliable
+
+**Key Files Modified:**
+- `currency_strategy_backtester.py` (lines 389, 1191): Fixed weekly ATR to use signal date
+- `trading_strategies.py` (lines 53-87): Rewrote ETF evaluate_exit() to respect strategy config
+
 **Multi-Target Implementation (2025):**
 - Added sophisticated multi-target evaluation system for futures strategies
 - Supports ATR-based and entry-stop percentage target calculations
