@@ -11,9 +11,8 @@ import utilities as util
 
 class TradingStrategy(ABC):
     """Abstract base class for trading strategies."""
-    
-    def __init__(self, symbol_mappings=None, tick_sizes=None):
-        self.symbol_mappings = symbol_mappings or {}
+
+    def __init__(self, tick_sizes=None):
         self.tick_sizes = tick_sizes or {}
     
     @abstractmethod
@@ -124,9 +123,9 @@ class ETFTradingStrategy(TradingStrategy):
 
 class FuturesTradingStrategy(TradingStrategy):
     """Trading strategy for futures contracts."""
-    
-    def __init__(self, symbol_mappings=None, tick_sizes=None):
-        super().__init__(symbol_mappings, tick_sizes)
+
+    def __init__(self, tick_sizes=None):
+        super().__init__(tick_sizes)
         self.evaluate_formula_func = None  # Will be set by main module
     
     def set_evaluate_formula_function(self, func):

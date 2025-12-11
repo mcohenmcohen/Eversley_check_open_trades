@@ -43,54 +43,7 @@ TICK_SIZE = {
     "XLV": 0.01, "XME": 0.01, "XOP": 0.01, "XRT": 0.01
 }
 
-# # Maps internal CME futures symbols to 
-# Yahoo Finance ticker symbols (for futures, not needed now since i'm downloading them from ninjatrader)
-# ETF tickers from Alpha Vantage
-symbol_map = {
-    # Futures
-    "6A": "6A=F",
-    "6B": "6B=F",
-    "6C": "6C=F",
-    "6E": "6E=F",
-    "6S": "6S=F",
-    
-    # Index futures
-    "ES": "ES=F",
-    "NQ": "NQ=F",
-    "RTY": "RTY=F",
-    "YM": "YM=F",
-
-    # ETFs
-    "DIA": "DIA",
-    "EEM": "EEM",
-    "EFA": "EFA",
-    "EWG": "EWG",
-    "EWH": "EWH",
-    "FXI": "FXI",
-    "GDX": "GDX",
-    "GLD": "GLD",
-    "IBB": "IBB",
-    "IWM": "IWM",
-    "IYR": "IYR",
-    "QQQ": "QQQ",
-    "SLV": "SLV",
-    "SPY": "SPY",
-    "TLT": "TLT",
-    "UNG": "UNG",
-    "USO": "USO",
-    "VNQ": "VNQ",
-    "VWO": "VWO",
-    "XHB": "XHB",
-    "XLB": "XLB",
-    "XLE": "XLE",
-    "XLF": "XLF",
-    "XLI": "XLI",
-    "XLK": "XLK",
-    "XLV": "XLV",
-    "XME": "XME",
-    "XOP": "XOP",
-    "XRT": "XRT"
-}
+# Symbol mapping removed - no longer needed as we now use the symbol names directly from the input file
 
 def resolve_strategy_name(input_name, strategy_names):
     match, score, _ = process.extractOne(input_name, strategy_names)
@@ -951,20 +904,24 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
             if entry_formula["type"] == "high_offset":
                 # For high_offset, entry would be High + offset
                 high_val = df.loc[signal_date]["High"]
-                offset_ticks = entry_formula.get("offset_by_symbol", {}).get(
-                    symbol[-1] if len(symbol) > 1 else symbol,
+                symbol_key = symbol[-1] if len(symbol) > 1 else symbol
+                offset_by_symbol_dict = entry_formula.get("offset_by_symbol", {})
+                offset_ticks = offset_by_symbol_dict.get(
+                    symbol_key,
                     entry_formula.get("offset_value", 0)
                 )
-                tick_size = get_tick_size(symbol)
+                tick_size = TICK_SIZE.get(symbol, 0.01)
                 proxy_entry_price = high_val + (offset_ticks * tick_size)
             elif entry_formula["type"] == "low_offset":
                 # For low_offset, entry would be Low - offset
                 low_val = df.loc[signal_date]["Low"]
-                offset_ticks = entry_formula.get("offset_by_symbol", {}).get(
-                    symbol[-1] if len(symbol) > 1 else symbol,
+                symbol_key = symbol[-1] if len(symbol) > 1 else symbol
+                offset_by_symbol_dict = entry_formula.get("offset_by_symbol", {})
+                offset_ticks = offset_by_symbol_dict.get(
+                    symbol_key,
                     entry_formula.get("offset_value", 0)
                 )
-                tick_size = get_tick_size(symbol)
+                tick_size = TICK_SIZE.get(symbol, 0.01)
                 proxy_entry_price = low_val - (offset_ticks * tick_size)
             elif entry_formula["type"] == "open_or_better":
                 # Use open price
@@ -975,7 +932,7 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                     proxy_entry_price = df.loc[first_date]["High"]
                 else:
                     proxy_entry_price = df.loc[first_date]["Low"]
-        except:
+        except Exception as e:
             # If calculation fails, use fallback
             if direction == "buy":
                 proxy_entry_price = df.loc[first_date]["High"]
@@ -1078,8 +1035,7 @@ def main():
     
     # Create appropriate trading strategy based on mode
     trading_strategy = StrategyFactory.create_strategy(
-        mode=args.mode, 
-        symbol_mappings=symbol_map, 
+        mode=args.mode,
         tick_sizes=TICK_SIZE
     )
     
