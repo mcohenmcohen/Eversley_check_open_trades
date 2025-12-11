@@ -190,9 +190,222 @@ class PolygonDataSource:
         return results
 
 
+class MassiveDataSource:
+    """Massive.com (formerly Polygon.io) data source implementation for futures data."""
+
+    def __init__(self, api_key: str):
+        """Initialize Massive client."""
+        self.api_key = api_key
+        if not self.api_key:
+            raise DataSourceError("Massive/Polygon API key required for futures")
+
+        self.base_url = "https://api.massive.com"
+        print("✅ Massive.com futures client initialized")
+
+    def test_authentication(self) -> bool:
+        """
+        Test if Massive API key is valid.
+
+        Returns:
+            True if authentication successful, False otherwise
+        """
+        try:
+            import requests
+
+            # Test with a known futures contract
+            symbol = '6EZ5'  # December 2025 Euro futures
+            url = f"{self.base_url}/futures/vX/aggs/{symbol}"
+            params = {
+                'resolution': '1day',
+                'limit': 1,
+                'sort': 'window_start.desc',
+                'apiKey': self.api_key
+            }
+
+            response = requests.get(url, params=params, timeout=10)
+
+            if response.status_code == 401 or response.status_code == 403:
+                print("❌ Massive.com authentication failed - invalid API key")
+                return False
+            elif response.status_code == 200:
+                print("✅ Massive.com authentication successful")
+                return True
+            else:
+                print(f"⚠️ Massive.com authentication test returned status {response.status_code}")
+                return False
+
+        except Exception as e:
+            print(f"⚠️ Massive.com authentication test error: {e}")
+            return False
+
+    def _get_contract_code(self, symbol: str, target_date: datetime = None) -> str:
+        """
+        Get the appropriate contract code for a futures symbol.
+
+        For now, uses December 2025 contracts (Z5 suffix).
+        TODO: Implement dynamic contract selection based on target_date.
+
+        Args:
+            symbol: Internal futures symbol (e.g., '6E', '6B')
+            target_date: Date for which to find the appropriate contract
+
+        Returns:
+            Massive.com contract code (e.g., '6EZ5', 'GBZ5')
+        """
+        # Currency futures contract mappings
+        # Format: Symbol + Month + Year
+        # Month codes: H=Mar, M=Jun, U=Sep, Z=Dec
+        currency_mappings = {
+            '6A': '6AZ5',   # Australian Dollar December 2025
+            '6B': '6BZ5',   # British Pound December 2025
+            '6C': '6CZ5',   # Canadian Dollar December 2025
+            '6E': '6EZ5',   # Euro December 2025
+            '6S': '6SZ5',   # Swiss Franc December 2025
+        }
+
+        # Index futures mappings
+        index_mappings = {
+            'ES': 'ESZ5',   # S&P 500 E-mini December 2025
+            'NQ': 'NQZ5',   # Nasdaq 100 E-mini December 2025
+            'RTY': 'RTYZ5', # Russell 2000 E-mini December 2025
+            'YM': 'YMZ5',   # Dow Jones E-mini December 2025
+        }
+
+        # Combine mappings
+        all_mappings = {**currency_mappings, **index_mappings}
+
+        contract_code = all_mappings.get(symbol)
+        if not contract_code:
+            raise DataSourceError(f"Unknown futures symbol: {symbol}")
+
+        return contract_code
+
+    def get_futures_data(self, symbol: str, start_date: datetime, end_date: datetime) -> pd.DataFrame:
+        """
+        Get historical futures data from Massive.com.
+
+        Args:
+            symbol: Futures symbol (e.g., '6E', '6B')
+            start_date: Start date as datetime
+            end_date: End date as datetime
+
+        Returns:
+            DataFrame with OHLCV data indexed by Date
+        """
+        try:
+            import requests
+
+            # Get contract code
+            contract_code = self._get_contract_code(symbol, start_date)
+
+            print(f"📡 Fetching {symbol} ({contract_code}) from Massive.com")
+
+            # Massive.com futures endpoint
+            url = f"{self.base_url}/futures/vX/aggs/{contract_code}"
+
+            # Don't use window_start - just fetch recent data with descending sort
+            # then reverse it. This is more reliable than window_start.
+            params = {
+                'resolution': '1day',
+                'limit': 100,  # Get last 100 days
+                'sort': 'window_start.desc',  # Most recent first
+                'apiKey': self.api_key
+            }
+
+            response = requests.get(url, params=params, timeout=30)
+
+            if response.status_code == 401 or response.status_code == 403:
+                raise DataSourceError(f"Massive.com API authentication failed for {symbol}")
+            elif response.status_code != 200:
+                print(f"❌ Massive.com API error for {symbol}: {response.status_code} - {response.text}")
+                return pd.DataFrame()
+
+            data = response.json()
+
+            # Check for results
+            if not data or 'results' not in data or not data['results']:
+                print(f"⚠️ No data returned from Massive.com for {symbol}")
+                return pd.DataFrame()
+
+            # Convert to DataFrame
+            results = data['results']
+            df_data = []
+
+            for bar in results:
+                # Use session_end_date field
+                date = bar.get('session_end_date')
+                if not date:
+                    continue
+
+                df_data.append({
+                    'Date': pd.to_datetime(date),
+                    'Open': float(bar.get('open', 0)),
+                    'High': float(bar.get('high', 0)),
+                    'Low': float(bar.get('low', 0)),
+                    'Close': float(bar.get('close', 0)),
+                    'Volume': int(bar.get('volume', 0))
+                })
+
+            if not df_data:
+                print(f"⚠️ No valid bars found for {symbol}")
+                return pd.DataFrame()
+
+            # Create DataFrame
+            df = pd.DataFrame(df_data)
+            df.set_index('Date', inplace=True)
+            df.sort_index(inplace=True)
+
+            print(f"{symbol}: retrieved {len(df)} days from Massive.com")
+            return df
+
+        except requests.RequestException as e:
+            print(f"❌ Network error fetching {symbol} from Massive.com: {e}")
+        except Exception as e:
+            print(f"❌ Error fetching {symbol} from Massive.com: {e}")
+
+        return pd.DataFrame()
+
+    def get_multiple_futures(self, symbols: List[str], start_date: datetime,
+                           end_date: datetime, max_workers: int = 10) -> Dict[str, pd.DataFrame]:
+        """
+        Get historical data for multiple futures symbols from Massive.com.
+
+        Args:
+            symbols: List of futures symbols
+            start_date: Start date as datetime
+            end_date: End date as datetime
+            max_workers: Max concurrent requests
+
+        Returns:
+            Dictionary of {symbol: DataFrame}
+        """
+        results = {}
+
+        print(f"🚀 Getting Massive.com futures data for {len(symbols)} symbols...")
+
+        # Use ThreadPoolExecutor for parallel requests
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_symbol = {
+                executor.submit(self.get_futures_data, symbol, start_date, end_date): symbol
+                for symbol in symbols
+            }
+
+            for future in as_completed(future_to_symbol):
+                symbol = future_to_symbol[future]
+                try:
+                    df = future.result()
+                    if not df.empty:
+                        results[symbol] = df
+                except Exception as e:
+                    print(f"❌ Error processing {symbol}: {e}")
+
+        print(f"✅ Retrieved Massive.com futures data for {len(results)}/{len(symbols)} symbols")
+        return results
+
+
 class InsightSentryDataSource:
     """InsightSentry data source implementation for futures data."""
-    
+
     def __init__(self, api_key: str):
         """Initialize InsightSentry client."""
         self.api_key = api_key
@@ -321,13 +534,15 @@ class InsightSentryDataSource:
     def _convert_hourly_to_daily_futures(self, hourly_df):
         """
         Convert hourly futures data to daily OHLC using 3pm-3pm cycle.
-        
+
         Futures trading day runs from 3pm ET previous day to 3pm ET current day.
-        This creates daily bars that align with futures market sessions.
-        
+        The bar is labeled with the calendar date when the session ends at 3pm.
+
+        Example: Session from 3pm 12/9 to 3pm 12/10 is labeled 12/10.
+
         Args:
             hourly_df: DataFrame with hourly OHLCV data
-            
+
         Returns:
             DataFrame with daily OHLC data indexed by trading date
         """
@@ -337,16 +552,17 @@ class InsightSentryDataSource:
         try:
             # Convert to EST/EDT timezone for proper 3pm alignment
             hourly_df.index = pd.to_datetime(hourly_df.index)
-            
-            # Create a column for the futures trading date
-            # Trading day starts at 3pm ET, so hours 15:00-23:59 belong to next calendar day
-            # Hours 00:00-14:59 belong to current calendar day
             hourly_df = hourly_df.copy()
-            
-            # Shift timestamps by 9 hours to align 3pm with midnight
-            # This way we can group by date and get proper 3pm-3pm sessions
-            shifted_index = hourly_df.index - pd.Timedelta(hours=9)
-            hourly_df['trading_date'] = shifted_index.normalize()
+
+            # For each hour, determine which trading day it belongs to
+            # Hours from 3pm (15:00) onwards belong to the NEXT calendar day's session
+            # Hours before 3pm belong to the current calendar day's session
+            # The bar is labeled with the date when the session ends at 3pm
+            #
+            # Example: Session from 3pm 12/9 to 3pm 12/10 is labeled 12/10
+            hourly_df['trading_date'] = hourly_df.index.to_series().apply(
+                lambda dt: (dt + pd.Timedelta(days=1)).normalize() if dt.hour >= 15 else dt.normalize()
+            )
             
             # Group by trading date and aggregate to daily OHLC
             daily_data = []
@@ -695,19 +911,19 @@ class InsightSentryDataSource:
 class DataSourceManager:
     """
     Manager class to coordinate between different data sources.
-    Routes ETFs to Polygon and futures to InsightSentry.
+    Routes ETFs to Polygon and futures to Massive.com (formerly Polygon futures API).
     """
-    
+
     def __init__(self, polygon_api_key: str = None, insightsentry_api_key: str = None):
         """
         Initialize data source manager.
-        
+
         Args:
-            polygon_api_key: Polygon.io API key for ETF data
-            insightsentry_api_key: InsightSentry API key for futures data
+            polygon_api_key: Polygon.io/Massive.com API key for both ETF and futures data
+            insightsentry_api_key: InsightSentry API key (deprecated, kept for backward compatibility)
         """
         self.sources = {}
-        
+
         # Initialize Polygon for ETFs
         if polygon_api_key:
             try:
@@ -716,14 +932,23 @@ class DataSourceManager:
                 print(f"⚠️ Polygon initialization failed: {e}")
             except Exception as e:
                 print(f"⚠️ Unexpected error initializing Polygon: {e}")
-        
-        # Initialize InsightSentry for futures
+
+            # Initialize Massive for futures (uses same API key as Polygon)
+            try:
+                self.sources['massive'] = MassiveDataSource(polygon_api_key)
+            except DataSourceError as e:
+                print(f"⚠️ Massive.com initialization failed: {e}")
+            except Exception as e:
+                print(f"⚠️ Unexpected error initializing Massive.com: {e}")
+
+        # Initialize InsightSentry for futures (deprecated, only if explicitly provided)
         if insightsentry_api_key:
             try:
                 self.sources['insightsentry'] = InsightSentryDataSource(insightsentry_api_key)
+                print("⚠️ Using InsightSentry for futures (deprecated - data quality issues)")
             except DataSourceError as e:
                 print(f"⚠️ InsightSentry initialization failed: {e}")
-        
+
         print(f"📊 Initialized data sources: {list(self.sources.keys())}")
     
     def test_authentication(self, source_name: str = None) -> Dict[str, bool]:
@@ -785,7 +1010,7 @@ class DataSourceManager:
     def get_futures_data(self, symbols: Union[str, List[str]], start_date: datetime,
                         end_date: datetime) -> Union[pd.DataFrame, Dict[str, pd.DataFrame]]:
         """
-        Get futures data from InsightSentry with Polygon fallback.
+        Get futures data from Massive.com with InsightSentry fallback.
 
         Args:
             symbols: Single symbol or list of symbols
@@ -795,8 +1020,18 @@ class DataSourceManager:
         Returns:
             DataFrame for single symbol, Dict for multiple symbols
         """
-        # Try InsightSentry first
-        if 'insightsentry' in self.sources:
+        # Try Massive.com first (best data quality)
+        if 'massive' in self.sources:
+            massive_source = self.sources['massive']
+
+            if isinstance(symbols, str):
+                return massive_source.get_futures_data(symbols, start_date, end_date)
+            else:
+                return massive_source.get_multiple_futures(symbols, start_date, end_date)
+
+        # Fall back to InsightSentry if Massive not available (deprecated)
+        elif 'insightsentry' in self.sources:
+            print("⚠️ Massive.com not available, using InsightSentry (deprecated - data quality issues)")
             insightsentry_source = self.sources['insightsentry']
 
             if isinstance(symbols, str):
@@ -804,18 +1039,8 @@ class DataSourceManager:
             else:
                 return insightsentry_source.get_multiple_futures(symbols, start_date, end_date)
 
-        # Fall back to Polygon if InsightSentry not available
-        elif 'polygon' in self.sources:
-            print("⚠️  InsightSentry not available, using Polygon for futures data")
-            polygon_source = self.sources['polygon']
-
-            if isinstance(symbols, str):
-                return polygon_source.get_stock_data(symbols, start_date, end_date)
-            else:
-                return polygon_source.get_multiple_stocks(symbols, start_date, end_date)
-
         else:
-            raise DataSourceError("No futures data source available (tried InsightSentry and Polygon)")
+            raise DataSourceError("No futures data source available (need Massive.com/Polygon API key)")
     
     def get_price_data(self, symbol: str, mode: str, start_date: datetime, 
                       end_date: datetime = None) -> pd.DataFrame:

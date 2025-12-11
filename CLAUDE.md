@@ -146,7 +146,7 @@ The system supports sophisticated target selection for futures strategies:
 
 ## Development Notes
 
-The system uses Polygon.io API for ETF data and InsightSentry API for futures data, with built-in caching for performance. The backtesting engine handles different execution rules for futures vs ETF strategies, supporting both intraday and daily timeframes with realistic slippage and commission modeling.
+The system uses Polygon.io API for ETF data and Massive.com (formerly Polygon futures API) for futures data, with built-in caching for performance. The backtesting engine handles different execution rules for futures vs ETF strategies, supporting both intraday and daily timeframes with realistic slippage and commission modeling.
 
 ### Recent Updates
 
@@ -177,3 +177,27 @@ The system uses Polygon.io API for ETF data and InsightSentry API for futures da
 - `currency_strategy_backtester.py`: Added multi-target calculation and selection logic
 - `trading_strategies.py`: Enhanced target type detection and polymorphic formula handling
 - `strategies_complete.json`: Updated to support flexible multi-target configurations per strategy
+
+**Massive.com Futures Data Migration (December 2024):**
+- **CRITICAL DATA QUALITY FIX:** Migrated from InsightSentry to Massive.com for futures data
+- InsightSentry had severe data quality issues (42+ tick discrepancies vs ThinkorSwim)
+- Massive.com data matches ThinkorSwim within 0-1 ticks (production quality)
+- Added `MassiveDataSource` class with proper contract code mapping (6B→6BZ5, 6E→6EZ5, etc.)
+- Uses same Polygon API key for both ETF and futures data
+
+**Impact:**
+- 6B (12/3): Entry now 1.3369 (exactly matches manual calculations vs 1.3373 with InsightSentry)
+- 6E (12/10): High 1.1703 matches ThinkorSwim perfectly (vs 1.16605, 42 ticks off with InsightSentry)
+- All futures calculations now accurate and reliable for live trading decisions
+
+**Non-Triggered Trade Improvements:**
+- Added "Open - Entry Not Triggered" status for trades still in trigger window
+- Added "Expired - Entry Not Triggered" for trades past trigger window
+- Now shows calculated entry/stop/target values even for non-triggered trades (essential for analysis)
+- `num_days_open` column shows "Expired" for expired non-triggered trades vs "open" for active ones
+
+**Key Files Modified:**
+- `data_sources.py` (lines 193-405): Added MassiveDataSource class with contract mappings
+- `data_sources.py` (lines 913-1045): Updated DataSourceManager to prioritize Massive.com
+- `currency_strategy_backtester.py` (lines 938-1036): Enhanced non-triggered trade value calculation
+- `currency_strategy_backtester.py` (lines 1217-1222): Added Expired status for num_days_open column

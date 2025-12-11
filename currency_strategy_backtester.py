@@ -935,40 +935,101 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
             }
 
 
-    # If not triggered, calculate what the target type would have been for multi-target strategies
+    # If not triggered, calculate what the entry/stop/target would have been
     selected_target_type_for_non_triggered = None
-    
-    # For multi-target strategies, we still want to show what target would have been selected
-    target_formula = strategy.get("target", {}).get("formula", {})
-    if target_formula.get("type") == "multi_target":
-        # We need a hypothetical entry price to calculate the target type
-        # Use the first valid date's high/low as a proxy
-        if len(valid_dates) > 0:
-            first_date = valid_dates[0]
-            if direction == "buy":
-                proxy_entry_price = df.loc[first_date]["High"]  # Conservative estimate for buy
+    proxy_entry_price = None
+    proxy_stop_price = None
+    proxy_target_price = None
+
+    # Calculate hypothetical entry, stop, and target for analysis purposes
+    if len(valid_dates) > 0:
+        first_date = valid_dates[0]
+
+        # Calculate entry price based on entry formula
+        try:
+            entry_formula = strategy["entry"]["formula"]
+            if entry_formula["type"] == "high_offset":
+                # For high_offset, entry would be High + offset
+                high_val = df.loc[signal_date]["High"]
+                offset_ticks = entry_formula.get("offset_by_symbol", {}).get(
+                    symbol[-1] if len(symbol) > 1 else symbol,
+                    entry_formula.get("offset_value", 0)
+                )
+                tick_size = get_tick_size(symbol)
+                proxy_entry_price = high_val + (offset_ticks * tick_size)
+            elif entry_formula["type"] == "low_offset":
+                # For low_offset, entry would be Low - offset
+                low_val = df.loc[signal_date]["Low"]
+                offset_ticks = entry_formula.get("offset_by_symbol", {}).get(
+                    symbol[-1] if len(symbol) > 1 else symbol,
+                    entry_formula.get("offset_value", 0)
+                )
+                tick_size = get_tick_size(symbol)
+                proxy_entry_price = low_val - (offset_ticks * tick_size)
+            elif entry_formula["type"] == "open_or_better":
+                # Use open price
+                proxy_entry_price = df.loc[first_date]["Open"]
             else:
-                proxy_entry_price = df.loc[first_date]["Low"]   # Conservative estimate for sell
-            
-            # Calculate stop price with proxy entry
-            if has_stop:
-                stop_formula = strategy["stop"]["formula"]
-                try:
-                    proxy_stop_price = evaluate_formula(stop_formula, df, signal_date, symbol, entry_price=proxy_entry_price)
-                    
-                    # Calculate target result to get the selected target type
-                    target_result = evaluate_formula(target_formula, df, signal_date, symbol, entry_price=proxy_entry_price, stop_price=proxy_stop_price)
-                    if isinstance(target_result, dict) and "target_type" in target_result:
-                        selected_target_type_for_non_triggered = target_result["target_type"]
-                except:
-                    # If calculation fails, leave as None
-                    pass
-    
+                # Fallback: use high for buy, low for sell
+                if direction == "buy":
+                    proxy_entry_price = df.loc[first_date]["High"]
+                else:
+                    proxy_entry_price = df.loc[first_date]["Low"]
+        except:
+            # If calculation fails, use fallback
+            if direction == "buy":
+                proxy_entry_price = df.loc[first_date]["High"]
+            else:
+                proxy_entry_price = df.loc[first_date]["Low"]
+
+        # Calculate stop price
+        if has_stop and proxy_entry_price is not None:
+            stop_formula = strategy["stop"]["formula"]
+            try:
+                proxy_stop_price = evaluate_formula(stop_formula, df, signal_date, symbol, entry_price=proxy_entry_price)
+            except:
+                pass
+
+        # Calculate target price and target type
+        if proxy_entry_price is not None:
+            target_formula = strategy.get("target", {}).get("formula", {})
+            try:
+                target_result = evaluate_formula(target_formula, df, signal_date, symbol, entry_price=proxy_entry_price, stop_price=proxy_stop_price)
+
+                if isinstance(target_result, dict):
+                    proxy_target_price = target_result.get("target_price")
+                    selected_target_type_for_non_triggered = target_result.get("target_type")
+                else:
+                    proxy_target_price = target_result
+            except:
+                pass
+
+    # Determine if trigger window has expired or is still open
+    # Check if we have enough data to know the trigger window is closed
+    trigger_window_closed = False
+    if len(valid_dates) >= max_days:
+        # We have data for the full trigger window, so it's closed
+        trigger_window_closed = True
+    elif len(valid_dates) > 0:
+        # Check if the last valid date is in the past (more than 1 day ago)
+        last_valid_date = valid_dates[-1]
+        from datetime import datetime, timedelta
+        days_since_last_valid = (datetime.now().date() - last_valid_date.date()).days
+        if days_since_last_valid > 1:
+            # Last valid date was more than 1 day ago, trigger window is closed
+            trigger_window_closed = True
+
+    # Choose status based on whether trigger window is still open
+    if trigger_window_closed:
+        status = "Expired - Entry Not Triggered"
+    else:
+        status = "Open - Entry Not Triggered"
+
     return {
-        "status": "Expired - Entry Not Triggered",
-        "entry": "",
-        "stop": "",
-        "target": "",
+        "status": status,
+        "entry": round(proxy_entry_price, 5) if proxy_entry_price is not None else "",
+        "stop": round(proxy_stop_price, 5) if proxy_stop_price is not None else "",
+        "target": round(proxy_target_price, 5) if proxy_target_price is not None else "",
         "entry_date": "",
         "exit_date": "",
         "selected_target_type": selected_target_type_for_non_triggered
@@ -1153,7 +1214,12 @@ def main():
             num_days_open = count_trading_days(entry_date, exit_date) if entry_date else "?"
         else:
             exit_date = None
-            num_days_open = 'open'
+            # Check if the status is "Expired - Entry Not Triggered"
+            status = result.get("status", "")
+            if status == "Expired - Entry Not Triggered":
+                num_days_open = 'Expired'
+            else:
+                num_days_open = 'open'
             # print('\'num_days_open\'', num_days_open)
 
         entry_price = result.get("entry", "")
