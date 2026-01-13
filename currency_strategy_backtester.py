@@ -45,6 +45,30 @@ TICK_SIZE = {
 
 # Symbol mapping removed - no longer needed as we now use the symbol names directly from the input file
 
+# Column schemas for different modes
+ETF_RESULT_COLUMNS = [
+    "symbol", "strategy", "direction", "signal_date", "status",
+    "expiration", "target_type", "atr", "entry_price",
+    "target_price", "last_close_price", "diff_from_entry",
+    "entry_date", "exit_date", "num_days_open"
+]
+
+FUTURES_RESULT_COLUMNS = [
+    "symbol", "strategy", "direction", "signal_date", "status",
+    "expiration", "target_type", "atr", "entry_price",
+    "target_price", "stop_price", "last_close_price",
+    "diff_from_entry", "entry_date", "exit_date", "num_days_open"
+]
+
+def get_result_columns(mode):
+    """Return the appropriate column list based on mode."""
+    if mode == "etfs":
+        return ETF_RESULT_COLUMNS
+    elif mode == "futures":
+        return FUTURES_RESULT_COLUMNS
+    else:
+        raise ValueError(f"Unknown mode: {mode}")
+
 def resolve_strategy_name(input_name, strategy_names):
     match, score, _ = process.extractOne(input_name, strategy_names)
     return match if score > 80 else None
@@ -757,8 +781,9 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
         return {"status": "Signal Date Missing in Data", "selected_target_type": None}
 
     # Get trading days only within the trigger window
+    # Signal occurs after close, so trigger window starts the NEXT trading day
     valid_dates = []
-    current_idx = df.index.get_loc(signal_date)
+    current_idx = df.index.get_loc(signal_date) + 1  # Start from day after signal
 
     while len(valid_dates) < max_days and current_idx < len(df):
         test_date = df.index[current_idx]
@@ -962,19 +987,22 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
                 pass
 
     # Determine if trigger window has expired or is still open
-    # Check if we have enough data to know the trigger window is closed
+    # The window is closed once we're past the last trigger day (counting trading days only)
     trigger_window_closed = False
-    if len(valid_dates) >= max_days:
-        # We have data for the full trigger window, so it's closed
-        trigger_window_closed = True
-    elif len(valid_dates) > 0:
-        # Check if the last valid date is in the past (more than 1 day ago)
+    if len(valid_dates) > 0:
         last_valid_date = valid_dates[-1]
-        from datetime import datetime, timedelta
-        days_since_last_valid = (datetime.now().date() - last_valid_date.date()).days
-        if days_since_last_valid > 1:
-            # Last valid date was more than 1 day ago, trigger window is closed
+        from datetime import datetime
+        today = datetime.now().date()
+
+        # Count trading days since the last trigger day
+        # count_trading_days is exclusive of end, so if today > last_valid_date and there's
+        # at least 1 trading day between them, the window is closed
+        trading_days_since = count_trading_days(last_valid_date.date(), today)
+
+        if trading_days_since >= 1:
+            # We're at least 1 trading day past the last trigger day, window is closed
             trigger_window_closed = True
+        # Otherwise window is still active (today is the last trigger day or hasn't arrived yet)
 
     # Choose status based on whether trigger window is still open
     if trigger_window_closed:
@@ -1228,28 +1256,37 @@ def main():
         else:
             expiration_date = ""  # Futures don't have expiration dates
 
-        results.append({
+        # Build complete result dictionary with all possible fields
+        complete_result = {
             "symbol": symbol,
-            # "strategy": resolved_name,
-            "strategy": str(row["strategy"]).strip(), # just get the actual strstegy name, not the reduced
+            "strategy": str(row["strategy"]).strip(),  # Use actual strategy name from input
             "direction": direction,
             "signal_date": signal_date.strftime('%m/%d/%y'),
             "status": result["status"],
             "expiration": expiration_date.strftime('%m/%d/%y') if expiration_date else "",
             "target_type": target_type,
-            "atr_target": atr_target,
+            "atr": atr_target,  # Renamed from atr_target to atr
             "entry_price": result.get("entry", ""),
             "target_price": result.get("target", ""),
-            "stop_price": result.get("stop", ""),
+            "stop_price": result.get("stop", ""),  # Only used for futures
             "last_close_price": last_close_price,
             "diff_from_entry": diff_from_entry if isinstance(diff_from_entry, (int, float)) else diff_from_entry,
             "entry_date": result.get("entry_date", ""),
             "exit_date": result.get("exit_date", ""),
             "num_days_open": num_days_open
-        })
-        
+        }
+
+        # Filter result based on mode-specific column schema
+        mode_columns = get_result_columns(args.mode)
+        filtered_result = {key: complete_result[key] for key in mode_columns}
+
+        results.append(filtered_result)
+
     print(f"Total processed signals: {len(results)}")
-    pd.DataFrame(results).to_csv(output_file, index=False)
+
+    # Create DataFrame with mode-specific columns in correct order
+    df_results = pd.DataFrame(results, columns=get_result_columns(args.mode))
+    df_results.to_csv(output_file, index=False)
     print(f"✅ Backtest completed. Results saved to '{output_file}'.")
 
 if __name__ == "__main__":

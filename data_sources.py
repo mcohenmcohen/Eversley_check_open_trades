@@ -242,41 +242,61 @@ class MassiveDataSource:
         """
         Get the appropriate contract code for a futures symbol.
 
-        For now, uses December 2025 contracts (Z5 suffix).
-        TODO: Implement dynamic contract selection based on target_date.
+        Dynamically selects the active contract based on target_date.
+        Uses quarterly contracts (Mar, Jun, Sep, Dec) for most financial futures.
 
         Args:
             symbol: Internal futures symbol (e.g., '6E', '6B')
-            target_date: Date for which to find the appropriate contract
+            target_date: Date for which to find the appropriate contract (defaults to today)
 
         Returns:
-            Massive.com contract code (e.g., '6EZ5', 'GBZ5')
+            Massive.com contract code (e.g., '6EH6', '6BZ5')
         """
-        # Currency futures contract mappings
-        # Format: Symbol + Month + Year
-        # Month codes: H=Mar, M=Jun, U=Sep, Z=Dec
-        currency_mappings = {
-            '6A': '6AZ5',   # Australian Dollar December 2025
-            '6B': '6BZ5',   # British Pound December 2025
-            '6C': '6CZ5',   # Canadian Dollar December 2025
-            '6E': '6EZ5',   # Euro December 2025
-            '6S': '6SZ5',   # Swiss Franc December 2025
-        }
+        # Use current date if no target_date specified
+        if target_date is None:
+            target_date = datetime.now()
 
-        # Index futures mappings
-        index_mappings = {
-            'ES': 'ESZ5',   # S&P 500 E-mini December 2025
-            'NQ': 'NQZ5',   # Nasdaq 100 E-mini December 2025
-            'RTY': 'RTYZ5', # Russell 2000 E-mini December 2025
-            'YM': 'YMZ5',   # Dow Jones E-mini December 2025
-        }
+        # Ensure target_date is a datetime object
+        if not isinstance(target_date, datetime):
+            target_date = datetime.combine(target_date, datetime.min.time())
 
-        # Combine mappings
-        all_mappings = {**currency_mappings, **index_mappings}
+        # Quarterly expiration months and their codes
+        # Format: (month_number, month_code)
+        quarterly_months = [
+            (3, 'H'),   # March
+            (6, 'M'),   # June
+            (9, 'U'),   # September
+            (12, 'Z'),  # December
+        ]
 
-        contract_code = all_mappings.get(symbol)
-        if not contract_code:
+        # Find the next quarterly expiration month
+        current_month = target_date.month
+        current_year = target_date.year
+
+        # Find next quarterly month >= current month
+        month_code = None
+        contract_year = current_year
+
+        for exp_month, code in quarterly_months:
+            if exp_month >= current_month:
+                month_code = code
+                break
+
+        # If no future quarter found this year, use March of next year
+        if month_code is None:
+            month_code = 'H'  # March
+            contract_year = current_year + 1
+
+        # Get year code (last digit of year)
+        year_code = str(contract_year)[-1]
+
+        # Build contract code
+        supported_symbols = ['6A', '6B', '6C', '6E', '6S', 'ES', 'NQ', 'RTY', 'YM']
+
+        if symbol not in supported_symbols:
             raise DataSourceError(f"Unknown futures symbol: {symbol}")
+
+        contract_code = f"{symbol}{month_code}{year_code}"
 
         return contract_code
 
@@ -295,8 +315,9 @@ class MassiveDataSource:
         try:
             import requests
 
-            # Get contract code
-            contract_code = self._get_contract_code(symbol, start_date)
+            # Get contract code based on end_date (current contract)
+            # Using end_date ensures we get the active contract, not an expired one
+            contract_code = self._get_contract_code(symbol, end_date)
 
             print(f"📡 Fetching {symbol} ({contract_code}) from Massive.com")
 
