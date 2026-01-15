@@ -804,8 +804,11 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
         )
 
         if triggered:
+            # CRITICAL: Use signal_date (not test_date) for stop/target calculations
+            # Entry threshold, stop, and target must ALL be calculated from the same signal_date
+            # to ensure consistent lookback windows (e.g., 2-day lookback for stop loss)
             exit_result = evaluate_exit(
-                strategy, formulas, df, test_date, symbol, entry_price, strategy_name, direction, trading_strategy
+                strategy, formulas, df, signal_date, symbol, entry_price, strategy_name, direction, trading_strategy
             )
             
             # Handle both 2-tuple and 3-tuple returns from evaluate_exit
