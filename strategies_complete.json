@@ -38,8 +38,8 @@
                 "type": "high_offset",
                 "offset_by_symbol": {
                     "A": 15,
-                    "C": 15,
                     "B": 10,
+                    "C": 15,
                     "E": 10,
                     "S": 10
                 }
@@ -74,10 +74,10 @@
             "formula": {
                 "type": "high_offset",
                 "offset_by_symbol": {
-                    "C": 10,
-                    "E": 10,
                     "A": 15,
                     "B": 15,
+                    "C": 10,
+                    "E": 10,
                     "S": 15
                 }
             }
@@ -144,10 +144,10 @@
             "formula": {
                 "type": "high_offset",
                 "offset_by_symbol": {
-                    "E": 10,
                     "A": 10,
                     "B": 15,
                     "C": 10,
+                    "E": 10,
                     "S": 15
                 }
             }
@@ -181,10 +181,10 @@
             "formula": {
                 "type": "high_offset",
                 "offset_by_symbol": {
-                    "E": 10,
                     "A": 15,
-                    "B": 15,
-                    "C": 15,
+                    "B": 20,
+                    "C": 10,
+                    "E": 10,
                     "S": 15
                 }
             }
@@ -192,7 +192,13 @@
         "stop": {
             "formula": {
                 "type": "low_offset",
-                "offset_value": 10,
+                "offset_by_symbol": {
+                    "A": 15,
+                    "B": 20,
+                    "C": 10,
+                    "E": 10,
+                    "S": 10
+                },
                 "lookback_days": 2,
                 "include_signal_day": true
             }
@@ -218,9 +224,9 @@
             "formula": {
                 "type": "high_offset",
                 "offset_by_symbol": {
-                    "C": 10,
                     "A": 15,
                     "B": 15,
+                    "C": 10,
                     "E": 15,
                     "S": 15
                 }
@@ -230,11 +236,11 @@
             "formula": {
                 "type": "low_offset",
                 "offset_by_symbol": {
-                    "C": 10,
-                    "S": 10,
                     "A": 15,
                     "B": 15,
-                    "E": 15
+                    "C": 10,
+                    "E": 15,
+                    "S": 10
                 },
                 "lookback_days": 2,
                 "include_signal_day": true
@@ -263,8 +269,8 @@
                 "offset_by_symbol": {
                     "A": 10,
                     "B": 10,
-                    "E": 10,
                     "C": 15,
+                    "E": 10,
                     "S": 15
                 }
             }
@@ -298,10 +304,10 @@
                 "type": "low_offset",
                 "offset_by_symbol": {
                     "A": 10,
-                    "S": 10,
                     "B": 15,
                     "C": 15,
-                    "E": 15
+                    "E": 15,
+                    "S": 10
                 }
             }
         },
@@ -362,9 +368,9 @@
                 "type": "low_offset",
                 "offset_by_symbol": {
                     "A": 10,
+                    "B": 15,
                     "C": 10,
                     "S": 10,
-                    "B": 15,
                     "E": 15
                 }
             }
@@ -398,9 +404,9 @@
                 "type": "low_offset",
                 "offset_by_symbol": {
                     "A": 10,
+                    "B": 15,
                     "C": 10,
                     "E": 10,
-                    "B": 15,
                     "S": 15
                 }
             }
@@ -568,6 +574,117 @@
             }
         },
         "trigger_window_days": 1
+    },
+    "Bear Attack 1 Currency Futures Sell": {
+        "entry": {
+            "formula": {
+                "type": "low_offset",
+                "offset_by_symbol": {
+                    "A": 15,
+                    "B": 15,
+                    "C": 10,
+                    "E": 15,
+                    "S": 15
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "high_offset",
+                "offset_value": 10,
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "multi_target",
+                "target_rank": 1,
+                "direction": "sell",
+                "target_options": [
+                    {"type": "atr_percentage", "atr_length": 5, "percentage": 0.6},
+                    {"type": "atr_percentage", "atr_length": 5, "percentage": 0.7},
+                    {"type": "entry_stop_percentage", "percentage": 0.4},
+                    {"type": "entry_stop_percentage", "percentage": 0.45},
+                    {"type": "entry_stop_percentage", "percentage": 0.5}
+                ]
+            }
+        },
+        "trigger_window_days": 2
+    },
+    "Bear Attack 2 Currency Futures Sell": {
+        "entry": {
+            "formula": {
+                "type": "low_offset",
+                "offset_by_symbol": {
+                    "A": 15,
+                    "B": 15,
+                    "C": 15,
+                    "E": 15,
+                    "S": 15
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "high_offset",
+                "offset_value": 10,
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "multi_target",
+                "target_rank": 1,
+                "direction": "sell",
+                "target_options": [
+                    {"type": "atr_percentage", "atr_length": 5, "percentage": 0.6},
+                    {"type": "atr_percentage", "atr_length": 5, "percentage": 0.7},
+                    {"type": "entry_stop_percentage", "percentage": 0.4},
+                    {"type": "entry_stop_percentage", "percentage": 0.45},
+                    {"type": "entry_stop_percentage", "percentage": 0.5}
+                ]
+            }
+        },
+        "trigger_window_days": 2
+    },
+    "Bear Attack Squeeze Currency Futures Sell": {
+        "entry": {
+            "formula": {
+                "type": "low_offset",
+                "offset_by_symbol": {
+                    "A": 15,
+                    "B": 15,
+                    "C": 15,
+                    "E": 15,
+                    "S": 15
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "high_offset",
+                "offset_value": 10,
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "multi_target",
+                "target_rank": 1,
+                "direction": "sell",
+                "target_options": [
+                    {"type": "atr_percentage", "atr_length": 5, "percentage": 0.6},
+                    {"type": "atr_percentage", "atr_length": 5, "percentage": 0.7},
+                    {"type": "entry_stop_percentage", "percentage": 0.4},
+                    {"type": "entry_stop_percentage", "percentage": 0.45},
+                    {"type": "entry_stop_percentage", "percentage": 0.5}
+                ]
+            }
+        },
+        "trigger_window_days": 2
     },
 
     "Daily ETF Options Buy": {

@@ -50,14 +50,14 @@ ETF_RESULT_COLUMNS = [
     "symbol", "strategy", "direction", "signal_date", "status",
     "expiration", "target_type", "atr", "entry_price",
     "target_price", "last_close_price", "diff_from_entry",
-    "entry_date", "exit_date", "num_days_open"
+    "entry_date", "exit_date", "num_days_open", "win_rate"
 ]
 
 FUTURES_RESULT_COLUMNS = [
     "symbol", "strategy", "direction", "signal_date", "status",
     "expiration", "target_type", "atr", "entry_price",
     "target_price", "stop_price", "last_close_price",
-    "diff_from_entry", "entry_date", "exit_date", "num_days_open"
+    "diff_from_entry", "entry_date", "exit_date", "num_days_open", "win_rate"
 ]
 
 def get_result_columns(mode):
@@ -77,6 +77,99 @@ def resolve_strategy_name(input_name, strategy_names):
 def load_strategies(path):
     with open(path) as f:
         return json.load(f)
+
+# Load win rate lookup data
+def load_win_rates(path="win_rates.json"):
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print("⚠️ win_rates.json not found. Win rate column will be empty.")
+        return {"ETF": {}, "Futures": {}}
+
+# Futures symbol to PDF abbreviation mapping
+FUTURES_SYMBOL_TO_PDF = {
+    "6A": "AD", "6B": "BP", "6C": "CD", "6E": "EC", "6S": "SF"
+}
+
+def lookup_win_rate(win_rates, strategy_name, symbol, direction, target_type, mode):
+    """Look up historical win rate percentage from win_rates.json."""
+    if not target_type or pd.isna(target_type):
+        return ""
+
+    mode_key = "ETF" if mode == "etfs" else "Futures"
+    direction = direction.lower()
+
+    # Map futures symbols (6A -> AD, etc.)
+    lookup_symbol = symbol
+    if mode == "futures" and symbol in FUTURES_SYMBOL_TO_PDF:
+        lookup_symbol = FUTURES_SYMBOL_TO_PDF[symbol]
+
+    # Map target_type to JSON key
+    target_key = _map_target_type_to_key(target_type, mode)
+    if not target_key:
+        return ""
+
+    # Look up in win_rates data
+    mode_data = win_rates.get(mode_key, {})
+
+    # Try exact strategy name match first, then fuzzy match
+    strategy_data = mode_data.get(strategy_name)
+    if not strategy_data:
+        # Try fuzzy matching against win_rates keys
+        for wr_name in mode_data:
+            if _strategy_names_match(strategy_name, wr_name):
+                strategy_data = mode_data[wr_name]
+                break
+
+    if not strategy_data:
+        return ""
+
+    direction_data = strategy_data.get(direction, {})
+    symbol_data = direction_data.get(lookup_symbol, {})
+    rate = symbol_data.get(target_key, "")
+
+    if rate != "":
+        return f"{rate}%"
+    return ""
+
+def _map_target_type_to_key(target_type, mode):
+    """Map the target_type column value to the JSON lookup key."""
+    if mode == "etfs":
+        etf_map = {
+            "ATR5 x 1.0": "2_exp_1x_ATR",
+            "ATR5 x 1.5": "2_exp_1.5x_ATR",
+            "ATR5 x 1.2": "2_exp_1.2x_ATR",
+            "ATR20 x 1.0": "1x_daily_ATR20",
+            "ATR20 x 1.5": "1.5x_daily_ATR20",
+            "Weekly ATR5 x 0.55": "55pct_weekly_ATR5",
+            "Weekly ATR5 x 0.6": "60pct_weekly_ATR5",
+        }
+        return etf_map.get(target_type)
+    else:
+        futures_map = {
+            "ATR5 x 0.6": "0.6_ATR5",
+            "ATR5 x 0.7": "0.7_ATR5",
+            "ATR5 x 0.8": "0.8_ATR5",
+            "Entry-Stop x 0.4": "0.4_entry_stop",
+            "Entry-Stop x 0.45": "0.45_entry_stop",
+            "Entry-Stop x 0.5": "0.5_entry_stop",
+        }
+        return futures_map.get(target_type)
+
+def _strategy_names_match(name1, name2):
+    """Check if two strategy names refer to the same strategy."""
+    # Normalize: remove special chars and encoding variants, then lowercase
+    def normalize(s):
+        s = s.strip()
+        # Replace all quote variants BEFORE lowercasing
+        for ch in ['"', '\u201c', '\u201d', '\u2018', '\u2019', "'",
+                   '\xd2', '\xd3', '\xd4', '\xd5',  # ISO-8859 curly quotes
+                   '\u00d2', '\u00d3', '\u00d4', '\u00d5',
+                   '\xf2', '\xf3', '\xf4', '\xf5']:  # lowercase variants
+            s = s.replace(ch, '')
+        return s.lower()
+    return normalize(name1) == normalize(name2)
 
 # Load configuration settings
 def load_config(path="config.json"):
@@ -1026,8 +1119,8 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
 
 def main():
     import argparse
-    parser = argparse.ArgumentParser(description="Futures Strategy Backtester")
-    parser.add_argument("--mode", choices=["futures", "etfs"], required=True, help="Which type of trades to backtest")
+    parser = argparse.ArgumentParser(description="Currency Strategy Trade Evaluator")
+    parser.add_argument("--mode", choices=["futures", "etfs"], required=True, help="Which type of trades to evaluate")
     parser.add_argument("--debug", action="store_true", help="Enable debug output for matched strategy names")
     parser.add_argument("--etf-source", choices=["polygon", "insightsentry"], help="Data source for ETF data (overrides config)")
     parser.add_argument("--test-auth", action="store_true", help="Test authentication for the selected data source and exit")
@@ -1062,6 +1155,7 @@ def main():
     output_file = "trade_results_futures.csv" if args.mode == "futures" else "trade_results_ETFs.csv"
 
     strategies = load_strategies(strategy_path)
+    win_rates = load_win_rates()
     df_signals = pd.read_csv(input_file, encoding="ISO-8859-1")
     
     # Create appropriate trading strategy based on mode
@@ -1259,6 +1353,9 @@ def main():
         else:
             expiration_date = ""  # Futures don't have expiration dates
 
+        # Look up historical win rate
+        win_rate = lookup_win_rate(win_rates, str(row["strategy"]).strip(), symbol, direction, target_type, args.mode)
+
         # Build complete result dictionary with all possible fields
         complete_result = {
             "symbol": symbol,
@@ -1276,7 +1373,8 @@ def main():
             "diff_from_entry": diff_from_entry if isinstance(diff_from_entry, (int, float)) else diff_from_entry,
             "entry_date": result.get("entry_date", ""),
             "exit_date": result.get("exit_date", ""),
-            "num_days_open": num_days_open
+            "num_days_open": num_days_open,
+            "win_rate": win_rate
         }
 
         # Filter result based on mode-specific column schema
@@ -1290,7 +1388,7 @@ def main():
     # Create DataFrame with mode-specific columns in correct order
     df_results = pd.DataFrame(results, columns=get_result_columns(args.mode))
     df_results.to_csv(output_file, index=False)
-    print(f"✅ Backtest completed. Results saved to '{output_file}'.")
+    print(f"✅ Evaluation completed. Results saved to '{output_file}'.")
 
 if __name__ == "__main__":
     main()

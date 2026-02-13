@@ -1,5 +1,5 @@
 """
-Trading strategy classes for ETF and Futures backtesting.
+Trading strategy classes for ETF and Futures trade evaluation.
 Provides clean separation between different trading logic types.
 """
 

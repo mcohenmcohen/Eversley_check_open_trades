@@ -1,5 +1,5 @@
 """
-Data sources module for currency strategy backtesting.
+Data sources module for currency strategy trade evaluation.
 Supports Polygon.io for ETFs and InsightSentry for futures data.
 """
 import pandas as pd
@@ -741,7 +741,7 @@ class InsightSentryDataSource:
             else:
                 print(f"Raw daily data: {total_bars} bars")
             
-            # Don't filter by date range - return all historical data for calendar year backtesting
+            # Don't filter by date range - return all historical data for calendar year evaluation
             # The dp parameter already limits us to the desired amount of historical data
             print(f"{symbol}: retrieved {len(df)} days from InsightSentry")
             return df
@@ -842,7 +842,7 @@ class InsightSentryDataSource:
             df.set_index('Date', inplace=True)
             df.sort_index(inplace=True)
             
-            # Don't filter by date range - return all historical data for calendar year backtesting
+            # Don't filter by date range - return all historical data for calendar year evaluation
             # The dp parameter already limits us to the desired amount of historical data
             print(f"{symbol}: retrieved {len(df)} days from InsightSentry")
             return df
@@ -1067,7 +1067,7 @@ class DataSourceManager:
                       end_date: datetime = None) -> pd.DataFrame:
         """
         Get price data for a symbol based on mode (etfs or futures).
-        This is the main interface for the backtesting system.
+        This is the main interface for the trade evaluation system.
         
         Args:
             symbol: Symbol to fetch
@@ -1120,7 +1120,7 @@ def load_futures_data_from_csv(symbol: str) -> pd.DataFrame:
 def fetch_price_data(symbols: List[str], start_date: datetime, end_date: datetime, 
                     data_manager: DataSourceManager) -> Dict[str, pd.DataFrame]:
     """
-    Backwards compatible function for the existing backtesting system.
+    Backwards compatible function for the existing trade evaluation system.
     
     Args:
         symbols: List of symbols to fetch

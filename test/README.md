@@ -1,6 +1,6 @@
 # Test Files Directory
 
-This directory contains all test and utility scripts for the currency strategy backtesting system.
+This directory contains all test and utility scripts for the currency strategy trade evaluation system.
 
 ## Test Files
 
@@ -44,6 +44,6 @@ python test/test_polygon_import.py --symbol QQQ --start_date 2023-10-27 --end_da
 
 ## Notes
 
-- All test files that import local modules (`data_sources`, `currency_strategy_backtester`) have been updated with proper path handling
+- All test files that import local modules (`data_sources`, `trade_evaluator`) have been updated with proper path handling
 - Tests require appropriate environment variables (`POLYGON_API_KEY`, `INSIGHTSENTRY_API_KEY`)
 - Some tests may fail if API keys are not set or if data is not available for the requested symbols/dates

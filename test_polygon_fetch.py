@@ -50,7 +50,7 @@ def fetch_futures_data(symbol, start_date, end_date):
             print(df)
 
             # Calculate ATR5 for reference
-            from currency_strategy_backtester import wilders_atr
+            from trade_evaluator import wilders_atr
             atr5 = wilders_atr(df, 5)
             print(f"\nATR5 on {df.index[-1].date()}: {atr5.iloc[-1]:.4f}")
 

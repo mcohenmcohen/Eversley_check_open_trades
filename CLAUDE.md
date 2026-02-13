@@ -17,14 +17,14 @@ Navigate to the main project directory:
 cd "currency_strategy_project_all_fixes"
 ```
 
-Run ETF backtesting:
+Run ETF trade evaluation:
 ```bash
-python currency_strategy_backtester.py --mode etfs --debug
+python trade_evaluator.py --mode etfs --debug
 ```
 
-Run futures backtesting:
+Run futures trade evaluation:
 ```bash
-python currency_strategy_backtester.py --mode futures --debug
+python trade_evaluator.py --mode futures --debug
 ```
 
 Launch Jupyter notebooks:
@@ -46,11 +46,11 @@ python test_polygon_import.py --symbol QQQ --start_date 2023-10-27 --end_date 20
 
 ## Project Architecture
 
-This is a currency futures and ETF trading strategy backtesting system housed in the `currency_strategy_project_all_fixes/` directory.
+This is a currency futures and ETF trading strategy trade evaluation system housed in the `currency_strategy_project_all_fixes/` directory.
 
 ### Core Components
 
-**currency_strategy_backtester.py** - Main backtesting engine supporting both ETF and futures modes:
+**trade_evaluator.py** - Main trade evaluation engine supporting both ETF and futures modes:
 - Loads 11+ predefined trading strategies from JSON configuration
 - Fetches historical price data via Polygon.io API and local CSV files
 - Simulates trade execution with realistic entry/exit rules
@@ -63,7 +63,7 @@ This is a currency futures and ETF trading strategy backtesting system housed in
 - Trigger window parameters (2-3 day windows)
 
 **utilities.py** - Shared utility functions for:
-- Date parsing and options expiration calculations  
+- Date parsing and options expiration calculations
 - Strategy name resolution and fuzzy matching
 - Local CSV data loading for futures contracts
 - Holiday and trading calendar management
@@ -146,7 +146,7 @@ The system supports sophisticated target selection for futures strategies:
 
 ## Development Notes
 
-The system uses Polygon.io API for ETF data and Massive.com (formerly Polygon futures API) for futures data, with built-in caching for performance. The backtesting engine handles different execution rules for futures vs ETF strategies, supporting both intraday and daily timeframes with realistic slippage and commission modeling.
+The system uses Polygon.io API for ETF data and Massive.com (formerly Polygon futures API) for futures data, with built-in caching for performance. The trade evaluation engine handles different execution rules for futures vs ETF strategies, supporting both intraday and daily timeframes with realistic slippage and commission modeling.
 
 ### Recent Updates
 
@@ -155,15 +155,15 @@ The system uses Polygon.io API for ETF data and Massive.com (formerly Polygon fu
 - Weekly strategies were using future data (most recent week's ATR) instead of ATR as of signal date
 - Fixed hardcoded ETF target calculations that ignored strategy configuration
 - Now correctly uses strategy JSON config for timeframe (weekly vs daily) and multiplier (e.g., 0.55)
-- Results are now consistent and reproducible regardless of when backtest is run
+- Results are now consistent and reproducible regardless of when evaluation is run
 
 **Impact:**
 - Weekly strategies now use correct ATR values (e.g., GLD 11/28: $15.59 instead of $14.03)
 - Target prices accurately reflect strategy config (e.g., GLD: $399.19 instead of $395.92)
-- Eliminates look-ahead bias that made historical backtests unreliable
+- Eliminates look-ahead bias that made historical evaluations unreliable
 
 **Key Files Modified:**
-- `currency_strategy_backtester.py` (lines 389, 1191): Fixed weekly ATR to use signal date
+- `trade_evaluator.py` (lines 389, 1191): Fixed weekly ATR to use signal date
 - `trading_strategies.py` (lines 53-87): Rewrote ETF evaluate_exit() to respect strategy config
 
 **Multi-Target Implementation (2025):**
@@ -174,7 +174,7 @@ The system uses Polygon.io API for ETF data and Massive.com (formerly Polygon fu
 - Target type results show specific selected target (e.g., "ATR5 x 0.6") instead of generic labels
 
 **Key Files Modified:**
-- `currency_strategy_backtester.py`: Added multi-target calculation and selection logic
+- `trade_evaluator.py`: Added multi-target calculation and selection logic
 - `trading_strategies.py`: Enhanced target type detection and polymorphic formula handling
 - `strategies_complete.json`: Updated to support flexible multi-target configurations per strategy
 
@@ -199,5 +199,5 @@ The system uses Polygon.io API for ETF data and Massive.com (formerly Polygon fu
 **Key Files Modified:**
 - `data_sources.py` (lines 193-405): Added MassiveDataSource class with contract mappings
 - `data_sources.py` (lines 913-1045): Updated DataSourceManager to prioritize Massive.com
-- `currency_strategy_backtester.py` (lines 938-1036): Enhanced non-triggered trade value calculation
-- `currency_strategy_backtester.py` (lines 1217-1222): Added Expired status for num_days_open column
+- `trade_evaluator.py` (lines 938-1036): Enhanced non-triggered trade value calculation
+- `trade_evaluator.py` (lines 1217-1222): Added Expired status for num_days_open column

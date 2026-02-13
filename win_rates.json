@@ -1,0 +1,617 @@
+{
+  "ETF": {
+    "Donchian Crossover Buy": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 90, "2_exp_1.5x_ATR": 81},
+        "EEM": {"2_exp_1x_ATR": 94, "2_exp_1.5x_ATR": 87},
+        "EFA": {"2_exp_1x_ATR": 90, "2_exp_1.5x_ATR": 88},
+        "EWG": {"2_exp_1x_ATR": 81, "2_exp_1.5x_ATR": 75},
+        "EWH": {"2_exp_1x_ATR": 92, "2_exp_1.5x_ATR": 90},
+        "FXI": {"2_exp_1x_ATR": 91, "2_exp_1.5x_ATR": 82},
+        "GDX": {"2_exp_1x_ATR": 91, "2_exp_1.5x_ATR": 91},
+        "GLD": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 82},
+        "IBB": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 79},
+        "IWM": {"2_exp_1x_ATR": 98, "2_exp_1.5x_ATR": 94},
+        "IYR": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 82},
+        "QQQ": {"2_exp_1x_ATR": 92, "2_exp_1.5x_ATR": 88},
+        "SLV": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 83},
+        "SPY": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 81},
+        "TLT": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 78},
+        "UNG": {"2_exp_1x_ATR": 81, "2_exp_1.5x_ATR": 78},
+        "USO": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 79},
+        "VNQ": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 83},
+        "VWO": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 81},
+        "XHB": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 83},
+        "XLB": {"2_exp_1x_ATR": 94, "2_exp_1.5x_ATR": 89},
+        "XLE": {"2_exp_1x_ATR": 93, "2_exp_1.5x_ATR": 90},
+        "XLF": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 75},
+        "XLI": {"2_exp_1x_ATR": 91, "2_exp_1.5x_ATR": 87},
+        "XLK": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 84},
+        "XLV": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 85},
+        "XME": {"2_exp_1x_ATR": 82, "2_exp_1.5x_ATR": 82},
+        "XOP": {"2_exp_1x_ATR": 82, "2_exp_1.5x_ATR": 79},
+        "XRT": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 81}
+      }
+    },
+    "Donchian T-Lines Buy/Sell": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 92, "2_exp_1.5x_ATR": 89},
+        "EEM": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 82},
+        "EFA": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 84},
+        "EWG": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 84},
+        "EWH": {"2_exp_1x_ATR": 74, "2_exp_1.5x_ATR": 63},
+        "FXI": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 76},
+        "GDX": {"2_exp_1x_ATR": 92, "2_exp_1.5x_ATR": 82},
+        "GLD": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 80},
+        "IBB": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 80},
+        "IWM": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 85},
+        "IYR": {"2_exp_1x_ATR": 93, "2_exp_1.5x_ATR": 92},
+        "QQQ": {"2_exp_1x_ATR": 92, "2_exp_1.5x_ATR": 87},
+        "SLV": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 74},
+        "SPY": {"2_exp_1x_ATR": 90, "2_exp_1.5x_ATR": 88},
+        "TLT": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 81},
+        "UNG": {"2_exp_1x_ATR": 80, "2_exp_1.5x_ATR": 67},
+        "USO": {"2_exp_1x_ATR": 91, "2_exp_1.5x_ATR": 89},
+        "VNQ": {"2_exp_1x_ATR": 94, "2_exp_1.5x_ATR": 87},
+        "VWO": {"2_exp_1x_ATR": 81, "2_exp_1.5x_ATR": 76},
+        "XHB": {"2_exp_1x_ATR": 90, "2_exp_1.5x_ATR": 83},
+        "XLB": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 82},
+        "XLE": {"2_exp_1x_ATR": 91, "2_exp_1.5x_ATR": 78},
+        "XLF": {"2_exp_1x_ATR": 90, "2_exp_1.5x_ATR": 81},
+        "XLI": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 83},
+        "XLK": {"2_exp_1x_ATR": 91, "2_exp_1.5x_ATR": 87},
+        "XLV": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 78},
+        "XME": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 84},
+        "XOP": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 80},
+        "XRT": {"2_exp_1x_ATR": 81, "2_exp_1.5x_ATR": 74}
+      },
+      "sell": {
+        "DIA": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 72},
+        "EEM": {"2_exp_1x_ATR": 71, "2_exp_1.5x_ATR": 69},
+        "EFA": {"2_exp_1x_ATR": 78, "2_exp_1.5x_ATR": 76},
+        "EWG": {"2_exp_1x_ATR": 79, "2_exp_1.5x_ATR": 77},
+        "EWH": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 85},
+        "FXI": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 78},
+        "GDX": {"2_exp_1x_ATR": 92, "2_exp_1.5x_ATR": 82},
+        "GLD": {"2_exp_1x_ATR": 71, "2_exp_1.5x_ATR": 69},
+        "IBB": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 67},
+        "IWM": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 78},
+        "IYR": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 79},
+        "QQQ": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 82},
+        "SLV": {"2_exp_1x_ATR": 76, "2_exp_1.5x_ATR": 65},
+        "SPY": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 78},
+        "TLT": {"2_exp_1x_ATR": 73, "2_exp_1.5x_ATR": 71},
+        "UNG": {"2_exp_1x_ATR": 82, "2_exp_1.5x_ATR": 72},
+        "USO": {"2_exp_1x_ATR": 81, "2_exp_1.5x_ATR": 74},
+        "VNQ": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 82},
+        "VWO": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 80},
+        "XHB": {"2_exp_1x_ATR": 94, "2_exp_1.5x_ATR": 81},
+        "XLB": {"2_exp_1x_ATR": 79, "2_exp_1.5x_ATR": 72},
+        "XLE": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 74},
+        "XLF": {"2_exp_1x_ATR": 80, "2_exp_1.5x_ATR": 69},
+        "XLI": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 73},
+        "XLK": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 86},
+        "XLV": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 70},
+        "XME": {"2_exp_1x_ATR": 97, "2_exp_1.5x_ATR": 83},
+        "XOP": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 78},
+        "XRT": {"2_exp_1x_ATR": 82, "2_exp_1.5x_ATR": 79}
+      }
+    },
+    "Donchian Hook Buy": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 78},
+        "EEM": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 84},
+        "EFA": {"2_exp_1x_ATR": 93, "2_exp_1.5x_ATR": 85},
+        "EWG": {"2_exp_1x_ATR": 80, "2_exp_1.5x_ATR": 70},
+        "EWH": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 75},
+        "FXI": {"2_exp_1x_ATR": 82, "2_exp_1.5x_ATR": 76},
+        "GDX": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 82},
+        "GLD": {"2_exp_1x_ATR": 81, "2_exp_1.5x_ATR": 81},
+        "IBB": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 81},
+        "IWM": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 83},
+        "IYR": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 84},
+        "QQQ": {"2_exp_1x_ATR": 94, "2_exp_1.5x_ATR": 86},
+        "SLV": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 78},
+        "SPY": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 82},
+        "TLT": {"2_exp_1x_ATR": 93, "2_exp_1.5x_ATR": 87},
+        "UNG": {"2_exp_1x_ATR": 74, "2_exp_1.5x_ATR": 63},
+        "USO": {"2_exp_1x_ATR": 81, "2_exp_1.5x_ATR": 78},
+        "VNQ": {"2_exp_1x_ATR": 92, "2_exp_1.5x_ATR": 84},
+        "VWO": {"2_exp_1x_ATR": 77, "2_exp_1.5x_ATR": 77},
+        "XHB": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 84},
+        "XLB": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 79},
+        "XLE": {"2_exp_1x_ATR": 91, "2_exp_1.5x_ATR": 89},
+        "XLF": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 79},
+        "XLI": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 85},
+        "XLK": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 87},
+        "XLV": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 84},
+        "XME": {"2_exp_1x_ATR": 94, "2_exp_1.5x_ATR": 94},
+        "XOP": {"2_exp_1x_ATR": 90, "2_exp_1.5x_ATR": 88},
+        "XRT": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 82}
+      }
+    },
+    "Ichimoku Kijun 5 Hook Buy": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 93, "2_exp_1.5x_ATR": 84},
+        "EEM": {"2_exp_1x_ATR": 80, "2_exp_1.5x_ATR": 73},
+        "EFA": {"2_exp_1x_ATR": 79, "2_exp_1.5x_ATR": 73},
+        "EWG": {"2_exp_1x_ATR": 78, "2_exp_1.5x_ATR": 73},
+        "EWH": {"2_exp_1x_ATR": 79, "2_exp_1.5x_ATR": 75},
+        "FXI": {"2_exp_1x_ATR": 81, "2_exp_1.5x_ATR": 74},
+        "GDX": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 82},
+        "GLD": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 80},
+        "IBB": {"2_exp_1x_ATR": 80, "2_exp_1.5x_ATR": 75},
+        "IWM": {"2_exp_1x_ATR": 90, "2_exp_1.5x_ATR": 82},
+        "IYR": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 75},
+        "QQQ": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 83},
+        "SLV": {"2_exp_1x_ATR": 81, "2_exp_1.5x_ATR": 74},
+        "SPY": {"2_exp_1x_ATR": 92, "2_exp_1.5x_ATR": 83},
+        "TLT": {"2_exp_1x_ATR": 82, "2_exp_1.5x_ATR": 78},
+        "UNG": {"2_exp_1x_ATR": 79, "2_exp_1.5x_ATR": 71},
+        "USO": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 83},
+        "VNQ": {"2_exp_1x_ATR": 93, "2_exp_1.5x_ATR": 80},
+        "VWO": {"2_exp_1x_ATR": 80, "2_exp_1.5x_ATR": 71},
+        "XHB": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 85},
+        "XLB": {"2_exp_1x_ATR": 95, "2_exp_1.5x_ATR": 85},
+        "XLE": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 77},
+        "XLF": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 82},
+        "XLI": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 83},
+        "XLK": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 79},
+        "XLV": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 87},
+        "XME": {"2_exp_1x_ATR": 74, "2_exp_1.5x_ATR": 68},
+        "XOP": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 80},
+        "XRT": {"2_exp_1x_ATR": 90, "2_exp_1.5x_ATR": 83}
+      }
+    },
+    "ETF Squeeze Sell": {
+      "sell": {
+        "DIA": {"2_exp_1x_ATR": 82, "2_exp_1.5x_ATR": 79},
+        "EEM": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 77},
+        "EFA": {"2_exp_1x_ATR": 77, "2_exp_1.5x_ATR": 72},
+        "EWG": {"2_exp_1x_ATR": 78, "2_exp_1.5x_ATR": 74},
+        "EWH": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 79},
+        "FXI": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 83},
+        "GDX": {"2_exp_1x_ATR": 80, "2_exp_1.5x_ATR": 76},
+        "GLD": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 71},
+        "IBB": {"2_exp_1x_ATR": 82, "2_exp_1.5x_ATR": 73},
+        "IWM": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 74},
+        "IYR": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 77},
+        "QQQ": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 75},
+        "SLV": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 81},
+        "SPY": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 75},
+        "TLT": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 78},
+        "UNG": {"2_exp_1x_ATR": 94, "2_exp_1.5x_ATR": 90},
+        "USO": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 81},
+        "VNQ": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 80},
+        "VWO": {"2_exp_1x_ATR": 90, "2_exp_1.5x_ATR": 79},
+        "XHB": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 77},
+        "XLB": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 80},
+        "XLE": {"2_exp_1x_ATR": 81, "2_exp_1.5x_ATR": 73},
+        "XLF": {"2_exp_1x_ATR": 82, "2_exp_1.5x_ATR": 71},
+        "XLI": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 81},
+        "XLK": {"2_exp_1x_ATR": 80, "2_exp_1.5x_ATR": 72},
+        "XLV": {"2_exp_1x_ATR": 85, "2_exp_1.5x_ATR": 80},
+        "XME": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 74},
+        "XOP": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 76},
+        "XRT": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 78}
+      }
+    },
+    "Super Trend Sector Buy": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 89, "2_exp_1.2x_ATR": 88, "2_exp_1.5x_ATR": 85},
+        "QQQ": {"2_exp_1x_ATR": 91, "2_exp_1.2x_ATR": 84, "2_exp_1.5x_ATR": 84},
+        "SPY": {"2_exp_1x_ATR": 93, "2_exp_1.2x_ATR": 89, "2_exp_1.5x_ATR": 83},
+        "XLI": {"2_exp_1x_ATR": 90, "2_exp_1.2x_ATR": 78, "2_exp_1.5x_ATR": 77},
+        "XLK": {"2_exp_1x_ATR": 85, "2_exp_1.2x_ATR": 82, "2_exp_1.5x_ATR": 76}
+      }
+    },
+    "Squeeze Play Sector Buy": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 96, "2_exp_1.2x_ATR": 87, "2_exp_1.5x_ATR": 74},
+        "QQQ": {"2_exp_1x_ATR": 96, "2_exp_1.2x_ATR": 91, "2_exp_1.5x_ATR": 82},
+        "SPY": {"2_exp_1x_ATR": 96, "2_exp_1.2x_ATR": 90, "2_exp_1.5x_ATR": 88},
+        "XLI": {"2_exp_1x_ATR": 95, "2_exp_1.2x_ATR": 93, "2_exp_1.5x_ATR": 91},
+        "XLK": {"2_exp_1x_ATR": 88, "2_exp_1.2x_ATR": 88, "2_exp_1.5x_ATR": 76}
+      }
+    },
+    "Squeeze Play Sector Sell": {
+      "sell": {
+        "DIA": {"2_exp_1x_ATR": 90, "2_exp_1.2x_ATR": 88, "2_exp_1.5x_ATR": 83},
+        "QQQ": {"2_exp_1x_ATR": 87, "2_exp_1.2x_ATR": 79, "2_exp_1.5x_ATR": 77},
+        "SPY": {"2_exp_1x_ATR": 89, "2_exp_1.2x_ATR": 85, "2_exp_1.5x_ATR": 81},
+        "XLI": {"2_exp_1x_ATR": 94, "2_exp_1.2x_ATR": 92, "2_exp_1.5x_ATR": 88},
+        "XLK": {"2_exp_1x_ATR": 85, "2_exp_1.2x_ATR": 78, "2_exp_1.5x_ATR": 74}
+      }
+    },
+    "Squeeze Put/Call Buy (Setup 1)": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 72},
+        "QQQ": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 75},
+        "SPY": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 74},
+        "XLI": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 69},
+        "XLK": {"2_exp_1x_ATR": 82, "2_exp_1.5x_ATR": 73}
+      }
+    },
+    "Ichimoku Tenkan Hook Put/Call Buy (Setup 2)": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 79, "2_exp_1.5x_ATR": 73},
+        "QQQ": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 83},
+        "SPY": {"2_exp_1x_ATR": 91, "2_exp_1.5x_ATR": 83},
+        "XLI": {"2_exp_1x_ATR": 75, "2_exp_1.5x_ATR": 67},
+        "XLK": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 81}
+      }
+    },
+    "Ichimoku Tenkan Flat Put/Call Buy (Setup 3)": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 75},
+        "QQQ": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 81},
+        "SPY": {"2_exp_1x_ATR": 81, "2_exp_1.5x_ATR": 70},
+        "XLI": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 74},
+        "XLK": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 79}
+      }
+    },
+    "Stochastics Hook Put/Call Buy (Setup 4)": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 80},
+        "QQQ": {"2_exp_1x_ATR": 92, "2_exp_1.5x_ATR": 81},
+        "SPY": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 75},
+        "XLI": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 80},
+        "XLK": {"2_exp_1x_ATR": 90, "2_exp_1.5x_ATR": 81}
+      }
+    },
+    "20.8 Trigger Lines Put/Call Buy (Setup 5)": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 89, "2_exp_1.5x_ATR": 76},
+        "QQQ": {"2_exp_1x_ATR": 93, "2_exp_1.5x_ATR": 85},
+        "SPY": {"2_exp_1x_ATR": 87, "2_exp_1.5x_ATR": 79},
+        "XLI": {"2_exp_1x_ATR": 84, "2_exp_1.5x_ATR": 75},
+        "XLK": {"2_exp_1x_ATR": 88, "2_exp_1.5x_ATR": 81}
+      }
+    },
+    "Gap and Go Put/Call Buy (Setup 6)": {
+      "buy": {
+        "DIA": {"2_exp_1x_ATR": 83, "2_exp_1.5x_ATR": 75},
+        "QQQ": {"2_exp_1x_ATR": 93, "2_exp_1.5x_ATR": 82},
+        "SPY": {"2_exp_1x_ATR": 86, "2_exp_1.5x_ATR": 78},
+        "XLI": {"2_exp_1x_ATR": 78, "2_exp_1.5x_ATR": 72},
+        "XLK": {"2_exp_1x_ATR": 92, "2_exp_1.5x_ATR": 87}
+      }
+    },
+    "Weekly Swing Trend Buy": {
+      "buy": {
+        "DIA": {"55pct_weekly_ATR5": 85},
+        "EEM": {"55pct_weekly_ATR5": 90},
+        "EFA": {"55pct_weekly_ATR5": 75},
+        "EWG": {"55pct_weekly_ATR5": 78},
+        "EWH": {"55pct_weekly_ATR5": 86},
+        "FXI": {"55pct_weekly_ATR5": 68},
+        "GDX": {"55pct_weekly_ATR5": 83},
+        "GLD": {"55pct_weekly_ATR5": 83},
+        "IBB": {"55pct_weekly_ATR5": 82},
+        "IWM": {"55pct_weekly_ATR5": 74},
+        "IYR": {"55pct_weekly_ATR5": 89},
+        "QQQ": {"55pct_weekly_ATR5": 85},
+        "SLV": {"55pct_weekly_ATR5": 93},
+        "SPY": {"55pct_weekly_ATR5": 89},
+        "TLT": {"55pct_weekly_ATR5": 76},
+        "UNG": {"55pct_weekly_ATR5": 81},
+        "USO": {"55pct_weekly_ATR5": 76},
+        "VNQ": {"55pct_weekly_ATR5": 90},
+        "VWO": {"55pct_weekly_ATR5": 89},
+        "XHB": {"55pct_weekly_ATR5": 93},
+        "XLB": {"55pct_weekly_ATR5": 84},
+        "XLE": {"55pct_weekly_ATR5": 85},
+        "XLF": {"55pct_weekly_ATR5": 86},
+        "XLI": {"55pct_weekly_ATR5": 92},
+        "XLK": {"55pct_weekly_ATR5": 86},
+        "XLV": {"55pct_weekly_ATR5": 97},
+        "XME": {"55pct_weekly_ATR5": 76},
+        "XOP": {"55pct_weekly_ATR5": 83},
+        "XRT": {"55pct_weekly_ATR5": 84}
+      }
+    },
+    "Weekly Turbo Hook Buy": {
+      "buy": {
+        "DIA": {"55pct_weekly_ATR5": 91, "60pct_weekly_ATR5": 91},
+        "EEM": {"55pct_weekly_ATR5": 88, "60pct_weekly_ATR5": 88},
+        "EFA": {"55pct_weekly_ATR5": 97, "60pct_weekly_ATR5": 97},
+        "EWG": {"55pct_weekly_ATR5": 71, "60pct_weekly_ATR5": 71},
+        "EWH": {"55pct_weekly_ATR5": 73, "60pct_weekly_ATR5": 69},
+        "FXI": {"55pct_weekly_ATR5": 81, "60pct_weekly_ATR5": 81},
+        "GDX": {"55pct_weekly_ATR5": 79, "60pct_weekly_ATR5": 79},
+        "GLD": {"55pct_weekly_ATR5": 83, "60pct_weekly_ATR5": 81},
+        "IBB": {"55pct_weekly_ATR5": 84, "60pct_weekly_ATR5": 84},
+        "IWM": {"55pct_weekly_ATR5": 79, "60pct_weekly_ATR5": 76},
+        "IYR": {"55pct_weekly_ATR5": 85, "60pct_weekly_ATR5": 85},
+        "QQQ": {"55pct_weekly_ATR5": 86, "60pct_weekly_ATR5": 86},
+        "SLV": {"55pct_weekly_ATR5": 72, "60pct_weekly_ATR5": 68},
+        "SPY": {"55pct_weekly_ATR5": 92, "60pct_weekly_ATR5": 90},
+        "TLT": {"55pct_weekly_ATR5": 78, "60pct_weekly_ATR5": 78},
+        "UNG": {"55pct_weekly_ATR5": 68, "60pct_weekly_ATR5": 68},
+        "USO": {"55pct_weekly_ATR5": 86, "60pct_weekly_ATR5": 86},
+        "VNQ": {"55pct_weekly_ATR5": 92, "60pct_weekly_ATR5": 92},
+        "VWO": {"55pct_weekly_ATR5": 89, "60pct_weekly_ATR5": 85},
+        "XHB": {"55pct_weekly_ATR5": 81, "60pct_weekly_ATR5": 81},
+        "XLB": {"55pct_weekly_ATR5": 91, "60pct_weekly_ATR5": 91},
+        "XLE": {"55pct_weekly_ATR5": 90, "60pct_weekly_ATR5": 83},
+        "XLF": {"55pct_weekly_ATR5": 76, "60pct_weekly_ATR5": 76},
+        "XLI": {"55pct_weekly_ATR5": 83, "60pct_weekly_ATR5": 81},
+        "XLK": {"55pct_weekly_ATR5": 89, "60pct_weekly_ATR5": 89},
+        "XLV": {"55pct_weekly_ATR5": 82, "60pct_weekly_ATR5": 82},
+        "XME": {"55pct_weekly_ATR5": 84, "60pct_weekly_ATR5": 80},
+        "XOP": {"55pct_weekly_ATR5": 89, "60pct_weekly_ATR5": 85},
+        "XRT": {"55pct_weekly_ATR5": 78, "60pct_weekly_ATR5": 78}
+      }
+    },
+    "Weekly Ichimoku Squeeze Sell": {
+      "sell": {
+        "DIA": {"1x_daily_ATR20": 92, "1.5x_daily_ATR20": 88},
+        "EEM": {"1x_daily_ATR20": 88, "1.5x_daily_ATR20": 88},
+        "EFA": {"1x_daily_ATR20": 76, "1.5x_daily_ATR20": 76},
+        "EWG": {"1x_daily_ATR20": 87, "1.5x_daily_ATR20": 65},
+        "EWH": {"1x_daily_ATR20": 95, "1.5x_daily_ATR20": 91},
+        "FXI": {"1x_daily_ATR20": 94, "1.5x_daily_ATR20": 88},
+        "GDX": {"1x_daily_ATR20": 92, "1.5x_daily_ATR20": 92},
+        "GLD": {"1x_daily_ATR20": 71, "1.5x_daily_ATR20": 62},
+        "IBB": {"1x_daily_ATR20": 90, "1.5x_daily_ATR20": 81},
+        "IWM": {"1x_daily_ATR20": 90, "1.5x_daily_ATR20": 76},
+        "IYR": {"1x_daily_ATR20": 83, "1.5x_daily_ATR20": 74},
+        "QQQ": {"1x_daily_ATR20": 85, "1.5x_daily_ATR20": 85},
+        "SLV": {"1x_daily_ATR20": 82, "1.5x_daily_ATR20": 71},
+        "SPY": {"1x_daily_ATR20": 92, "1.5x_daily_ATR20": 83},
+        "TLT": {"1x_daily_ATR20": 89, "1.5x_daily_ATR20": 89},
+        "UNG": {"1x_daily_ATR20": 92, "1.5x_daily_ATR20": 92},
+        "USO": {"1x_daily_ATR20": 89, "1.5x_daily_ATR20": 83},
+        "VNQ": {"1x_daily_ATR20": 87, "1.5x_daily_ATR20": 77},
+        "VWO": {"1x_daily_ATR20": 94, "1.5x_daily_ATR20": 88},
+        "XHB": {"1x_daily_ATR20": 96, "1.5x_daily_ATR20": 84},
+        "XLB": {"1x_daily_ATR20": 90, "1.5x_daily_ATR20": 79},
+        "XLE": {"1x_daily_ATR20": 89, "1.5x_daily_ATR20": 89},
+        "XLF": {"1x_daily_ATR20": 85, "1.5x_daily_ATR20": 77},
+        "XLI": {"1x_daily_ATR20": 89, "1.5x_daily_ATR20": 81},
+        "XLK": {"1x_daily_ATR20": 93, "1.5x_daily_ATR20": 87},
+        "XLV": {"1x_daily_ATR20": 83, "1.5x_daily_ATR20": 83},
+        "XME": {"1x_daily_ATR20": 91, "1.5x_daily_ATR20": 83},
+        "XOP": {"1x_daily_ATR20": 85, "1.5x_daily_ATR20": 85},
+        "XRT": {"1x_daily_ATR20": 94, "1.5x_daily_ATR20": 81}
+      }
+    },
+    "Weekly 10.5 Squeeze Buy": {
+      "buy": {
+        "DIA": {"55pct_weekly_ATR5": 96},
+        "EEM": {"55pct_weekly_ATR5": 81},
+        "EFA": {"55pct_weekly_ATR5": 76},
+        "EWG": {"55pct_weekly_ATR5": 79},
+        "EWH": {"55pct_weekly_ATR5": 85},
+        "FXI": {"55pct_weekly_ATR5": 87},
+        "GDX": {"55pct_weekly_ATR5": 88},
+        "GLD": {"55pct_weekly_ATR5": 83},
+        "IBB": {"55pct_weekly_ATR5": 93},
+        "IWM": {"55pct_weekly_ATR5": 94},
+        "IYR": {"55pct_weekly_ATR5": 91},
+        "QQQ": {"55pct_weekly_ATR5": 95},
+        "SLV": {"55pct_weekly_ATR5": 83},
+        "SPY": {"55pct_weekly_ATR5": 85},
+        "TLT": {"55pct_weekly_ATR5": 83},
+        "UNG": {"55pct_weekly_ATR5": 76},
+        "USO": {"55pct_weekly_ATR5": 56},
+        "VNQ": {"55pct_weekly_ATR5": 96},
+        "VWO": {"55pct_weekly_ATR5": 79},
+        "XHB": {"55pct_weekly_ATR5": 93},
+        "XLB": {"55pct_weekly_ATR5": 90},
+        "XLE": {"55pct_weekly_ATR5": 88},
+        "XLF": {"55pct_weekly_ATR5": 76},
+        "XLI": {"55pct_weekly_ATR5": 83},
+        "XLK": {"55pct_weekly_ATR5": 95},
+        "XLV": {"55pct_weekly_ATR5": 88},
+        "XME": {"55pct_weekly_ATR5": 89},
+        "XOP": {"55pct_weekly_ATR5": 100},
+        "XRT": {"55pct_weekly_ATR5": 77}
+      }
+    },
+    "Weekly Swing Sell": {
+      "sell": {
+        "DIA": {"55pct_weekly_ATR5": 71, "60pct_weekly_ATR5": 71, "1x_weekly_ATR5": 71},
+        "EEM": {"55pct_weekly_ATR5": 67, "60pct_weekly_ATR5": 67, "1x_weekly_ATR5": 67},
+        "EFA": {"55pct_weekly_ATR5": 92, "60pct_weekly_ATR5": 92, "1x_weekly_ATR5": 92},
+        "EWG": {"55pct_weekly_ATR5": 93, "60pct_weekly_ATR5": 93, "1x_weekly_ATR5": 93},
+        "EWH": {"55pct_weekly_ATR5": 76, "60pct_weekly_ATR5": 76, "1x_weekly_ATR5": 88},
+        "FXI": {"55pct_weekly_ATR5": 79, "60pct_weekly_ATR5": 79, "1x_weekly_ATR5": 93},
+        "GDX": {"55pct_weekly_ATR5": 80, "60pct_weekly_ATR5": 80, "1x_weekly_ATR5": 87},
+        "GLD": {"55pct_weekly_ATR5": 88, "60pct_weekly_ATR5": 88, "1x_weekly_ATR5": 88},
+        "IBB": {"55pct_weekly_ATR5": 82, "60pct_weekly_ATR5": 73, "1x_weekly_ATR5": 91},
+        "IWM": {"55pct_weekly_ATR5": 80, "60pct_weekly_ATR5": 80, "1x_weekly_ATR5": 93},
+        "IYR": {"55pct_weekly_ATR5": 94, "60pct_weekly_ATR5": 94, "1x_weekly_ATR5": 94},
+        "QQQ": {"55pct_weekly_ATR5": 71, "60pct_weekly_ATR5": 71, "1x_weekly_ATR5": 71},
+        "SLV": {"55pct_weekly_ATR5": 87, "60pct_weekly_ATR5": 87, "1x_weekly_ATR5": 93},
+        "SPY": {"55pct_weekly_ATR5": 60, "60pct_weekly_ATR5": 60, "1x_weekly_ATR5": 60},
+        "TLT": {"55pct_weekly_ATR5": 57, "60pct_weekly_ATR5": 57, "1x_weekly_ATR5": 57},
+        "UNG": {"55pct_weekly_ATR5": 78, "60pct_weekly_ATR5": 72, "1x_weekly_ATR5": 78},
+        "USO": {"55pct_weekly_ATR5": 60, "60pct_weekly_ATR5": 60, "1x_weekly_ATR5": 60},
+        "VNQ": {"55pct_weekly_ATR5": 94, "60pct_weekly_ATR5": 88, "1x_weekly_ATR5": 94},
+        "VWO": {"55pct_weekly_ATR5": 73, "60pct_weekly_ATR5": 73, "1x_weekly_ATR5": 73},
+        "XHB": {"55pct_weekly_ATR5": 89, "60pct_weekly_ATR5": 89, "1x_weekly_ATR5": 89},
+        "XLB": {"55pct_weekly_ATR5": 85, "60pct_weekly_ATR5": 77, "1x_weekly_ATR5": 85},
+        "XLE": {"55pct_weekly_ATR5": 100, "60pct_weekly_ATR5": 100, "1x_weekly_ATR5": 100},
+        "XLF": {"55pct_weekly_ATR5": 88, "60pct_weekly_ATR5": 88, "1x_weekly_ATR5": 88},
+        "XLI": {"55pct_weekly_ATR5": 92, "60pct_weekly_ATR5": 92, "1x_weekly_ATR5": 92},
+        "XLK": {"55pct_weekly_ATR5": 86, "60pct_weekly_ATR5": 86, "1x_weekly_ATR5": 86},
+        "XLV": {"55pct_weekly_ATR5": 80, "60pct_weekly_ATR5": 80, "1x_weekly_ATR5": 93},
+        "XME": {"55pct_weekly_ATR5": 56, "60pct_weekly_ATR5": 56, "1x_weekly_ATR5": 78},
+        "XOP": {"55pct_weekly_ATR5": 100, "60pct_weekly_ATR5": 100, "1x_weekly_ATR5": 100},
+        "XRT": {"55pct_weekly_ATR5": 85, "60pct_weekly_ATR5": 85, "1x_weekly_ATR5": 92}
+      }
+    }
+  },
+  "Futures": {
+    "D3 Index Futures Buy": {
+      "buy": {
+        "ES": {"0.6_ATR5": 86, "0.7_ATR5": 86},
+        "NQ": {"0.6_ATR5": 84, "0.7_ATR5": 84},
+        "RTY": {"0.6_ATR5": 84, "0.7_ATR5": 81},
+        "YM": {"0.6_ATR5": 92, "0.7_ATR5": 92}
+      }
+    },
+    "T-Lines Index Futures Buy": {
+      "buy": {
+        "ES": {"0.6_ATR5": 88},
+        "NQ": {"0.6_ATR5": 85},
+        "RTY": {"0.6_ATR5": 80},
+        "YM": {"0.7_ATR5": 89}
+      }
+    },
+    "TNT 47 Index Futures Trendline Buy": {
+      "buy": {
+        "ES": {"0.6_ATR5": 87},
+        "NQ": {"0.6_ATR5": 83},
+        "RTY": {"0.6_ATR5": 86},
+        "YM": {"0.6_ATR5": 84}
+      }
+    },
+    "Sector Hook Index Futures Buy": {
+      "buy": {
+        "ES": {"0.6_ATR5": 87, "0.7_ATR5": 87, "0.8_ATR5": 83},
+        "NQ": {"0.6_ATR5": 81, "0.7_ATR5": 71, "0.8_ATR5": 71},
+        "RTY": {"0.6_ATR5": 76, "0.7_ATR5": 76, "0.8_ATR5": 76},
+        "YM": {"0.6_ATR5": 92, "0.7_ATR5": 88, "0.8_ATR5": 88}
+      }
+    },
+    "Sector T-Lines Index Futures Buy": {
+      "buy": {
+        "ES": {"0.6_ATR5": 85, "0.7_ATR5": 82, "0.8_ATR5": 80},
+        "NQ": {"0.6_ATR5": 87, "0.7_ATR5": 82, "0.8_ATR5": 79},
+        "RTY": {"0.6_ATR5": 83, "0.7_ATR5": 78, "0.8_ATR5": 74},
+        "YM": {"0.6_ATR5": 87, "0.7_ATR5": 82, "0.8_ATR5": 80}
+      }
+    },
+    "Bull Run Currency Futures Buy": {
+      "buy": {
+        "AD": {"0.4_entry_stop": 86, "0.45_entry_stop": 86, "0.5_entry_stop": 86, "0.6_ATR5": 86, "0.7_ATR5": 86},
+        "BP": {"0.4_entry_stop": 68, "0.45_entry_stop": 66, "0.5_entry_stop": 63, "0.6_ATR5": 76, "0.7_ATR5": 74},
+        "CD": {"0.4_entry_stop": 80, "0.45_entry_stop": 76, "0.5_entry_stop": 72, "0.6_ATR5": 80, "0.7_ATR5": 76},
+        "EC": {"0.4_entry_stop": 91, "0.45_entry_stop": 91, "0.5_entry_stop": 91, "0.6_ATR5": 91, "0.7_ATR5": 91},
+        "SF": {"0.4_entry_stop": 93, "0.45_entry_stop": 85, "0.5_entry_stop": 81, "0.6_ATR5": 96, "0.7_ATR5": 93}
+      }
+    },
+    "D3 Currency Futures Buy": {
+      "buy": {
+        "AD": {"0.4_entry_stop": 87, "0.45_entry_stop": 83, "0.5_entry_stop": 83, "0.6_ATR5": 87, "0.7_ATR5": 87},
+        "BP": {"0.4_entry_stop": 92, "0.45_entry_stop": 92, "0.5_entry_stop": 88, "0.6_ATR5": 88, "0.7_ATR5": 88},
+        "CD": {"0.4_entry_stop": 87, "0.45_entry_stop": 83, "0.5_entry_stop": 83, "0.6_ATR5": 87, "0.7_ATR5": 87},
+        "EC": {"0.4_entry_stop": 85, "0.45_entry_stop": 85, "0.5_entry_stop": 85, "0.6_ATR5": 85, "0.7_ATR5": 85},
+        "SF": {"0.4_entry_stop": 69, "0.45_entry_stop": 66, "0.5_entry_stop": 66, "0.6_ATR5": 69, "0.7_ATR5": 66}
+      }
+    },
+    "Double \"D\" Swing Currency Futures Buy": {
+      "buy": {
+        "AD": {"0.4_entry_stop": 89, "0.45_entry_stop": 86, "0.5_entry_stop": 83, "0.6_ATR5": 89, "0.7_ATR5": 89},
+        "BP": {"0.4_entry_stop": 88, "0.45_entry_stop": 88, "0.5_entry_stop": 88, "0.6_ATR5": 88, "0.7_ATR5": 88},
+        "CD": {"0.4_entry_stop": 84, "0.45_entry_stop": 84, "0.5_entry_stop": 77, "0.6_ATR5": 87, "0.7_ATR5": 84},
+        "EC": {"0.4_entry_stop": 82, "0.45_entry_stop": 82, "0.5_entry_stop": 79, "0.6_ATR5": 82, "0.7_ATR5": 76},
+        "SF": {"0.4_entry_stop": 73, "0.45_entry_stop": 73, "0.5_entry_stop": 60, "0.6_ATR5": 73, "0.7_ATR5": 73}
+      }
+    },
+    "Squeeze Play Currency Futures Buy": {
+      "buy": {
+        "AD": {"0.4_entry_stop": 95, "0.45_entry_stop": 91, "0.5_entry_stop": 91, "0.6_ATR5": 91, "0.7_ATR5": 91},
+        "BP": {"0.4_entry_stop": 53, "0.45_entry_stop": 47, "0.5_entry_stop": 47, "0.6_ATR5": 56, "0.7_ATR5": 47},
+        "CD": {"0.4_entry_stop": 75, "0.45_entry_stop": 75, "0.5_entry_stop": 71, "0.6_ATR5": 79, "0.7_ATR5": 71},
+        "EC": {"0.4_entry_stop": 86, "0.45_entry_stop": 82, "0.5_entry_stop": 82, "0.6_ATR5": 86, "0.7_ATR5": 86},
+        "SF": {"0.4_entry_stop": 94, "0.45_entry_stop": 94, "0.5_entry_stop": 88, "0.6_ATR5": 94, "0.7_ATR5": 88}
+      }
+    },
+    "TXD Trendlines Currency Futures Buy": {
+      "buy": {
+        "AD": {"0.4_entry_stop": 82, "0.45_entry_stop": 82, "0.5_entry_stop": 76, "0.6_ATR5": 85, "0.7_ATR5": 80},
+        "BP": {"0.4_entry_stop": 82, "0.45_entry_stop": 77, "0.5_entry_stop": 73, "0.6_ATR5": 82, "0.7_ATR5": 70},
+        "CD": {"0.4_entry_stop": 84, "0.45_entry_stop": 82, "0.5_entry_stop": 80, "0.6_ATR5": 84, "0.7_ATR5": 80},
+        "EC": {"0.4_entry_stop": 73, "0.45_entry_stop": 68, "0.5_entry_stop": 68, "0.6_ATR5": 75, "0.7_ATR5": 63},
+        "SF": {"0.4_entry_stop": 86, "0.45_entry_stop": 86, "0.5_entry_stop": 79, "0.6_ATR5": 86, "0.7_ATR5": 86}
+      }
+    },
+    "Super Bull Currency Futures Buy": {
+      "buy": {
+        "AD": {"0.4_entry_stop": 84, "0.45_entry_stop": 84, "0.5_entry_stop": 84, "0.6_ATR5": 84, "0.7_ATR5": 84},
+        "BP": {"0.4_entry_stop": 76, "0.45_entry_stop": 72, "0.5_entry_stop": 72, "0.6_ATR5": 72, "0.7_ATR5": 72},
+        "CD": {"0.4_entry_stop": 78, "0.45_entry_stop": 78, "0.5_entry_stop": 78, "0.6_ATR5": 72, "0.7_ATR5": 72},
+        "EC": {"0.4_entry_stop": 90, "0.45_entry_stop": 87, "0.5_entry_stop": 87, "0.6_ATR5": 90, "0.7_ATR5": 87},
+        "SF": {"0.4_entry_stop": 89, "0.45_entry_stop": 89, "0.5_entry_stop": 89, "0.6_ATR5": 94, "0.7_ATR5": 94}
+      }
+    },
+    "Stochastics \"D\" Currency Futures Buy": {
+      "buy": {
+        "AD": {"0.4_entry_stop": 87, "0.45_entry_stop": 87, "0.5_entry_stop": 87, "0.6_ATR5": 87, "0.7_ATR5": 87},
+        "BP": {"0.4_entry_stop": 81, "0.45_entry_stop": 71, "0.5_entry_stop": 71, "0.6_ATR5": 81, "0.7_ATR5": 76},
+        "CD": {"0.4_entry_stop": 84, "0.45_entry_stop": 76, "0.5_entry_stop": 76, "0.6_ATR5": 84, "0.7_ATR5": 84},
+        "EC": {"0.4_entry_stop": 97, "0.45_entry_stop": 87, "0.5_entry_stop": 87, "0.6_ATR5": 97, "0.7_ATR5": 97},
+        "SF": {"0.4_entry_stop": 91, "0.45_entry_stop": 91, "0.5_entry_stop": 91, "0.6_ATR5": 91, "0.7_ATR5": 91}
+      }
+    },
+    "Bear Attack 1 Currency Futures Sell": {
+      "sell": {
+        "AD": {"0.4_entry_stop": 88, "0.45_entry_stop": 88, "0.5_entry_stop": 88, "0.6_ATR5": 88, "0.7_ATR5": 88},
+        "BP": {"0.4_entry_stop": 90, "0.45_entry_stop": 87, "0.5_entry_stop": 82, "0.6_ATR5": 87, "0.7_ATR5": 87},
+        "CD": {"0.4_entry_stop": 75, "0.45_entry_stop": 72, "0.5_entry_stop": 72, "0.6_ATR5": 84, "0.7_ATR5": 84},
+        "EC": {"0.4_entry_stop": 83, "0.45_entry_stop": 79, "0.5_entry_stop": 76, "0.6_ATR5": 88, "0.7_ATR5": 83},
+        "SF": {"0.4_entry_stop": 78, "0.45_entry_stop": 76, "0.5_entry_stop": 76, "0.6_ATR5": 88, "0.7_ATR5": 83}
+      }
+    },
+    "Bear Attack 2 Currency Futures Sell": {
+      "sell": {
+        "AD": {"0.4_entry_stop": 79, "0.45_entry_stop": 71, "0.5_entry_stop": 71, "0.6_ATR5": 83, "0.7_ATR5": 83},
+        "BP": {"0.4_entry_stop": 76, "0.45_entry_stop": 71, "0.5_entry_stop": 62, "0.6_ATR5": 81, "0.7_ATR5": 76},
+        "CD": {"0.4_entry_stop": 90, "0.45_entry_stop": 90, "0.5_entry_stop": 90, "0.6_ATR5": 90, "0.7_ATR5": 90},
+        "EC": {"0.4_entry_stop": 89, "0.45_entry_stop": 89, "0.5_entry_stop": 83, "0.6_ATR5": 89, "0.7_ATR5": 86},
+        "SF": {"0.4_entry_stop": 87, "0.45_entry_stop": 87, "0.5_entry_stop": 84, "0.6_ATR5": 100, "0.7_ATR5": 87}
+      }
+    },
+    "Swing Trend Currency Futures Sell": {
+      "sell": {
+        "AD": {"0.6_ATR5": 86, "0.7_ATR5": 86},
+        "BP": {"0.6_ATR5": 94, "0.7_ATR5": 90},
+        "CD": {"0.6_ATR5": 78, "0.7_ATR5": 75},
+        "EC": {"0.6_ATR5": 94, "0.7_ATR5": 94},
+        "SF": {"0.6_ATR5": 79, "0.7_ATR5": 79}
+      }
+    },
+    "TNT 52 Currency Futures Sell": {
+      "sell": {
+        "AD": {"0.6_ATR5": 90},
+        "BP": {"0.6_ATR5": 75},
+        "CD": {"0.6_ATR5": 83},
+        "EC": {"0.6_ATR5": 77},
+        "SF": {"0.6_ATR5": 84}
+      }
+    },
+    "D2 Swing Currency Futures Sell": {
+      "sell": {
+        "AD": {"0.4_entry_stop": 88, "0.45_entry_stop": 85, "0.5_entry_stop": 78, "0.6_ATR5": 88, "0.7_ATR5": 88},
+        "BP": {"0.4_entry_stop": 86, "0.45_entry_stop": 86, "0.5_entry_stop": 86, "0.6_ATR5": 86, "0.7_ATR5": 86},
+        "CD": {"0.4_entry_stop": 78, "0.45_entry_stop": 78, "0.5_entry_stop": 78, "0.6_ATR5": 88, "0.7_ATR5": 83},
+        "EC": {"0.4_entry_stop": 86, "0.45_entry_stop": 86, "0.5_entry_stop": 83, "0.6_ATR5": 89, "0.7_ATR5": 86},
+        "SF": {"0.4_entry_stop": 79, "0.45_entry_stop": 74, "0.5_entry_stop": 72, "0.6_ATR5": 85, "0.7_ATR5": 82}
+      }
+    },
+    "Ichimoku Cross Currency Futures Buy": {
+      "buy": {}
+    },
+    "Channel \"D\" Currency Futures Sell": {
+      "sell": {}
+    },
+    "Super Bear Currency Futures Sell": {
+      "sell": {}
+    },
+    "TXD Trendlines Index Futures Sell": {
+      "sell": {}
+    },
+    "14.8 Trig Extension Index Futures Sell": {
+      "sell": {}
+    },
+    "Bear Attack Squeeze Currency Futures Sell": {
+      "sell": {}
+    },
+    "Bull Run Index Futures Buy": {
+      "buy": {}
+    }
+  }
+}

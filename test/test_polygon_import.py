@@ -11,7 +11,7 @@ print("✅ Polygon SDK import works!")
 
 def main():
 
-    parser = argparse.ArgumentParser(description="Futures Strategy Backtester")
+    parser = argparse.ArgumentParser(description="Polygon Data Import Test")
     parser.add_argument('--symbol', type=str, required=True, help="e.g. QQQ")
     parser.add_argument('--start_date', type=str, required=True, help="YYYY-MM-DD format (e.g., 2023-10-27).")
     parser.add_argument('--end_date', type=str, required=True, help="YYYY-MM-DD format (e.g., 2023-10-27).")

@@ -1,7 +1,7 @@
 How to run the scripts
 
 ETFs:
-python currency_strategy_backtester.py --mode etfs --debug
+python trade_evaluator.py --mode etfs --debug
 
 Futures:
-python currency_strategy_backtester.py --mode futures --debug
+python trade_evaluator.py --mode futures --debug

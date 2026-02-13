@@ -1,99 +1,4 @@
 date,symbol,strategy,direction
-1/3/25,AD,Super Bull Buy,Buy
-1/16/25,EC,Super Bull Buy,Buy
-1/16/25,SF,Super Bull Buy,Buy
-1/29/25,CD,Super Bear Sell,Sell
-2/4/25,BP,Double D Swing Buy,Buy
-2/11/25,BP,TXD Trendlines Currency Futures Buy,Buy
-2/12/25,EC,Stochastics ÒDÓ Currency Futures Buy,Buy
-2/20/25,EC,Squeeze Play Currency Futures Buy,Buy
-2/25/25,CD,Channel ÒDÓ Currency Futures Sell,Sell
-2/27/25,EC,Swing Trend Currency Futures Sell,Sell
-2/27/25,SF,Super Bear Sell,Sell
-3/4/25,EC,Double D Swing Buy,Buy
-3/17/25,CD,D3 Currency Futures Buy,Buy
-3/24/25,CD,Squeeze Play Currency Futures Buy,Buy
-3/25/25,CD,Stochastics ÒDÓ Currency Futures Buy,Buy
-4/4/25,CD,Channel ÒDÓ Currency Futures Sell,Sell
-4/4/25,EC,Channel ÒDÓ Currency Futures Sell,Sell
-4/9/25,CD,Stochastics ÒDÓ Currency Futures Buy,Buy
-4/9/25,EC,Stochastics ÒDÓ Currency Futures Buy,Buy
-4/11/25,BP,Channel ÒDÓ Currency Futures Sell,Buy
-4/11/25,BP,TXD Trendlines Currency Futures Buy,Buy
-4/11/25,AD,Super Bull Currency Futures Buy ,Buy
-4/14/25,AD,Ichimoku Cross Currency Futures Buy,Buy
-4/14/25,BP,Ichimoku Cross Currency Futures Buy,Buy
-4/15/25,AD,D3 Currency Futures Buy,Buy
-4/22/25,SF,TNT 52 Currency Futures Sell,Sell
-5/1/25,CD,TNT 52 Currency Futures Sell,Sell
-5/6/25,BP,"Double ""D"" Swing Currency Futures Buy",Buy
-5/8/25,AD,"Channel ""D"" Currency Futures Sell",Sell
-5/13/25,AD,"Double ""D"" Swing Currency Futures Buy",Buy
-5/19/25,SF,TXD Trendlines Currency Futures Buy,Buy
-5/20/25,AD,TNT 52 Currency Futures Sell,Sell
-5/21/25,EC,D3 Currency Futures Buy,Buy
-5/21/25,SF,D3 Currency Futures Buy,Buy
-5/27/25,AD,Channel ÒDÓ Currency Futures Sell,Sell
-5/29/25,EC,Squeeze Play Currency Futures Buy,Buy
-5/29/25,EC,Double ÒDÓ Swing Currency Futures Buy,Buy
-5/30/25,CD,Stochastics ÒDÓ Currency Futures Buy,Buy
-6/10/25,ES,T-Lines Index Futures Buy,Buy
-6/10/25,YM,T-Lines Index Futures Buy,Buy
-6/18/25,CD,"Channel ""D"" Currency Futures Sell",Sell
-6/23/25,SF,Stochastics ÒDÓ Currency Futures Buy,Buy
-7/2/25,BP,Channel ÒDÓ Currency Futures Sell,Sell
-7/7/25,EC,TNT 52 Currency Futures Sell,Sell
-7/7/25,AD,"Channel ""D"" Currency Futures Sell",Sell
-7/10/25,SF,TNT 52 Currency Futures Sell,Sell
-7/14/25,BP,D2 Swing Currency Futures Sell,Sell
-7/14/25,BP,D2 Swing Currency Futures Sell,Sell
-7/21/25,AD,TXD Trendlines Currency Futures Buy,Buy
-7/21/25,AD,TXD Trendlines Currency Futures Buy,Buy
-7/23/25,CD,Channel ÒDÓ Currency Futures Sell,Sell
-7/28/25,CD,D2 Swing Currency Futures Sell,Sell
-7/30/25,AD,D2 Swing Currency Futures Sell,Sell
-7/30/25,SF,D2 Swing Currency Futures Sell,Sell
-7/30/25,AD,Swing Trend Currency Futures Sell,Sell
-7/31/25,YM,14.8 Trig Extension Index Futures Sell,Sell
-8/8/25,ES,Sector T-Lines Index Futures Buy,Buy
-8/8/25,BP,TXD Trendlines Currency Futures Buy,Buy
-8/12/25,ES,TNT 47 Index Futures Trendline Buy,Buy
-8/12/25,YM,D3 Index Futures Buy,Buy
-8/12/25,SF,Stochastics ÒDÓ Currency Futures Buy,Buy
-8/12/25,RTY,TNT 47 Index Futures Trendline Buy,Buy
-8/12/25,YM,D3 Index Futures Buy,Buy
-8/13/25,EC,D3 Currency Futures Buy,Buy
-8/13/25,BP,D3 Currency Futures Buy,Buy
-8/19/25,AD,D2 Swing Currency Futures Sell,Sell
-8/21/25,NQ,14.8 Trig Extension Index Futures Sell,Sell
-8/22/25,EC,"Double ""D"" Swing Currency Futures Buy",Buy
-8/22/25,EC,TXD Trendlines Currency Futures Buy,Buy
-8/29/25,AD,D3 Currency Futures Buy,Buy
-9/2/25,SF,TNT 52 Currency Futures Sell,Sell
-9/2/25,NQ,TXD Trendlines Index Futures Sell,Sell
-9/5/25,EC,TXD Trendlines Currency Futures Buy,Buy
-9/5/25,AD,Squeeze Play Currency Futures Buy,Buy
-9/5/25,EC,Stochastics ÒDÓ Currency Futures Buy,Buy
-9/8/25,BP,D3 Currency Futures Buy,Buy
-9/8/25,SF,TXD Trendlines Currency Futures Buy,Buy
-9/8/25,EC,TXD Trendlines Currency Futures Buy,Buy
-9/9/25,NQ,T-Lines Index Futures Buy,Buy
-9/15/25,CD,TXD Trendlines Currency Futures Buy,Buy
-9/15/25,CD,Ichimoku Cross Currency Futures Buy,Buy
-9/22/25,CD,Super Bear Currency Futures Sell,Sell
-9/24/25,CD,D2 Swing Currency Futures Sell,Sell
-9/25/25,BP,D2 Swing Currency Futures Sell,Sell
-9/25/25,CD,Swing Trend Currency Futures Sell,Sell
-10/10/25,RTY,TXD Trendlines Index Futures Sell,Sell
-10/16/25,EC,Super Bull Currency Futures Buy ,Buy
-10/16/25,SF,Super Bull Currency Futures Buy ,Buy
-10/20/25,SF,Ichimoku Cross Currency Futures Buy,Buy
-10/20/25,NQ,T-Lines Index Futures Buy,Buy
-10/21/25,YM,T-Lines Index Futures Buy,Buy
-10/23/25,SF,Squeeze Play Currency Futures Buy,Buy
-10/24/25,ES,T-Lines Index Futures Buy,Buy
-10/27/25,AD,TXD Trendlines Currency Futures Buy,Buy
-10/30/25,SF,D2 Swing Currency Futures Sell,Sell
 11/3/25,CD,Swing Trend Currency Futures Sell  ,Sell
 11/7/25,BP,Super Bull Currency Futures Buy,Buy
 11/12/25,CD,TXD Trendlines Currency Futures Buy,Buy
@@ -104,3 +9,23 @@ date,symbol,strategy,direction
 12/3/25,BP,TXD Trendlines Currency Futures Buy,Buy
 12/10/25,EC,Stochastics ÒDÓ Currency Futures Buy,Buy
 12/10/25,EC,Squeeze Play Currency Futures Buy,Buy
+1/12/26,BP,TXD Trendlines Currency Futures Buy,Buy
+1/14/26,AD,TNT 52 Currency Futures Sell,Sell
+1/20/26,ES,14.8 Trig Extension Index Futures Sell,Sell
+1/20/26,NQ,14.8 Trig Extension Index Futures Sell,Sell
+1/20/26,YM,14.8 Trig Extension Index Futures Sell,Sell
+1/20/26,AD,TXD Trendlines Currency Futures Buy,Buy
+1/20/26,YM,TXD Trendlines Index Futures Sell,Sell
+1/22/26,NQ,D3 Index Futures Buy,Buy
+1/22/26,EC,Super Bull Currency Futures Buy,Buy
+1/27/26,NQ,T-Lines Index Futures Buy,Buy
+2/3/26,SF,Squeeze Play Currency Futures Buy,Buy
+2/3/26,EC,Squeeze Play Currency Futures Buy,Buy
+2/3/26,BP,Squeeze Play Currency Futures Buy,Buy
+2/5/26,SF,TNT 52 Currency Futures Sell,Buy
+2/5/26,BP,Bear Attack 2 Currency Futures Sell,Sell
+2/5/26,SF,Bear Attack Squeeze Currency Futures Sell ,Sell
+2/6/26,ES,D3 Index Futures Buy,Buy
+2/9/26,CD,Double ÒDÓ Swing Currency Futures Buy,Buy
+2/9/26,SF,Double ÒDÓ Swing Currency Futures Buy,Buy
+2/9/26,ES,Bull Run Index Futures Buy,Buy

@@ -12,7 +12,7 @@ from data_sources import DataSourceManager
 
 import os
 
-# API Keys from environment variables (same as main backtester)
+# API Keys from environment variables (same as main trade evaluator)
 POLYGON_API_KEY = os.getenv('POLYGON_API_KEY')
 INSIGHTSENTRY_API_KEY = os.getenv('INSIGHTSENTRY_API_KEY')
 
@@ -118,12 +118,12 @@ def test_futures_data():
             print(f"❌ CSV Error for {symbol}: {e}")
 
 def test_integration():
-    """Test integration with the main backtester interface."""
-    print("\n🔍 Testing Integration with Main Backtester")
+    """Test integration with the main trade evaluator interface."""
+    print("\n🔍 Testing Integration with Main Trade Evaluator")
     print("=" * 50)
-    
-    # Test the main interface used by currency_strategy_backtester.py
-    from currency_strategy_backtester import get_price_data, fetched_data_cache
+
+    # Test the main interface used by trade_evaluator.py
+    from trade_evaluator import get_price_data, fetched_data_cache
     
     # Test ETF mode
     print("📊 Testing ETF mode integration")
