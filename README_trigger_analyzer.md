@@ -176,3 +176,37 @@ Tested against Eversley's actual 2025 signals across 7 dates (50 signals total):
 ## Default Symbols (29 ETFs)
 
 DIA, EEM, EFA, EWG, EWH, FXI, GDX, GLD, IBB, IWM, IYR, QQQ, SLV, SPY, TLT, UNG, USO, VNQ, VWO, XHB, XLB, XLE, XLF, XLI, XLK, XLV, XME, XOP, XRT
+
+## Roadmap
+
+### Futures Trigger Analyzer
+
+Extend the trigger analyzer to support Eversley's futures strategies (6A, 6B, 6C, 6E, 6S, ES, NQ, RTY, YM). The futures strategies use many of the same indicators (Donchian, TriggerLines, RSqueeze, TSSuperTrend) but with different parameters and contract-specific rules (rollover weeks, tick sizes, continuous contract handling). The `MassiveDataSource` class already handles futures OHLCV data. Output would follow the same pattern: `trigger_analyzer_results_<date>_futures.csv`.
+
+### Custom Win Rate Backtester (Task 2)
+
+Run the trigger analyzer historically across custom symbol sets (beyond Eversley's 29 ETFs) to generate win rate statistics for new symbols before trading them live:
+
+1. Scan historical date ranges to detect all signals
+2. Feed detected signals through `trade_evaluator.py` to get entry/stop/target outcomes
+3. Aggregate into win rate tables per strategy/symbol/target type
+
+The `TriggerAnalyzer` class is designed for this — its `run()` method returns a DataFrame with no side effects, so it can be called in a loop across trading dates.
+
+**Performance consideration:** For backtesting across years of data, the current per-date data fetching would be too slow. The backtester will batch-load OHLCV data once for the full date range, then iterate through dates computing indicators incrementally.
+
+### Code Reuse with Momentum-Trading Project
+
+The [Momentum-Trading](https://github.com/mcohenmcohen/Momentum-Trading) project has its own indicator implementations (Donchian, Bollinger Bands, ATR) in `ta_utils.py`, optimized for multi-symbol DataFrames where each column is a symbol. Several indicators here were adapted from that project.
+
+**Current approach:** Indicators were copied and adapted rather than shared, because:
+- Momentum-Trading uses multi-column DataFrames (one computation for all symbols); this project uses per-symbol Series
+- The Eversley strategies require NinjaTrader-specific indicator variants (TSSuperTrend, RSqueeze, TriggerLines) that don't exist in Momentum-Trading
+- Different parameter sets and edge-case handling (e.g., Gann swing detection, Ichimoku with Kijun decrease counting)
+
+**Future consideration:** When building the Task 2 backtester, evaluate whether to:
+- Extract shared indicators into a common library used by both projects
+- Adopt Momentum-Trading's multi-symbol DataFrame pattern here for batch performance
+- Keep them separate if the NinjaTrader-specific calibration makes sharing impractical
+
+The backtester is the natural point to make this decision, since it will need the same batch performance optimizations that Momentum-Trading already has.

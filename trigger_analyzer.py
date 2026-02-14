@@ -8,11 +8,12 @@ Separate from trade_evaluator.py which evaluates known signals from input CSVs.
 This module DETECTS the signals by implementing the indicator logic.
 
 Usage:
-  python trigger_analyzer.py                              # Scan 29 ETFs for today
+  python trigger_analyzer.py                              # Scan 29 ETFs for today, save CSV
   python trigger_analyzer.py --symbols AAPL MSFT GOOGL    # Scan custom symbols
   python trigger_analyzer.py --date 2025-06-15            # Scan for historical date
   python trigger_analyzer.py --include-internals          # Include Put/Call strategies
-  python trigger_analyzer.py --output triggers.csv        # Save to CSV
+  python trigger_analyzer.py --output triggers.csv        # Custom output path
+  python trigger_analyzer.py --no-save                    # Print to stdout only
   python trigger_analyzer.py --debug                      # Verbose indicator output
 """
 import argparse
@@ -68,6 +69,7 @@ class TriggerAnalyzer:
         self.daily_ohlcv: Dict[str, pd.DataFrame] = {}
         self.weekly_ohlcv: Dict[str, pd.DataFrame] = {}
         self.indicators: Dict[str, Dict] = {}
+        self.last_trading_day: Optional[date] = None
 
     def run(self) -> pd.DataFrame:
         """
@@ -159,7 +161,14 @@ class TriggerAnalyzer:
             except Exception as e:
                 print(f"  ERROR fetching {symbol}: {e}")
 
+        # Determine the most recent trading day from fetched data
+        if self.daily_ohlcv:
+            last_dates = [df.index.max().date() for df in self.daily_ohlcv.values()]
+            self.last_trading_day = max(last_dates)
+
         print(f"  Fetched data for {len(self.daily_ohlcv)}/{len(self.symbols)} symbols")
+        if self.last_trading_day:
+            print(f"  Most recent trading day: {self.last_trading_day}")
 
     def _compute_all_indicators(self):
         """Compute all needed indicators for each symbol."""
@@ -247,7 +256,11 @@ def parse_args():
     )
     parser.add_argument(
         '--output', type=str, default=None,
-        help='Output CSV path (default: print to stdout)'
+        help='Output CSV path (default: trigger_analyzer_results_<date>_ETFs.csv)'
+    )
+    parser.add_argument(
+        '--no-save', action='store_true',
+        help='Print to stdout instead of saving to CSV'
     )
     parser.add_argument(
         '--lookback-days', type=int, default=730,
@@ -281,11 +294,18 @@ def main():
     if results.empty:
         return
 
-    if args.output:
-        results.to_csv(args.output, index=False)
-        print(f"\nResults saved to {args.output}")
-    else:
+    if args.no_save:
         print(results.to_string(index=False))
+    else:
+        if args.output:
+            output_path = args.output
+        else:
+            # Default filename using most recent trading day
+            trade_date = analyzer.last_trading_day or scan_date
+            suffix = "custom" if args.symbols else "ETFs"
+            output_path = f"trigger_analyzer_results_{trade_date}_{suffix}.csv"
+        results.to_csv(output_path, index=False)
+        print(f"\nResults saved to {output_path}")
 
 
 if __name__ == '__main__':
