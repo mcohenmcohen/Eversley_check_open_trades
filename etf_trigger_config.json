@@ -1,0 +1,1109 @@
+{
+  "_comment": "ETF Strategy Trigger Configuration — defines setup and trigger conditions for each strategy. Used by trigger_analyzer.py. Separate from strategies_complete.json (which defines entry/stop/target formulas for trade_evaluator.py).",
+  "strategies": {
+
+    "Super Trend Sector Buy": {
+      "direction": "buy",
+      "symbols": ["DIA", "QQQ", "SPY", "XLI", "XLK"],
+      "is_internals": false,
+      "timeframe": "daily",
+      "exclusions": "No trades Dec 1 thru Jan 1. No trades on Rollover week (2nd Friday of Mar/Jun/Sep/Dec). No trades on Quadruple Witching week (3rd Friday of Mar/Jun/Sep/Dec).",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "supertrend_14_078_d",
+          "field": "is_bullish",
+          "expected": true,
+          "description": "Signal day must be Green TSSuperTrend candle"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "price_d",
+          "field": "is_up_day",
+          "expected": true,
+          "description": "Signal day must be an up day"
+        },
+        {
+          "type": "indicator_comparison",
+          "indicator": "supertrend_14_078_d",
+          "field": "consecutive_red_before",
+          "operator": ">=",
+          "compare_to": {"value": 3},
+          "description": "At least 3 Red TSSuperTrend candles prior to turning Green"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_23_d",
+          "field": "momentum_increasing",
+          "expected": true,
+          "description": "23_RSqueeze histogram increasing from previous day"
+        }
+      ],
+      "display_indicators": [
+        "supertrend_14_078_d.direction",
+        "rsqueeze_23_d.momentum",
+        "donchian_7_d.mean",
+        "sma_40_d.value",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Donchian Crossover Buy": {
+      "direction": "buy",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "daily",
+      "exclusions": "None",
+      "setup_conditions": [
+        {
+          "type": "indicator_comparison",
+          "indicator": "donchian_14_d",
+          "field": "mean",
+          "operator": ">",
+          "compare_to": {"indicator": "sma_40_d", "field": "value"},
+          "description": "Donchian(14) Mean above SMA(40) on signal day (cross day)"
+        },
+        {
+          "type": "indicator_comparison",
+          "indicator": "donchian_14_d",
+          "field": "mean_prev",
+          "operator": "<",
+          "compare_to": {"indicator": "sma_40_d", "field": "value_prev"},
+          "description": "Donchian(14) Mean was below SMA(40) previous day (confirms cross)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "donchian_14_d",
+          "field": "mean_increasing",
+          "expected": true,
+          "description": "Mean Line is increasing from previous day"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "consecutive_condition",
+          "indicator": "donchian_14_d",
+          "field": "mean_series",
+          "compare_to": {"indicator": "sma_40_d", "field": "series"},
+          "operator": "<",
+          "min_bars": 8,
+          "end_offset": 1,
+          "description": "Previous 8 days Donchian Mean below 40 SMA"
+        },
+        {
+          "type": "price_comparison",
+          "price_field": "close",
+          "operator": "<",
+          "compare_to": {"indicator": "bb_30_20_d", "field": "upper"},
+          "description": "Signal day close below upper Bollinger Band(30,2)"
+        }
+      ],
+      "display_indicators": [
+        "donchian_14_d.mean",
+        "sma_40_d.value",
+        "bb_30_20_d.upper",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Donchian T-Lines Buy": {
+      "direction": "buy",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "daily",
+      "exclusions": "None",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "bullish_cross",
+          "expected": true,
+          "description": "Bullish crossover on Trigger_Lines(20,8) — Plot1 > Plot2 today, Plot1 < Plot2 yesterday"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "plot1_up_prev",
+          "expected": false,
+          "description": "Previous day Plot1_Up must be N/A (false)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "plot2_up_prev",
+          "expected": false,
+          "description": "Previous day Plot2_Up must be N/A (false)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "plot1_increasing",
+          "expected": true,
+          "description": "Plot1 signal day > Plot1 previous day"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "plot2_increasing",
+          "expected": true,
+          "description": "Plot2 signal day > Plot2 previous day"
+        },
+        {
+          "type": "any_of",
+          "conditions": [
+            {
+              "type": "indicator_state",
+              "indicator": "donchian_14_d",
+              "field": "mean_increasing",
+              "expected": true
+            },
+            {
+              "type": "indicator_comparison",
+              "indicator": "donchian_14_d",
+              "field": "mean",
+              "operator": "==",
+              "compare_to": {"indicator": "donchian_14_d", "field": "mean_prev"}
+            }
+          ],
+          "description": "Donchian(14) Mean Line equal or increasing from previous day"
+        },
+        {
+          "type": "price_comparison",
+          "price_field": "close",
+          "operator": "<",
+          "compare_to": {"indicator": "bb_30_20_d", "field": "upper"},
+          "description": "Signal day close below upper Bollinger Band(30,2)"
+        },
+        {
+          "type": "price_comparison",
+          "price_field": "close_prev",
+          "operator": "<",
+          "compare_to": {"indicator": "bb_30_20_d", "field": "upper"},
+          "description": "Previous day close below upper Bollinger Band(30,2)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "sma_40_d",
+          "field": "increasing",
+          "expected": true,
+          "description": "SMA(40) increasing from previous day"
+        }
+      ],
+      "display_indicators": [
+        "trig_20_8_d.plot1",
+        "trig_20_8_d.plot2",
+        "donchian_14_d.mean",
+        "sma_40_d.value",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Donchian T-Lines Sell": {
+      "direction": "sell",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "daily",
+      "exclusions": "None",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "bearish_cross",
+          "expected": true,
+          "description": "Bearish crossover on Trigger_Lines(20,8) — Plot1 < Plot2 today, Plot1 > Plot2 yesterday"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "plot1_dn_prev",
+          "expected": false,
+          "description": "Previous day Plot1_Dn must be N/A (false)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "plot2_dn_prev",
+          "expected": false,
+          "description": "Previous day Plot2_Dn must be N/A (false)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "plot1_decreasing",
+          "expected": true,
+          "description": "Plot1 signal day < Plot1 previous day"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "plot2_decreasing",
+          "expected": true,
+          "description": "Plot2 signal day < Plot2 previous day"
+        },
+        {
+          "type": "any_of",
+          "conditions": [
+            {
+              "type": "indicator_state",
+              "indicator": "donchian_14_d",
+              "field": "mean_decreasing",
+              "expected": true
+            },
+            {
+              "type": "indicator_comparison",
+              "indicator": "donchian_14_d",
+              "field": "mean",
+              "operator": "==",
+              "compare_to": {"indicator": "donchian_14_d", "field": "mean_prev"}
+            }
+          ],
+          "description": "Donchian(14) Mean Line equal or decreasing from previous day"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "sma_40_d",
+          "field": "decreasing_2d",
+          "expected": true,
+          "description": "SMA(40) decreasing for at least 2 consecutive days including signal day"
+        }
+      ],
+      "display_indicators": [
+        "trig_20_8_d.plot1",
+        "trig_20_8_d.plot2",
+        "donchian_14_d.mean",
+        "sma_40_d.value",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Donchian Hook Buy": {
+      "direction": "buy",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "daily",
+      "exclusions": "None",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "donchian_14_d",
+          "field": "mean_increasing",
+          "expected": true,
+          "description": "Signal day is first increase (hook up) of Donchian(14) Mean Line"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "donchian_14_d",
+          "field": "mean_decreasing",
+          "expected": false,
+          "description": "Confirming mean is not decreasing (it's the hook up)"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "indicator_comparison",
+          "indicator": "donchian_14_d",
+          "field": "mean_prev",
+          "operator": "<",
+          "compare_to": {"indicator": "sma_40_d", "field": "value_prev"},
+          "description": "Donchian(14) Mean of day before signal day < SMA(40)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "donchian_14_d",
+          "field": "mean_increasing",
+          "expected": true,
+          "description": "Donchian(14) Mean increasing from previous day"
+        },
+        {
+          "type": "any_of",
+          "conditions": [
+            {
+              "type": "indicator_state",
+              "indicator": "sma_40_d",
+              "field": "increasing",
+              "expected": true
+            },
+            {
+              "type": "indicator_comparison",
+              "indicator": "sma_40_d",
+              "field": "value",
+              "operator": "==",
+              "compare_to": {"indicator": "sma_40_d", "field": "value_prev"}
+            }
+          ],
+          "description": "SMA(40) equal or increasing from previous day"
+        }
+      ],
+      "display_indicators": [
+        "donchian_14_d.mean",
+        "donchian_14_d.mean_prev",
+        "sma_40_d.value",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Ichimoku Kijun 5 Hook Buy": {
+      "direction": "buy",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "daily",
+      "exclusions": "None",
+      "setup_conditions": [
+        {
+          "type": "indicator_comparison",
+          "indicator": "ichimoku_9_26_52_d",
+          "field": "kijun_decrease_count",
+          "operator": ">=",
+          "compare_to": {"value": 5},
+          "description": "Kijun decreased for 5 or more days (non-consecutive allowed)"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "ichimoku_9_26_52_d",
+          "field": "kijun_hook_up",
+          "expected": true,
+          "description": "First Kijun hook upward after decreasing for 5+ days"
+        }
+      ],
+      "display_indicators": [
+        "ichimoku_9_26_52_d.kijun",
+        "ichimoku_9_26_52_d.kijun_prev",
+        "ichimoku_9_26_52_d.kijun_decrease_count",
+        "atr_5_d.value"
+      ]
+    },
+
+    "ETF Squeeze Sell": {
+      "direction": "sell",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "daily",
+      "exclusions": "None",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "ttm_squeeze_d",
+          "field": "momentum_decreasing",
+          "expected": true,
+          "description": "TTM_Squeeze histogram on signal day decreasing from previous day"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "ttm_squeeze_d",
+          "field": "prev_2_positive_increasing",
+          "expected": true,
+          "description": "Histogram on each of previous 2 days > 0 and increasing"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "lookback_any",
+          "indicator": "price_d",
+          "field_series": "high_series",
+          "compare_to": {"indicator": "bb_30_20_d", "field": "upper_series"},
+          "operator": ">",
+          "lookback": 5,
+          "description": "High of any of last 5 days above upper Bollinger Band(30,2)"
+        }
+      ],
+      "display_indicators": [
+        "ttm_squeeze_d.momentum",
+        "ttm_squeeze_d.momentum_prev",
+        "bb_30_20_d.upper",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Squeeze Play Sector Buy": {
+      "direction": "buy",
+      "symbols": ["DIA", "QQQ", "SPY", "XLI", "XLK"],
+      "is_internals": false,
+      "timeframe": "daily",
+      "exclusions": "No trades from Dec Expiration Friday thru 1st FULL week of Jan trading.",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "is_bullish",
+          "expected": true,
+          "description": "Trigger_Lines(20,8) in bullish cross (Plot1 > Plot2)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_4_d",
+          "field": "momentum_increasing",
+          "expected": true,
+          "description": "4_RSqueeze histogram on signal day increasing"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_4_d",
+          "field": "prev_2_negative_decreasing",
+          "expected": true,
+          "description": "4_RSqueeze previous day < 0 and decreasing"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_20_d",
+          "field": "momentum_increasing",
+          "expected": true,
+          "description": "RSqueeze histogram increasing from previous day"
+        },
+        {
+          "type": "any_of",
+          "conditions": [
+            {
+              "type": "indicator_state",
+              "indicator": "volume_d",
+              "field": "increasing",
+              "expected": true
+            },
+            {
+              "type": "indicator_state",
+              "indicator": "volume_d",
+              "field": "prev_is_5d_max",
+              "expected": true
+            }
+          ],
+          "description": "Volume increasing from previous day OR previous day had highest volume in prior 5 days"
+        }
+      ],
+      "display_indicators": [
+        "trig_20_8_d.plot1",
+        "trig_20_8_d.plot2",
+        "rsqueeze_4_d.momentum",
+        "rsqueeze_20_d.momentum",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Squeeze Play Sector Sell": {
+      "direction": "sell",
+      "symbols": ["DIA", "QQQ", "SPY", "XLI", "XLK"],
+      "is_internals": false,
+      "timeframe": "daily",
+      "exclusions": "No trades from Dec Expiration Friday thru 1st FULL week of Jan trading.",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "is_bearish",
+          "expected": true,
+          "description": "Trigger_Lines(20,8) in bearish cross (Plot1 < Plot2)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_4_d",
+          "field": "momentum_decreasing",
+          "expected": true,
+          "description": "4_RSqueeze histogram on signal day decreasing"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "any_of",
+          "conditions": [
+            {
+              "type": "indicator_state",
+              "indicator": "sma_40_d",
+              "field": "increasing",
+              "expected": true
+            },
+            {
+              "type": "indicator_comparison",
+              "indicator": "sma_40_d",
+              "field": "value",
+              "operator": "==",
+              "compare_to": {"indicator": "sma_40_d", "field": "value_prev"}
+            }
+          ],
+          "description": "SMA(40) equal or increasing from previous day"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_20_d",
+          "field": "momentum_decreasing",
+          "expected": true,
+          "description": "RSqueeze histogram decreasing from previous day"
+        },
+        {
+          "type": "any_of",
+          "conditions": [
+            {
+              "type": "indicator_state",
+              "indicator": "volume_d",
+              "field": "increasing",
+              "expected": true
+            },
+            {
+              "type": "indicator_state",
+              "indicator": "volume_d",
+              "field": "prev_is_5d_max",
+              "expected": true
+            }
+          ],
+          "description": "Volume increasing from previous day OR previous day had highest volume in prior 5 days"
+        }
+      ],
+      "display_indicators": [
+        "trig_20_8_d.plot1",
+        "trig_20_8_d.plot2",
+        "rsqueeze_4_d.momentum",
+        "rsqueeze_20_d.momentum",
+        "sma_40_d.value",
+        "atr_5_d.value"
+      ]
+    },
+
+    "_comment_weekly": "=== WEEKLY STRATEGIES (Phase 3) ===",
+
+    "Weekly Swing Trend Buy Setup 1": {
+      "direction": "buy",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "weekly",
+      "exclusions": "No trades valid Christmas week.",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "swing_trend_w",
+          "field": "blue_gold_red_gold",
+          "expected": true,
+          "description": "PriceActionSwingTrend(15,1,Gann) turns Blue->Gold->Red->Gold (signal week is Gold)"
+        }
+      ],
+      "trigger_conditions": [],
+      "display_indicators": [
+        "swing_trend_w.color",
+        "swing_trend_w.color_prev",
+        "atr_5_w.value"
+      ]
+    },
+
+    "Weekly Swing Trend Buy Setup 2": {
+      "direction": "buy",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "weekly",
+      "exclusions": "No trades valid Christmas week.",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_w",
+          "field": "bullish_cross",
+          "expected": true,
+          "description": "Bullish crossover on Trigger_Lines(Weekly, 20, 8) — Plot1 > Plot2 this week, was < last week"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "sma_40_w",
+          "field": "increasing_3d",
+          "expected": true,
+          "description": "Weekly 40 SMA increasing for 3 consecutive weeks including signal week"
+        }
+      ],
+      "display_indicators": [
+        "trig_20_8_w.plot1",
+        "trig_20_8_w.plot2",
+        "sma_40_w.value",
+        "atr_5_w.value"
+      ]
+    },
+
+    "Weekly Turbo Hook Buy": {
+      "direction": "buy",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "weekly",
+      "exclusions": "No trades valid Christmas week.",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "cci_14_6_w",
+          "field": "turbo_hook_from_negative",
+          "expected": true,
+          "description": "CCI Turbo (6-period) hooks upward from below zero"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "cci_14_6_w",
+          "field": "cci_long_positive",
+          "expected": true,
+          "description": "CCI Long (14-period) must be > 0 on signal week"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "cci_14_6_w",
+          "field": "cci_long_valid_during_turbo_dip",
+          "expected": true,
+          "description": "CCI Long was > 0 before turbo dropped below 0 AND was not < 0 for more than 1 week during dip"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "sma_40_w",
+          "field": "equal_or_increasing",
+          "expected": true,
+          "description": "Weekly 40 SMA equal or increasing from previous week"
+        }
+      ],
+      "display_indicators": [
+        "cci_14_6_w.cci_short",
+        "cci_14_6_w.cci_long",
+        "sma_40_w.value",
+        "atr_5_w.value"
+      ]
+    },
+
+    "Weekly Ichimoku Squeeze Sell": {
+      "direction": "sell",
+      "symbols": "all",
+      "is_internals": true,
+      "timeframe": "weekly",
+      "exclusions": "None (all weeks included).",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "ttm_squeeze_w",
+          "field": "momentum_decreasing",
+          "expected": true,
+          "description": "TTM_Squeeze weekly histogram on signal week decreasing from previous week"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "ttm_squeeze_w",
+          "field": "prev_2_positive_increasing",
+          "expected": true,
+          "description": "Weekly histogram on each of previous 2 weeks > 0 and increasing"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "external_threshold",
+          "source": "nyse_ad_cumulative",
+          "field": "bearish_cross",
+          "expected": true,
+          "description": "Advance_Decline_Cumulative_Average(NYSE, 5) in bearish cross below AvgCumulAD"
+        }
+      ],
+      "display_indicators": [
+        "ttm_squeeze_w.momentum",
+        "ttm_squeeze_w.momentum_prev",
+        "atr_5_w.value"
+      ]
+    },
+
+    "Weekly 10.5 Squeeze Buy": {
+      "direction": "buy",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "weekly",
+      "exclusions": "No trades valid Christmas week.",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_atr14_w",
+          "field": "momentum_increasing",
+          "expected": true,
+          "description": "ATR_14_RSqueeze weekly histogram increasing from previous week"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_atr14_w",
+          "field": "prev_2_negative_decreasing",
+          "expected": true,
+          "description": "Weekly histogram on each of previous 2 weeks < 0 and decreasing"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "any_of",
+          "conditions": [
+            {
+              "type": "indicator_state",
+              "indicator": "supertrend_5_023_w",
+              "field": "is_bullish",
+              "expected": true
+            },
+            {
+              "type": "indicator_state",
+              "indicator": "sma_40_w",
+              "field": "increasing_2d",
+              "expected": true
+            }
+          ],
+          "description": "TSSuperTrend(5,0.23) Blue candle on signal week OR SMA(40) increasing 2 consecutive weeks"
+        }
+      ],
+      "display_indicators": [
+        "rsqueeze_atr14_w.momentum",
+        "rsqueeze_atr14_w.momentum_prev",
+        "supertrend_5_023_w.direction",
+        "sma_40_w.value",
+        "atr_5_w.value"
+      ]
+    },
+
+    "Weekly Swing Sell": {
+      "direction": "sell",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "weekly",
+      "exclusions": "No trades on weekends of Federal Holidays, or Expiration Friday in December through end of year.",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_w",
+          "field": "is_bullish",
+          "expected": true,
+          "description": "Trigger_Lines(20,8) in bullish cross (Plot1 > Plot2)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_w",
+          "field": "swing_sell_pattern",
+          "expected": true,
+          "description": "Close was above Plot1 during bullish cross, now closes at or below Plot2"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "price_w",
+          "field": "is_down_day",
+          "expected": true,
+          "description": "Signal week must be a down week (close < open)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "sma_40_w",
+          "field": "equal_or_decreasing",
+          "expected": true,
+          "description": "Weekly 40 SMA equal or decreasing from previous week"
+        }
+      ],
+      "display_indicators": [
+        "trig_20_8_w.plot1",
+        "trig_20_8_w.plot2",
+        "sma_40_w.value",
+        "atr_5_w.value"
+      ]
+    },
+
+    "_comment_internals": "=== DAILY INTERNALS STRATEGIES (Phase 4) ===",
+
+    "Squeeze Put/Call Buy": {
+      "direction": "buy",
+      "symbols": ["DIA", "QQQ", "SPY", "XLI", "XLK"],
+      "proxy_symbols": {"XLI": "DIA", "XLK": "QQQ"},
+      "is_internals": true,
+      "timeframe": "daily",
+      "exclusions": "None",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "ttm_squeeze_d",
+          "field": "momentum_increasing",
+          "expected": true,
+          "description": "TTM_Squeeze histogram on signal day increasing from previous day"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "ttm_squeeze_d",
+          "field": "prev_2_negative_decreasing",
+          "expected": true,
+          "description": "Histogram on each of previous 2 days < 0 and decreasing"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "put_call_threshold",
+          "source": "put_call_ratio",
+          "low_threshold": 0.85,
+          "high_threshold": 1.0,
+          "window": 1,
+          "description": "P/C ratio on signal day <= 0.85 or >= 1.0"
+        }
+      ],
+      "display_indicators": [
+        "ttm_squeeze_d.momentum",
+        "ttm_squeeze_d.momentum_prev",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Ichimoku Tenkan Hook Put/Call Buy": {
+      "direction": "buy",
+      "symbols": ["DIA", "QQQ", "SPY", "XLI", "XLK"],
+      "proxy_symbols": {"XLI": "DIA", "XLK": "QQQ"},
+      "is_internals": true,
+      "timeframe": "daily",
+      "exclusions": "No trades valid Christmas week.",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "ichimoku_9_26_52_d",
+          "field": "tenkan_hook_up",
+          "expected": true,
+          "description": "Tenkan hooks upward: signal day > prev day, prev2 > prev1, prev1 < Kijun prev1"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "put_call_threshold",
+          "source": "put_call_ratio",
+          "low_threshold": 0.85,
+          "high_threshold": 1.0,
+          "window": 3,
+          "description": "P/C ratio on signal day or either of 2 previous days <= 0.85 or >= 1.0"
+        }
+      ],
+      "display_indicators": [
+        "ichimoku_9_26_52_d.tenkan",
+        "ichimoku_9_26_52_d.tenkan_prev",
+        "ichimoku_9_26_52_d.kijun",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Ichimoku Tenkan Flat Put/Call Buy": {
+      "direction": "buy",
+      "symbols": ["DIA", "QQQ", "SPY", "XLI", "XLK"],
+      "proxy_symbols": {"XLI": "DIA", "XLK": "QQQ"},
+      "is_internals": true,
+      "timeframe": "daily",
+      "exclusions": "None",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "ichimoku_9_26_52_d",
+          "field": "tenkan_flat_hook_up",
+          "expected": true,
+          "description": "Tenkan hooks upward with previous 2 days flat (equal to each other)"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "ichimoku_9_26_52_d",
+          "field": "kijun_equal_or_increasing",
+          "expected": true,
+          "description": "Kijun of signal day >= Kijun of 1 day ago"
+        },
+        {
+          "type": "put_call_threshold",
+          "source": "put_call_ratio",
+          "low_threshold": 0.85,
+          "high_threshold": 1.0,
+          "window": 3,
+          "description": "P/C ratio on signal day or either of 2 previous days <= 0.85 or >= 1.0"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "ichimoku_9_26_52_d",
+          "field": "tenkan_below_kijun_prev2",
+          "expected": true,
+          "description": "Tenkan of 2 days ago < Kijun of 2 days ago"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "ichimoku_9_26_52_d",
+          "field": "tenkan_below_kijun_prev",
+          "expected": true,
+          "description": "Tenkan of 1 day ago < Kijun of 1 day ago"
+        }
+      ],
+      "display_indicators": [
+        "ichimoku_9_26_52_d.tenkan",
+        "ichimoku_9_26_52_d.tenkan_prev",
+        "ichimoku_9_26_52_d.kijun",
+        "ichimoku_9_26_52_d.kijun_prev",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Stochastics Hook Put/Call Buy": {
+      "direction": "buy",
+      "symbols": ["DIA", "QQQ", "SPY", "XLI", "XLK"],
+      "proxy_symbols": {"XLI": "DIA", "XLK": "QQQ"},
+      "is_internals": true,
+      "timeframe": "daily",
+      "exclusions": "No trades valid Christmas week.",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "stoch_10_10_3_d",
+          "field": "k_hooking_up",
+          "expected": true,
+          "description": "%K of signal day > %K of previous day"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "stoch_10_10_3_d",
+          "field": "k_was_decreasing",
+          "expected": true,
+          "description": "%K of 2 days ago > %K of 1 day ago (was declining)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "stoch_10_10_3_d",
+          "field": "k_prev_below_20",
+          "expected": true,
+          "description": "%K of 1 day ago < 20 (oversold level)"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "ichimoku_9_26_52_d",
+          "field": "kijun_equal_or_increasing",
+          "expected": true,
+          "description": "Kijun of signal day >= Kijun of 1 day ago"
+        },
+        {
+          "type": "put_call_threshold",
+          "source": "put_call_ratio",
+          "low_threshold": 0.85,
+          "high_threshold": 1.0,
+          "window": 1,
+          "description": "P/C ratio on signal day <= 0.85 or >= 1.0"
+        }
+      ],
+      "display_indicators": [
+        "stoch_10_10_3_d.k",
+        "stoch_10_10_3_d.k_prev",
+        "ichimoku_9_26_52_d.kijun",
+        "atr_5_d.value"
+      ]
+    },
+
+    "20.8 Trigger Lines Put/Call Buy": {
+      "direction": "buy",
+      "symbols": ["DIA", "QQQ", "SPY", "XLI", "XLK"],
+      "proxy_symbols": {"XLI": "DIA", "XLK": "QQQ"},
+      "is_internals": true,
+      "timeframe": "daily",
+      "exclusions": "No trades valid Christmas week.",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "trig_20_8_d",
+          "field": "bullish_cross",
+          "expected": true,
+          "description": "Bullish crossover on Trigger_Lines(20,8): Plot1 > Plot2 today, Plot1 < Plot2 yesterday"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "put_call_threshold",
+          "source": "put_call_ratio",
+          "low_threshold": 0.85,
+          "high_threshold": 1.0,
+          "window": 1,
+          "description": "P/C ratio on signal day <= 0.85 or >= 1.0"
+        }
+      ],
+      "display_indicators": [
+        "trig_20_8_d.plot1",
+        "trig_20_8_d.plot2",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Gap and Go Put/Call Buy": {
+      "direction": "buy",
+      "symbols": ["DIA", "QQQ", "SPY", "XLI", "XLK"],
+      "proxy_symbols": {"XLI": "DIA", "XLK": "QQQ"},
+      "is_internals": true,
+      "timeframe": "daily",
+      "exclusions": "No trades valid Christmas week.",
+      "setup_conditions": [
+        {
+          "type": "indicator_state",
+          "indicator": "price_d",
+          "field": "is_up_day",
+          "expected": true,
+          "description": "Close of signal day > Open of signal day"
+        },
+        {
+          "type": "indicator_comparison",
+          "indicator": "price_d",
+          "field": "close_prev",
+          "operator": "<",
+          "compare_to": {"indicator": "price_d", "field": "open"},
+          "description": "Close of previous day < Open of signal day"
+        },
+        {
+          "type": "indicator_comparison",
+          "indicator": "price_d",
+          "field": "open_prev",
+          "operator": "<",
+          "compare_to": {"indicator": "price_d", "field": "open"},
+          "description": "Open of previous day < Open of signal day"
+        },
+        {
+          "type": "indicator_comparison",
+          "indicator": "price_d",
+          "field": "close_prev",
+          "operator": "<",
+          "compare_to": {"indicator": "price_d", "field": "close_prev2"},
+          "description": "Close of previous day < Close of 2 days ago"
+        },
+        {
+          "type": "indicator_comparison",
+          "indicator": "price_d",
+          "field": "open_prev",
+          "operator": "<",
+          "compare_to": {"indicator": "price_d", "field": "open_prev2"},
+          "description": "Open of previous day < Open of 2 days ago"
+        },
+        {
+          "type": "indicator_comparison",
+          "indicator": "price_d",
+          "field": "open_prev",
+          "operator": "<",
+          "compare_to": {"indicator": "price_d", "field": "close_prev2"},
+          "description": "Open of previous day < Close of 2 days ago"
+        },
+        {
+          "type": "indicator_comparison",
+          "indicator": "price_d",
+          "field": "close_prev2",
+          "operator": "<",
+          "compare_to": {"indicator": "price_d", "field": "open_prev2"},
+          "description": "Close of 2 days ago < Open of 2 days ago (down day)"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "put_call_threshold",
+          "source": "put_call_ratio",
+          "low_threshold": 0.85,
+          "high_threshold": 1.0,
+          "window": 1,
+          "description": "P/C ratio on signal day <= 0.85 or >= 1.0"
+        }
+      ],
+      "display_indicators": [
+        "price_d.close",
+        "price_d.open",
+        "price_d.close_prev",
+        "atr_5_d.value"
+      ]
+    }
+
+  }
+}

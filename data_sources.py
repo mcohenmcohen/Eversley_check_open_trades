@@ -1,6 +1,11 @@
 """
 Data sources module for currency strategy trade evaluation.
-Supports Polygon.io for ETFs and InsightSentry for futures data.
+
+NOTE: Polygon.io rebranded to Massive.com. The same API key (POLYGON_API_KEY)
+is used for both ETF and futures data — they are the same provider.
+- PolygonDataSource: Uses the legacy `polygon` Python SDK for ETF data
+- MassiveDataSource: Uses the Massive.com REST API for futures data
+Both classes hit the same underlying service.
 """
 import pandas as pd
 import time
@@ -21,7 +26,8 @@ class DataSourceError(Exception):
 
 
 class PolygonDataSource:
-    """Polygon.io data source implementation for ETF data."""
+    """Massive.com (formerly Polygon.io) data source for ETF data.
+    Uses the legacy `polygon` Python SDK which still works with Massive.com's API."""
     
     def __init__(self, api_key: str):
         """Initialize Polygon client."""
@@ -99,7 +105,7 @@ class PolygonDataSource:
     
     def get_stock_data(self, symbol: str, start_date: datetime, end_date: datetime) -> pd.DataFrame:
         """
-        Get historical stock data from Polygon for ETFs.
+        Get historical stock/ETF data from Massive.com (via legacy polygon SDK).
         
         Args:
             symbol: Stock symbol (e.g., 'SPY')
@@ -135,7 +141,8 @@ class PolygonDataSource:
                     "Open": agg.open,
                     "High": agg.high,
                     "Low": agg.low,
-                    "Close": agg.close
+                    "Close": agg.close,
+                    "Volume": agg.volume
                 })
             
             df = pd.DataFrame(data)
@@ -191,7 +198,7 @@ class PolygonDataSource:
 
 
 class MassiveDataSource:
-    """Massive.com (formerly Polygon.io) data source implementation for futures data."""
+    """Massive.com data source for futures data. Uses the Massive REST API directly."""
 
     def __init__(self, api_key: str):
         """Initialize Massive client."""
@@ -932,7 +939,8 @@ class InsightSentryDataSource:
 class DataSourceManager:
     """
     Manager class to coordinate between different data sources.
-    Routes ETFs to Polygon and futures to Massive.com (formerly Polygon futures API).
+    Both ETFs and futures are served by Massive.com (formerly Polygon.io) using
+    the same API key. ETFs use the legacy `polygon` SDK, futures use the Massive REST API.
     """
 
     def __init__(self, polygon_api_key: str = None, insightsentry_api_key: str = None):
@@ -940,12 +948,12 @@ class DataSourceManager:
         Initialize data source manager.
 
         Args:
-            polygon_api_key: Polygon.io/Massive.com API key for both ETF and futures data
+            polygon_api_key: Massive.com API key (env var still named POLYGON_API_KEY for compatibility)
             insightsentry_api_key: InsightSentry API key (deprecated, kept for backward compatibility)
         """
         self.sources = {}
 
-        # Initialize Polygon for ETFs
+        # Initialize Massive.com for ETFs (via legacy polygon SDK) and futures (via REST API)
         if polygon_api_key:
             try:
                 self.sources['polygon'] = PolygonDataSource(polygon_api_key)
@@ -954,7 +962,7 @@ class DataSourceManager:
             except Exception as e:
                 print(f"⚠️ Unexpected error initializing Polygon: {e}")
 
-            # Initialize Massive for futures (uses same API key as Polygon)
+            # Initialize Massive REST API for futures (same API key)
             try:
                 self.sources['massive'] = MassiveDataSource(polygon_api_key)
             except DataSourceError as e:
@@ -1061,7 +1069,7 @@ class DataSourceManager:
                 return insightsentry_source.get_multiple_futures(symbols, start_date, end_date)
 
         else:
-            raise DataSourceError("No futures data source available (need Massive.com/Polygon API key)")
+            raise DataSourceError("No futures data source available (need Massive.com API key)")
     
     def get_price_data(self, symbol: str, mode: str, start_date: datetime, 
                       end_date: datetime = None) -> pd.DataFrame:

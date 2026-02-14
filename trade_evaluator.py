@@ -13,9 +13,9 @@ import utilities as util
 from data_sources import DataSourceManager, load_futures_data_from_csv
 from trading_strategies import StrategyFactory
 
-# API Keys
-POLYGON_API_KEY = os.getenv('POLYGON_API_KEY')
-INSIGHTSENTRY_API_KEY = os.getenv('INSIGHTSENTRY_API_KEY')  # Add to your environment variables
+# API Keys — Polygon.io rebranded to Massive.com; same key used for both ETFs and futures
+POLYGON_API_KEY = os.getenv('POLYGON_API_KEY')  # Massive.com API key (env var kept as POLYGON_API_KEY for compatibility)
+INSIGHTSENTRY_API_KEY = os.getenv('INSIGHTSENTRY_API_KEY')  # Deprecated, kept for backward compatibility
 
 
 # Initialize data source manager
@@ -47,17 +47,17 @@ TICK_SIZE = {
 
 # Column schemas for different modes
 ETF_RESULT_COLUMNS = [
-    "symbol", "strategy", "direction", "signal_date", "status",
+    "symbol", "strategy", "direction", "win_rate", "signal_date", "status",
     "expiration", "target_type", "atr", "entry_price",
     "target_price", "last_close_price", "diff_from_entry",
-    "entry_date", "exit_date", "num_days_open", "win_rate"
+    "entry_date", "exit_date", "num_days_open"
 ]
 
 FUTURES_RESULT_COLUMNS = [
-    "symbol", "strategy", "direction", "signal_date", "status",
+    "symbol", "strategy", "direction", "win_rate", "signal_date", "status",
     "expiration", "target_type", "atr", "entry_price",
     "target_price", "stop_price", "last_close_price",
-    "diff_from_entry", "entry_date", "exit_date", "num_days_open", "win_rate"
+    "diff_from_entry", "entry_date", "exit_date", "num_days_open"
 ]
 
 def get_result_columns(mode):
@@ -265,7 +265,7 @@ def get_price_data(symbol, mode, cache, start_date=None, etf_source="insightsent
     cache[symbol] = df
     return df
 
-# Get the ticker data from Polygon (now handled by data_sources module)
+# Get the ticker data from Massive.com (handled by data_sources module)
 def fetch_price_data(symbols, start_date=None, end_date=None):
     # Optimize date range for ETFs (3 months max)
     if start_date is None:
@@ -1117,57 +1117,33 @@ def simulate_trade(strategy, symbol, df, signal_date, strategy_name, direction=N
     }
 
 
-def main():
-    import argparse
-    parser = argparse.ArgumentParser(description="Currency Strategy Trade Evaluator")
-    parser.add_argument("--mode", choices=["futures", "etfs"], required=True, help="Which type of trades to evaluate")
-    parser.add_argument("--debug", action="store_true", help="Enable debug output for matched strategy names")
-    parser.add_argument("--etf-source", choices=["polygon", "insightsentry"], help="Data source for ETF data (overrides config)")
-    parser.add_argument("--test-auth", action="store_true", help="Test authentication for the selected data source and exit")
-    args = parser.parse_args()
+def run_evaluation(mode, debug=False, etf_source="polygon"):
+    """Run trade evaluation for a single mode (etfs or futures)."""
+    global fetched_data_cache
 
-    # Load configuration
-    config = load_config()
-    
-    # Determine data source to use
-    if args.mode == "etfs":
-        # Default to polygon for ETFs when no explicit source specified
-        etf_source = args.etf_source or "polygon"
-        print(f"📊 Using {etf_source} for ETF data")
-    else:
-        etf_source = "polygon"  # Not used for futures mode
-    
-    # Test authentication if requested
-    if args.test_auth:
-        source_to_test = etf_source if args.mode == "etfs" else config["data_sources"]["futures_data_source"]
-        print(f"🔐 Testing authentication for {source_to_test}...")
-        auth_result = data_manager.test_authentication(source_to_test)
-        if auth_result.get(source_to_test, False):
-            print("✅ Authentication successful!")
-            return
-        else:
-            print("❌ Authentication failed!")
-            return
+    print(f"\n{'='*60}")
+    print(f"  Running {mode.upper()} evaluation")
+    print(f"{'='*60}")
 
     # Choose file based on mode
-    input_file = "trade_signals_futures.csv" if args.mode == "futures" else "trade_signals_ETFs.csv"
+    input_file = "trade_signals_futures.csv" if mode == "futures" else "trade_signals_ETFs.csv"
     strategy_path = "strategies_complete.json"
-    output_file = "trade_results_futures.csv" if args.mode == "futures" else "trade_results_ETFs.csv"
+    output_file = "trade_results_futures.csv" if mode == "futures" else "trade_results_ETFs.csv"
 
     strategies = load_strategies(strategy_path)
     win_rates = load_win_rates()
     df_signals = pd.read_csv(input_file, encoding="ISO-8859-1")
-    
+
     # Create appropriate trading strategy based on mode
     trading_strategy = StrategyFactory.create_strategy(
-        mode=args.mode,
+        mode=mode,
         tick_sizes=TICK_SIZE
     )
-    
+
     # For futures, set the evaluate_formula function
-    if args.mode == "futures":
+    if mode == "futures":
         trading_strategy.set_evaluate_formula_function(evaluate_formula)
-    
+
     # Filter out empty rows (Excel often adds millions of empty rows)
     df_signals = df_signals.dropna(how='all')  # Remove completely empty rows
     df_signals = df_signals.dropna(subset=['symbol', 'strategy'])  # Remove rows missing key columns
@@ -1177,8 +1153,8 @@ def main():
     for _, row in df_signals.iterrows():
         symbol = str(row['symbol']).strip()
 
-        # The "buy or sell" and "frequency" columns are only in the trade_signals_ETFs file, 
-        # so this code sets values for when runing on futures   
+        # The "buy or sell" and "frequency" columns are only in the trade_signals_ETFs file,
+        # so this code sets values for when runing on futures
         # Safely parse 'frequency'
         freq_raw = row.get("frequency", "Daily")
         freq = str(freq_raw).strip().capitalize() if pd.notna(freq_raw) else "Daily"
@@ -1192,16 +1168,16 @@ def main():
 
         # For ETFs, try to use actual strategy name first, then fall back to generic
         raw_strategy_name = str(row.get("strategy", "")).strip()
-        
+
         # List of known daily ETF strategy patterns that should map to generic daily strategies
         daily_etf_patterns = [
-            "Donchian", "Ichimoku", "ETF Squeeze", "Squeeze Play", "Stochastics", 
+            "Donchian", "Ichimoku", "ETF Squeeze", "Squeeze Play", "Stochastics",
             "20.8 Trigger", "Gap and Go", "Put/Call Buy"
         ]
-        
+
         # Check if raw name matches any daily pattern and frequency is Daily
         is_daily_strategy = freq.lower() == "daily" and any(pattern in raw_strategy_name for pattern in daily_etf_patterns)
-        
+
         if is_daily_strategy:
             resolved_name = f"{freq} ETF Options {direction.capitalize()}"
         else:
@@ -1213,7 +1189,7 @@ def main():
             # Make sure signal_date is in the exact same format as df.index
             signal_date = pd.to_datetime(row['date'], format='%m/%d/%y').normalize()
             # print('signal_date:',signal_date)
-            
+
         except ValueError:
             print(f"❌ Invalid date format (must be MM/DD/YY): '{row['date']}'")
             results.append({
@@ -1233,11 +1209,11 @@ def main():
 
         # Convert alt futures symbol codes
         alternate_symbols = {"AD": "6A", "BP": "6B", "CD": "6C", "EC": "6E", "SF": "6S"}
-        if args.mode == "futures" and symbol in alternate_symbols:
+        if mode == "futures" and symbol in alternate_symbols:
             symbol = alternate_symbols[symbol]
 
         # Resolve strategy name for futures mode
-        if args.mode == "futures":
+        if mode == "futures":
             raw_name = str(row["strategy"]).strip()
             resolved_name = resolve_strategy_name(raw_name, list(strategies.keys()))
 
@@ -1253,7 +1229,7 @@ def main():
             })
             continue
 
-        if args.debug:
+        if debug:
             print(f"→ Matched to strategy: '{resolved_name}'")
 
         # Retrieve the symbol data
@@ -1262,18 +1238,18 @@ def main():
             df = fetched_data_cache[symbol]
         else:
             # Use unified data fetching for both ETFs and futures
-            df = get_price_data(symbol, args.mode, fetched_data_cache, etf_source=etf_source)
+            df = get_price_data(symbol, mode, fetched_data_cache, etf_source=etf_source)
             if df is None:
                 print(f"⚠️ No price data available for {symbol}. Skipping.")
                 continue
 
             fetched_data_cache[symbol] = df
-        
+
         # print('sym data for',symbol)
         # print(df.tail)
         # print('Close:',df['Close'].iloc[-1])
         result = simulate_trade(strategies[resolved_name], symbol, df, signal_date, resolved_name, direction=direction, trading_strategy=trading_strategy)
-        
+
         # Use selected target type from multi-target result if available, otherwise use default strategy target type
         if "selected_target_type" in result and result["selected_target_type"]:
             target_type = result["selected_target_type"]
@@ -1282,7 +1258,7 @@ def main():
 
         entry_date_str = result.get("entry_date", "")
         entry_date = datetime.strptime(entry_date_str, '%Y-%m-%d').date() if entry_date_str else None
-        if not entry_date and args.mode == "etfs":
+        if not entry_date and mode == "etfs":
             print(f"⚠️ {symbol} signal date on {signal_date} is the most recent date.  No next day open price yet. Skipping.")
             continue
 
@@ -1312,10 +1288,10 @@ def main():
         if entry_price and isinstance(entry_price, (int, float)):
             if direction == 'buy':
                 diff_from_entry = last_close_price - entry_price
-            else:    
+            else:
                 diff_from_entry = entry_price - last_close_price
         else:
-            diff_from_entry = "" 
+            diff_from_entry = ""
 
         # Calculate ATR target value for the signal date
         strategy_config = strategies[resolved_name]
@@ -1348,13 +1324,13 @@ def main():
                 atr_target = ""
 
         # Calculate expiration date for ETF options (2 full months out), but not for futures
-        if args.mode == "etfs":
+        if mode == "etfs":
             expiration_date = util.get_final_expiration_date(signal_date, months_out=2)
         else:
             expiration_date = ""  # Futures don't have expiration dates
 
         # Look up historical win rate
-        win_rate = lookup_win_rate(win_rates, str(row["strategy"]).strip(), symbol, direction, target_type, args.mode)
+        win_rate = lookup_win_rate(win_rates, str(row["strategy"]).strip(), symbol, direction, target_type, mode)
 
         # Build complete result dictionary with all possible fields
         complete_result = {
@@ -1378,7 +1354,7 @@ def main():
         }
 
         # Filter result based on mode-specific column schema
-        mode_columns = get_result_columns(args.mode)
+        mode_columns = get_result_columns(mode)
         filtered_result = {key: complete_result[key] for key in mode_columns}
 
         results.append(filtered_result)
@@ -1386,9 +1362,50 @@ def main():
     print(f"Total processed signals: {len(results)}")
 
     # Create DataFrame with mode-specific columns in correct order
-    df_results = pd.DataFrame(results, columns=get_result_columns(args.mode))
+    df_results = pd.DataFrame(results, columns=get_result_columns(mode))
     df_results.to_csv(output_file, index=False)
     print(f"✅ Evaluation completed. Results saved to '{output_file}'.")
+
+
+def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Currency Strategy Trade Evaluator")
+    parser.add_argument("--mode", choices=["futures", "etfs", "all"], default="all", help="Which type of trades to evaluate (default: all)")
+    parser.add_argument("--debug", action="store_true", help="Enable debug output for matched strategy names")
+    parser.add_argument("--etf-source", choices=["polygon", "insightsentry"], help="Data source for ETF data (overrides config)")
+    parser.add_argument("--test-auth", action="store_true", help="Test authentication for the selected data source and exit")
+    args = parser.parse_args()
+
+    # Load configuration
+    config = load_config()
+
+    # Determine ETF data source
+    etf_source = args.etf_source or "polygon"
+
+    # Test authentication if requested
+    if args.test_auth:
+        source_to_test = etf_source if args.mode in ("etfs", "all") else config["data_sources"]["futures_data_source"]
+        print(f"🔐 Testing authentication for {source_to_test}...")
+        auth_result = data_manager.test_authentication(source_to_test)
+        if auth_result.get(source_to_test, False):
+            print("✅ Authentication successful!")
+            return
+        else:
+            print("❌ Authentication failed!")
+            return
+
+    # Determine which modes to run
+    if args.mode == "all":
+        modes_to_run = ["etfs", "futures"]
+    else:
+        modes_to_run = [args.mode]
+
+    for mode in modes_to_run:
+        if mode == "etfs":
+            print(f"📊 Using {etf_source} for ETF data")
+        # Clear the price data cache between modes so ETF/futures symbols don't collide
+        fetched_data_cache.clear()
+        run_evaluation(mode, debug=args.debug, etf_source=etf_source)
 
 if __name__ == "__main__":
     main()

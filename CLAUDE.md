@@ -6,8 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Required environment variables in your `.zshrc` or `.bashrc`:
 ```bash
-export POLYGON_API_KEY="your_polygon_api_key_here"
-export INSIGHTSENTRY_API_KEY="your_insightsentry_api_key_here"  # Optional for futures
+export POLYGON_API_KEY="your_massive_api_key_here"  # Massive.com API key (formerly Polygon.io) — used for both ETFs and futures
+export INSIGHTSENTRY_API_KEY="your_insightsentry_api_key_here"  # Deprecated, kept for backward compatibility
 ```
 
 ## Common Commands
@@ -39,7 +39,7 @@ Test data sources integration:
 python test_data_sources.py
 ```
 
-Test individual Polygon.io API:
+Test individual Massive.com API (via legacy polygon SDK):
 ```bash
 python test_polygon_import.py --symbol QQQ --start_date 2023-10-27 --end_date 2023-10-30
 ```
@@ -52,7 +52,7 @@ This is a currency futures and ETF trading strategy trade evaluation system hous
 
 **trade_evaluator.py** - Main trade evaluation engine supporting both ETF and futures modes:
 - Loads 11+ predefined trading strategies from JSON configuration
-- Fetches historical price data via Polygon.io API and local CSV files
+- Fetches historical price data via Massive.com API and local CSV files
 - Simulates trade execution with realistic entry/exit rules
 - Outputs detailed trade results with P&L calculations
 
@@ -70,9 +70,9 @@ This is a currency futures and ETF trading strategy trade evaluation system hous
 
 ### Data Sources and Flow
 
-**Price Data Sources:**
-- ETFs: Downloaded via Polygon.io API
-- Futures: InsightSentry API (primary) with fallback to local CSV files in `data/` directory (6A.csv, 6B.csv, 6C.csv, 6E.csv, 6S.csv, ES.csv, NQ.csv, RTY.csv, YM.csv)
+**Price Data Sources (all via Massive.com, formerly Polygon.io):**
+- ETFs: Massive.com API via legacy `polygon` Python SDK
+- Futures: Massive.com REST API with fallback to local CSV files in `data/` directory (6A.csv, 6B.csv, 6C.csv, 6E.csv, 6S.csv, ES.csv, NQ.csv, RTY.csv, YM.csv)
 
 **Input/Output Files:**
 - `trade_signals_*.csv` - Input files containing ticker, strategy name, signal date
@@ -87,10 +87,11 @@ This is a currency futures and ETF trading strategy trade evaluation system hous
 
 ### Data Sources Module
 
-**data_sources.py** - Unified data source management:
-- `DataSourceManager` class coordinates between different APIs
-- `PolygonDataSource` handles ETF data via Polygon.io API
-- `InsightSentryDataSource` handles futures data via InsightSentry API
+**data_sources.py** - Unified data source management (all via Massive.com, formerly Polygon.io):
+- `DataSourceManager` class coordinates between data sources
+- `PolygonDataSource` handles ETF data via legacy `polygon` Python SDK (Massive.com)
+- `MassiveDataSource` handles futures data via Massive.com REST API
+- `InsightSentryDataSource` deprecated (kept for backward compatibility)
 - Automatic fallback to local CSV files for futures if API unavailable
 - Concurrent data fetching for improved performance
 
@@ -98,8 +99,8 @@ This is a currency futures and ETF trading strategy trade evaluation system hous
 
 Required Python packages:
 - pandas (data manipulation)
-- polygon-api-client (Polygon.io data for ETFs)
-- requests (InsightSentry API integration)
+- polygon-api-client (Massive.com ETF data via legacy Polygon SDK)
+- requests (Massive.com futures REST API, legacy InsightSentry)
 - rapidfuzz (fuzzy string matching for strategy names)
 - dateutil (date calculations)
 - holidays (trading calendar)
@@ -146,7 +147,7 @@ The system supports sophisticated target selection for futures strategies:
 
 ## Development Notes
 
-The system uses Polygon.io API for ETF data and Massive.com (formerly Polygon futures API) for futures data, with built-in caching for performance. The trade evaluation engine handles different execution rules for futures vs ETF strategies, supporting both intraday and daily timeframes with realistic slippage and commission modeling.
+The system uses Massive.com (formerly Polygon.io) for all market data — both ETFs and futures use the same API key. The trade evaluation engine handles different execution rules for futures vs ETF strategies, supporting both intraday and daily timeframes with realistic slippage and commission modeling.
 
 ### Recent Updates
 
@@ -178,12 +179,12 @@ The system uses Polygon.io API for ETF data and Massive.com (formerly Polygon fu
 - `trading_strategies.py`: Enhanced target type detection and polymorphic formula handling
 - `strategies_complete.json`: Updated to support flexible multi-target configurations per strategy
 
-**Massive.com Futures Data Migration (December 2024):**
-- **CRITICAL DATA QUALITY FIX:** Migrated from InsightSentry to Massive.com for futures data
+**Massive.com Data Migration (December 2024):**
+- **CRITICAL DATA QUALITY FIX:** Migrated from InsightSentry to Massive.com (formerly Polygon.io) for futures data
 - InsightSentry had severe data quality issues (42+ tick discrepancies vs ThinkorSwim)
 - Massive.com data matches ThinkorSwim within 0-1 ticks (production quality)
 - Added `MassiveDataSource` class with proper contract code mapping (6B→6BZ5, 6E→6EZ5, etc.)
-- Uses same Polygon API key for both ETF and futures data
+- Same Massive.com API key (POLYGON_API_KEY env var) powers both ETF and futures data
 
 **Impact:**
 - 6B (12/3): Entry now 1.3369 (exactly matches manual calculations vs 1.3373 with InsightSentry)
