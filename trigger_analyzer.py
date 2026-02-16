@@ -17,6 +17,7 @@ Usage:
   python trigger_analyzer.py --debug                      # Verbose indicator output
 """
 import argparse
+import json
 import os
 import sys
 import pandas as pd
@@ -26,7 +27,37 @@ from typing import List, Dict, Optional
 from data_sources import DataSourceManager
 from indicators import IndicatorEngine
 from strategy_rules import StrategyRuleEngine, load_trigger_config
+from trade_evaluator import lookup_win_rate, load_win_rates
+from utilities import get_final_expiration_date
 
+
+# Futures symbols (stop_price applicable; ETFs/stocks get "n/a")
+FUTURES_SYMBOLS = {"6A", "6B", "6C", "6E", "6S", "ES", "NQ", "RTY", "YM"}
+
+# Map trigger config strategy names → win_rates.json keys
+WIN_RATE_STRATEGY_MAP = {
+    "Donchian T-Lines Buy": "Donchian T-Lines Buy/Sell",
+    "Donchian T-Lines Sell": "Donchian T-Lines Buy/Sell",
+    "Weekly Swing Trend Buy Setup 1": "Weekly Swing Trend Buy",
+    "Weekly Swing Trend Buy Setup 2": "Weekly Swing Trend Buy",
+    "Squeeze Put/Call Buy": "Squeeze Put/Call Buy (Setup 1)",
+    "Ichimoku Tenkan Hook Put/Call Buy": "Ichimoku Tenkan Hook Put/Call Buy (Setup 2)",
+    "Ichimoku Tenkan Flat Put/Call Buy": "Ichimoku Tenkan Flat Put/Call Buy (Setup 3)",
+    "Stochastics Hook Put/Call Buy": "Stochastics Hook Put/Call Buy (Setup 4)",
+    "20.8 Trigger Lines Put/Call Buy": "20.8 Trigger Lines Put/Call Buy (Setup 5)",
+    "Gap and Go Put/Call Buy": "Gap and Go Put/Call Buy (Setup 6)",
+}
+
+# Number of recent trading days to scan for triggers
+SCAN_WINDOW_DAYS = 21
+
+# Trade results columns matching trade_results_futures.csv column order
+TRADE_RESULT_COLUMNS = [
+    "symbol", "strategy", "direction", "win_rate", "signal_date", "status",
+    "expiration", "target_type", "atr", "entry_price", "target_price",
+    "stop_price", "last_close_price", "diff_from_entry", "entry_date",
+    "exit_date", "num_days_open"
+]
 
 # Eversley's 29 ETF symbols
 DEFAULT_ETF_SYMBOLS = [
@@ -68,15 +99,20 @@ class TriggerAnalyzer:
         # Data caches
         self.daily_ohlcv: Dict[str, pd.DataFrame] = {}
         self.weekly_ohlcv: Dict[str, pd.DataFrame] = {}
-        self.indicators: Dict[str, Dict] = {}
         self.last_trading_day: Optional[date] = None
+
+        # Win rates (lazy-loaded on first lookup)
+        self._win_rates = None
 
     def run(self) -> pd.DataFrame:
         """
         Execute full scan pipeline.
 
+        Scans the last 21 trading days for triggers, then evaluates each
+        triggered signal as a trade (entry, target, status tracking).
+
         Returns:
-            DataFrame of triggered signals with indicator values.
+            DataFrame of triggered signals with trade evaluation columns.
         """
         print(f"\nETF Strategy Trigger Analyzer")
         print(f"Scan date: {self.scan_date}")
@@ -85,37 +121,74 @@ class TriggerAnalyzer:
         print(f"{'='*60}")
 
         # Step 1: Fetch OHLCV data
-        print(f"\n[1/4] Fetching price data...")
+        print(f"\n[1/5] Fetching price data...")
         self._fetch_price_data()
 
         if not self.daily_ohlcv:
             print("No price data available. Check API key and symbol names.")
             return pd.DataFrame()
 
-        # Step 2: Compute indicators
-        print(f"\n[2/4] Computing indicators for {len(self.daily_ohlcv)} symbols...")
-        self._compute_all_indicators()
-
-        # Step 3: Fetch external data if internals enabled
+        # Step 2: Fetch external data if internals enabled
         if self.include_internals:
-            print(f"\n[3/4] Fetching external data (CBOE, NYSE)...")
+            print(f"\n[2/5] Fetching external data (CBOE, NYSE)...")
             self._fetch_external_data()
         else:
-            print(f"\n[3/4] Skipping external data (use --include-internals to enable)")
+            print(f"\n[2/5] Skipping external data (use --include-internals to enable)")
 
-        # Step 4: Evaluate strategy rules
-        print(f"\n[4/4] Evaluating strategy rules...")
-        triggers = self.rule_engine.evaluate_all(
-            symbols=self.symbols,
-            scan_date=self.scan_date,
-            indicators=self.indicators,
-            external_data=self.external_data,
-            include_internals=self.include_internals,
-            debug=self.debug
-        )
+        # Step 3: Scan last 21 trading days for triggers
+        recent_dates = self._get_recent_trading_days(SCAN_WINDOW_DAYS)
+        print(f"\n[3/5] Scanning {len(recent_dates)} trading days "
+              f"({recent_dates[0]} to {recent_dates[-1]})...")
 
-        # Format output
-        return self._format_output(triggers)
+        all_triggers = []
+        for eval_date in recent_dates:
+            # Compute indicators for this date
+            indicators_for_date = {}
+            for symbol in self.daily_ohlcv:
+                daily = self.daily_ohlcv[symbol]
+                weekly = self.weekly_ohlcv.get(symbol, pd.DataFrame())
+                indicators_for_date[symbol] = self.indicator_engine.compute_all(
+                    daily_df=daily,
+                    weekly_df=weekly,
+                    scan_date=eval_date
+                )
+
+            # Evaluate rules for this date
+            triggers = self.rule_engine.evaluate_all(
+                symbols=self.symbols,
+                scan_date=eval_date,
+                indicators=indicators_for_date,
+                external_data=self.external_data,
+                include_internals=self.include_internals,
+                debug=(self.debug and eval_date == recent_dates[-1])
+            )
+
+            # Save ATR values with each trigger (indicators get overwritten per date)
+            for t in triggers:
+                sym = t['symbol']
+                tf = t.get('timeframe', 'daily')
+                atr_key = 'atr_5_w' if tf == 'weekly' else 'atr_5_d'
+                atr_ind = indicators_for_date.get(sym, {}).get(atr_key)
+                t['_atr_value'] = atr_ind.values.get('value') if atr_ind else None
+
+            if triggers and self.debug:
+                print(f"  {eval_date}: {len(triggers)} triggers")
+
+            all_triggers.extend(triggers)
+
+        print(f"  Raw triggers found: {len(all_triggers)}")
+
+        # Deduplicate: same symbol+strategy on consecutive trading days = same signal
+        all_triggers = self._dedup_consecutive(all_triggers, recent_dates)
+        print(f"  After dedup: {len(all_triggers)} unique signals")
+
+        # Step 4: Evaluate trades (entry, target, status)
+        print(f"\n[4/5] Evaluating {len(all_triggers)} triggered trades...")
+        self._evaluate_trades(all_triggers)
+
+        # Step 5: Format output
+        print(f"\n[5/5] Formatting results...")
+        return self._format_output(all_triggers)
 
     def _fetch_price_data(self):
         """Fetch daily OHLCV and resample to weekly for all symbols."""
@@ -170,26 +243,6 @@ class TriggerAnalyzer:
         if self.last_trading_day:
             print(f"  Most recent trading day: {self.last_trading_day}")
 
-    def _compute_all_indicators(self):
-        """Compute all needed indicators for each symbol."""
-        for symbol in self.daily_ohlcv:
-            daily = self.daily_ohlcv[symbol]
-            weekly = self.weekly_ohlcv.get(symbol, pd.DataFrame())
-
-            if self.debug:
-                print(f"\n  Computing indicators for {symbol}...")
-                print(f"    Daily: {len(daily)} bars, {daily.index.min().date()} to {daily.index.max().date()}")
-                if not weekly.empty:
-                    print(f"    Weekly: {len(weekly)} bars")
-
-            self.indicators[symbol] = self.indicator_engine.compute_all(
-                daily_df=daily,
-                weekly_df=weekly,
-                scan_date=self.scan_date
-            )
-
-        print(f"  Computed indicators for {len(self.indicators)} symbols")
-
     def _fetch_external_data(self):
         """Fetch CBOE Put/Call ratio and NYSE A/D data."""
         from external_data import fetch_external_data
@@ -211,24 +264,231 @@ class TriggerAnalyzer:
         else:
             print("  NYSE A/D: No data available")
 
+    def _get_recent_trading_days(self, num_days: int = SCAN_WINDOW_DAYS) -> List[date]:
+        """Get the most recent N trading days from cached OHLCV data."""
+        all_dates = set()
+        for df in self.daily_ohlcv.values():
+            all_dates.update(d.date() for d in df.index)
+        return sorted(all_dates)[-num_days:]
+
+    def _dedup_consecutive(self, triggers: List[dict],
+                           trading_days: List[date]) -> List[dict]:
+        """Remove consecutive-day duplicates for the same symbol+strategy.
+
+        If the same (symbol, strategy, direction) triggers on consecutive
+        trading days, keep only the first occurrence.  A gap of 2+ trading
+        days resets and starts a new signal.
+        """
+        if not triggers:
+            return triggers
+
+        # Build a set for O(1) next-day lookup
+        day_set = set(trading_days)
+        day_to_next = {}
+        for i in range(len(trading_days) - 1):
+            day_to_next[trading_days[i]] = trading_days[i + 1]
+
+        # Sort by date so we process in chronological order
+        triggers.sort(key=lambda t: t['scan_date'])
+
+        # Track last kept date per (symbol, strategy, direction)
+        last_kept: Dict[tuple, date] = {}
+        kept = []
+
+        for t in triggers:
+            key = (t['symbol'], t['strategy'], t['direction'])
+            scan = date.fromisoformat(t['scan_date'])
+            prev = last_kept.get(key)
+
+            if prev is not None and day_to_next.get(prev) == scan:
+                # Consecutive trading day — skip (same signal)
+                continue
+
+            last_kept[key] = scan
+            kept.append(t)
+
+        return kept
+
+    def _evaluate_trades(self, triggers: List[dict]):
+        """Evaluate entry, target, and status for each triggered signal."""
+        for trigger in triggers:
+            symbol = trigger['symbol']
+            direction = trigger['direction']
+            timeframe = trigger.get('timeframe', 'daily')
+            signal_date_val = date.fromisoformat(trigger['scan_date'])
+
+            df = self.daily_ohlcv.get(symbol)
+            if df is None or df.empty:
+                self._set_na_trade_fields(trigger, timeframe)
+                continue
+
+            # ATR value saved during scanning loop
+            atr_value = trigger.get('_atr_value')
+
+            # Target type and multiplier
+            if timeframe == 'weekly':
+                target_type = 'Weekly ATR5 x 0.55'
+                multiplier = 0.55
+            else:
+                target_type = 'ATR5 x 1.0'
+                multiplier = 1.0
+
+            trigger['target_type'] = target_type
+            trigger['atr'] = round(atr_value, 4) if atr_value else ''
+
+            # Expiration: 3rd Friday, 2 months out
+            expiration = get_final_expiration_date(signal_date_val, months_out=2)
+            trigger['expiration'] = expiration.strftime('%m/%d/%y')
+
+            # Stop price
+            trigger['stop_price'] = '' if symbol in FUTURES_SYMBOLS else 'n/a'
+
+            # Last close (most recent bar in data)
+            last_close = round(float(df['Close'].iloc[-1]), 2)
+            trigger['last_close_price'] = last_close
+
+            # Win rate lookup
+            trigger['win_rate'] = self._lookup_win_rate(
+                trigger['strategy'], symbol, direction, target_type
+            )
+
+            # Find next trading day after signal for entry
+            future_bars = df[df.index > pd.Timestamp(signal_date_val)]
+            if future_bars.empty:
+                # Most recent day trigger — no forward data
+                trigger['signal_date'] = trigger['scan_date']
+                trigger['entry_price'] = 'n/a'
+                trigger['target_price'] = 'n/a'
+                trigger['entry_date'] = 'n/a'
+                trigger['exit_date'] = ''
+                trigger['status'] = 'n/a'
+                trigger['num_days_open'] = 'n/a'
+                trigger['diff_from_entry'] = ''
+                continue
+
+            # Entry at next day's Open
+            entry_idx = future_bars.index[0]
+            entry_price = float(df.loc[entry_idx, 'Open'])
+            entry_date_val = entry_idx.date()
+
+            trigger['signal_date'] = trigger['scan_date']
+            trigger['entry_price'] = round(entry_price, 2)
+            trigger['entry_date'] = entry_date_val.isoformat()
+
+            # Target price
+            if atr_value and atr_value > 0:
+                if direction == 'buy':
+                    target_price = entry_price + (atr_value * multiplier)
+                else:
+                    target_price = entry_price - (atr_value * multiplier)
+                trigger['target_price'] = round(target_price, 2)
+            else:
+                target_price = None
+                trigger['target_price'] = ''
+
+            # Track forward from entry date (inclusive) for target/expiration
+            tracking_bars = df[df.index >= entry_idx]
+            status = 'Open'
+            exit_date_str = ''
+            num_days_open = 'open'
+
+            for i, (bar_ts, row) in enumerate(tracking_bars.iterrows()):
+                bar_date = bar_ts.date()
+
+                # Check expiration
+                if bar_date >= expiration:
+                    status = 'Expired'
+                    exit_date_str = bar_date.isoformat()
+                    num_days_open = i
+                    break
+
+                # Check target hit
+                if target_price is not None:
+                    if direction == 'buy' and row['High'] >= target_price:
+                        status = 'Target Hit'
+                        exit_date_str = bar_date.isoformat()
+                        num_days_open = i
+                        break
+                    elif direction == 'sell' and row['Low'] <= target_price:
+                        status = 'Target Hit'
+                        exit_date_str = bar_date.isoformat()
+                        num_days_open = i
+                        break
+
+            trigger['status'] = status
+            trigger['exit_date'] = exit_date_str
+            trigger['num_days_open'] = num_days_open
+
+            # Diff from entry
+            if direction == 'buy':
+                trigger['diff_from_entry'] = round(last_close - entry_price, 2)
+            else:
+                trigger['diff_from_entry'] = round(entry_price - last_close, 2)
+
+    def _set_na_trade_fields(self, trigger: dict, timeframe: str):
+        """Set trade fields to n/a when no OHLCV data available."""
+        trigger['signal_date'] = trigger['scan_date']
+        trigger['target_type'] = 'Weekly ATR5 x 0.55' if timeframe == 'weekly' else 'ATR5 x 1.0'
+        trigger['atr'] = 'n/a'
+        trigger['entry_price'] = 'n/a'
+        trigger['target_price'] = 'n/a'
+        trigger['stop_price'] = '' if trigger['symbol'] in FUTURES_SYMBOLS else 'n/a'
+        trigger['entry_date'] = 'n/a'
+        trigger['exit_date'] = ''
+        trigger['status'] = 'n/a'
+        trigger['num_days_open'] = 'n/a'
+        trigger['expiration'] = ''
+        trigger['last_close_price'] = ''
+        trigger['diff_from_entry'] = ''
+        trigger['win_rate'] = ''
+
+    def _lookup_win_rate(self, strategy_name: str, symbol: str,
+                         direction: str, target_type: str) -> str:
+        """Look up historical win rate from win_rates.json."""
+        if self._win_rates is None:
+            self._win_rates = load_win_rates()
+
+        lookup_name = WIN_RATE_STRATEGY_MAP.get(strategy_name, strategy_name)
+        return lookup_win_rate(
+            self._win_rates, lookup_name, symbol, direction, target_type,
+            mode='etfs'
+        )
+
     def _format_output(self, triggers: List[dict]) -> pd.DataFrame:
-        """Format trigger results into output DataFrame."""
+        """Format trigger results into output DataFrame.
+
+        Column order matches trade_results_futures.csv, with trigger-analyzer-
+        specific columns (timeframe, scan_date, display indicators) appended.
+        Trade columns are pre-populated by _evaluate_trades().
+        """
         if not triggers:
             print(f"\n{'='*60}")
-            print(f"No triggers found for {self.scan_date}")
+            print(f"No triggers found in last {SCAN_WINDOW_DAYS} trading days")
             return pd.DataFrame()
 
         df = pd.DataFrame(triggers)
 
-        # Reorder columns: key columns first, then display indicators
-        key_cols = ['symbol', 'strategy', 'direction', 'timeframe', 'scan_date']
-        other_cols = [c for c in df.columns if c not in key_cols and c != 'is_internals']
-        df = df[key_cols + other_cols]
+        # Drop internal fields
+        df = df.drop(columns=['_atr_value'], errors='ignore')
 
-        df = df.sort_values(['strategy', 'symbol']).reset_index(drop=True)
+        # Ensure all trade-result columns exist (fallback for any missed fields)
+        for col in TRADE_RESULT_COLUMNS:
+            if col not in df.columns:
+                df[col] = ""
+
+        # Trigger-specific columns appended after trade-result columns
+        trigger_cols = ['timeframe', 'scan_date']
+        display_cols = [c for c in df.columns
+                        if c not in TRADE_RESULT_COLUMNS
+                        and c not in trigger_cols
+                        and c != 'is_internals']
+
+        df = df[TRADE_RESULT_COLUMNS + trigger_cols + display_cols]
+
+        df = df.sort_values(['scan_date', 'strategy', 'symbol']).reset_index(drop=True)
 
         print(f"\n{'='*60}")
-        print(f"Found {len(df)} triggers for {self.scan_date}:")
+        print(f"Found {len(df)} triggers across last {SCAN_WINDOW_DAYS} trading days:")
         print(f"{'='*60}")
 
         return df
@@ -274,6 +534,9 @@ def parse_args():
 
 
 def main():
+    import time
+    t0 = time.time()
+
     args = parse_args()
 
     symbols = args.symbols or DEFAULT_ETF_SYMBOLS
@@ -292,6 +555,8 @@ def main():
     results = analyzer.run()
 
     if results.empty:
+        elapsed = time.time() - t0
+        print(f"\nTotal execution time: {elapsed / 60:.1f} min")
         return
 
     if args.no_save:
@@ -306,6 +571,9 @@ def main():
             output_path = f"trigger_analyzer_results_{trade_date}_{suffix}.csv"
         results.to_csv(output_path, index=False)
         print(f"\nResults saved to {output_path}")
+
+    elapsed = time.time() - t0
+    print(f"\nTotal execution time: {elapsed / 60:.1f} min")
 
 
 if __name__ == '__main__':
