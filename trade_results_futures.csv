@@ -1,31 +1,36 @@
-symbol,strategy,direction,signal_date,status,expiration,target_type,atr,entry_price,target_price,stop_price,last_close_price,diff_from_entry,entry_date,exit_date,num_days_open,win_rate
-6C,Swing Trend Currency Futures Sell,sell,11/03/25,Target Hit,,ATR5 x 0.6,,0.7135,0.7119,0.7187,0.7348,-0.021299999999999986,2025-11-04,2025-11-05,1,78%
-6B,Super Bull Currency Futures Buy,buy,11/07/25,Expired - Entry Not Triggered,,ATR5 x 0.6,,1.3189,1.32332,1.3031,1.3614,0.04249999999999998,,,Expired,72%
-6C,TXD Trendlines Currency Futures Buy,buy,11/12/25,Expired - Entry Not Triggered,,ATR5 x 0.6,,0.72,0.7213,0.7164,0.7348,0.014800000000000035,,,Expired,84%
-6S,D2 Swing Currency Futures Sell,sell,11/21/25,Expired - Entry Not Triggered,,ATR5 x 0.6,,1.2492,1.24443,1.2613,1.3021,-0.05289999999999995,,,Expired,85%
-RTY,T-Lines Index Futures Buy,buy,11/26/25,Target Hit,,ATR5 x 0.6,,2510.8,2545.62042,2429.55236,2615.4,104.59999999999991,2025-11-28,2025-12-04,4,80%
-NQ,D3 Index Futures Buy,buy,11/26/25,Target Hit,,ATR5 x 0.6,,25631.5,25980.68321,24816.73919,24743.75,-887.75,2025-11-28,2025-12-05,5,84%
-6C,Ichimoku Cross Currency Futures Buy,buy,12/02/25,Target Hit,,ATR5 x 0.6,,0.7209,0.72259,0.7161,0.7348,0.013900000000000023,2025-12-03,2025-12-05,2,
-6B,TXD Trendlines Currency Futures Buy,buy,12/03/25,Target Hit,,ATR5 x 0.6,,1.3366,1.34182,1.3169,1.3614,0.024799999999999933,2025-12-04,2025-12-11,5,82%
-6E,Stochastics ÒDÓ Currency Futures Buy,buy,12/10/25,Target Hit,,ATR5 x 0.6,,1.1771,1.18032,1.1657,1.1875,0.010399999999999965,2025-12-11,2025-12-15,2,97%
-6E,Squeeze Play Currency Futures Buy,buy,12/10/25,Target Hit,,ATR5 x 0.6,,1.1771,1.18032,1.1668,1.1875,0.010399999999999965,2025-12-11,2025-12-15,2,86%
-6B,TXD Trendlines Currency Futures Buy,buy,01/12/26,Stopped out,,ATR5 x 0.6,,1.35,1.35471,1.3355,1.3614,0.011399999999999855,2026-01-13,2026-01-20,4,82%
-6A,TNT 52 Currency Futures Sell,sell,01/14/26,Expired - Entry Not Triggered,,ATR5 x 0.6,,0.6664,0.66391,0.6738,0.706,-0.03959999999999997,,,Expired,90%
-ES,14.8 Trig Extension Index Futures Sell,sell,01/20/26,Stopped out,,ATR5 x 0.6,,6856.075,6903.57763,6745.23552,6842.75,13.324999999999818,2026-01-21,2026-01-22,1,
-NQ,14.8 Trig Extension Index Futures Sell,sell,01/20/26,Stopped out,,ATR5 x 0.6,,25208.275,25444.39097,24657.33773,24743.75,464.52500000000146,2026-01-21,2026-01-22,1,
-YM,14.8 Trig Extension Index Futures Sell,sell,01/20/26,Stopped out,,ATR5 x 0.6,,48826.1,49178.47181,48003.8991,49449.0,-622.9000000000015,2026-01-21,2026-01-22,1,
-6A,TXD Trendlines Currency Futures Buy,buy,01/20/26,Target Hit,,ATR5 x 0.6,,0.6758,0.67867,0.6662,0.706,0.030200000000000005,2026-01-21,2026-01-22,1,85%
-YM,TXD Trendlines Index Futures Sell,sell,01/20/26,Stopped out,,ATR5 x 0.6,,48826.1,48473.72819,48003.8991,49449.0,-622.9000000000015,2026-01-21,2026-01-22,1,
-NQ,D3 Index Futures Buy,buy,01/22/26,Target Hit,,ATR5 x 0.6,,25742.75,25984.92022,25177.68614,24743.75,-999.0,2026-01-23,2026-01-27,2,84%
-6E,Super Bull Currency Futures Buy,buy,01/22/26,Target Hit,,Entry-Stop x 0.4,,1.1795,1.18378,1.1688,1.1875,0.008000000000000007,2026-01-23,2026-01-26,1,90%
-NQ,T-Lines Index Futures Buy,buy,01/27/26,Stopped out,,ATR5 x 0.6,,26111.25,26347.08355,25560.97171,24743.75,-1367.5,2026-01-28,2026-01-29,1,85%
-6S,Squeeze Play Currency Futures Buy,buy,02/03/26,Expired - Entry Not Triggered,,Entry-Stop x 0.4,,1.2994,1.30778,1.27844,1.3021,0.0026999999999999247,,,Expired,94%
-6E,Squeeze Play Currency Futures Buy,buy,02/03/26,Expired - Entry Not Triggered,,Entry-Stop x 0.4,,1.1868,1.19242,1.17275,1.1875,0.0006999999999999229,,,Expired,86%
-6B,Squeeze Play Currency Futures Buy,buy,02/03/26,Stopped out,,Entry-Stop x 0.4,,1.3721,1.37773,1.35803,1.3614,-0.010700000000000154,2026-02-04,2026-02-05,1,53%
-6S,TNT 52 Currency Futures Sell,buy,02/05/26,Expired - Entry Not Triggered,,ATR5 x 0.6,,1.2883,1.28118,1.2978,1.3021,0.013800000000000034,,,Expired,
-6B,Bear Attack 2 Currency Futures Sell,sell,02/05/26,Expired - Entry Not Triggered,,ATR5 x 0.6,,1.3502,1.34382,1.3742,1.3614,-0.011199999999999877,,,Expired,81%
-6S,Bear Attack Squeeze Currency Futures Sell,sell,02/05/26,Expired - Entry Not Triggered,,Entry-Stop x 0.4,,1.2878,1.2838,1.2978,1.3021,-0.01429999999999998,,,Expired,
-ES,D3 Index Futures Buy,buy,02/06/26,Open,,ATR5 x 0.6,,6967.5,7048.13869,6741.5,6842.75,-124.75,2026-02-09,,open,86%
-6C,Double ÒDÓ Swing Currency Futures Buy,buy,02/09/26,Open,,ATR5 x 0.6,,0.74,0.74294,0.7288,0.7348,-0.005199999999999982,2026-02-10,,open,87%
-6S,Double ÒDÓ Swing Currency Futures Buy,buy,02/09/26,Open,,ATR5 x 0.6,,1.3122,1.31962,1.2883,1.3021,-0.010099999999999998,2026-02-10,,open,73%
-ES,Bull Run Index Futures Buy,buy,02/09/26,Stopped out,,ATR5 x 0.6,,7002.5,7076.55095,6829.71444,6842.75,-159.75,2026-02-10,2026-02-13,3,
+symbol,strategy,direction,win_rate,signal_date,status,expiration,target_type,atr,entry_price,target_price,stop_price,last_close_price,diff_from_entry,entry_date,exit_date,num_days_open
+6C,Swing Trend Currency Futures Sell,sell,78%,11/03/25,Target Hit,,ATR5 x 0.6,,0.7135,0.7119,0.7187,0.7317,-0.018199999999999994,2025-11-04,2025-11-05,1
+6B,Super Bull Currency Futures Buy,buy,72%,11/07/25,Expired - Entry Not Triggered,,ATR5 x 0.6,,1.3189,1.32332,1.3031,1.3479,0.029000000000000137,,,Expired
+6C,TXD Trendlines Currency Futures Buy,buy,84%,11/12/25,Expired - Entry Not Triggered,,ATR5 x 0.6,,0.72,0.7213,0.7164,0.7317,0.011700000000000044,,,Expired
+6S,D2 Swing Currency Futures Sell,sell,85%,11/21/25,Expired - Entry Not Triggered,,ATR5 x 0.6,,1.2492,1.24443,1.2613,1.2919,-0.04269999999999996,,,Expired
+RTY,T-Lines Index Futures Buy,buy,80%,11/26/25,Target Hit,,ATR5 x 0.6,,2510.8,2545.61988,2429.55362,2668.9,158.0999999999999,2025-11-28,2025-12-04,4
+NQ,D3 Index Futures Buy,buy,84%,11/26/25,Target Hit,,ATR5 x 0.6,,25631.5,25980.68212,24816.74172,25077.5,-554.0,2025-11-28,2025-12-05,5
+6C,Ichimoku Cross Currency Futures Buy,buy,,12/02/25,Target Hit,,ATR5 x 0.6,,0.7209,0.72259,0.7161,0.7317,0.010800000000000032,2025-12-03,2025-12-05,2
+6B,TXD Trendlines Currency Futures Buy,buy,82%,12/03/25,Target Hit,,ATR5 x 0.6,,1.3366,1.34182,1.3169,1.3479,0.011300000000000088,2025-12-04,2025-12-11,5
+6E,Stochastics ÒDÓ Currency Futures Buy,buy,97%,12/10/25,Target Hit,,ATR5 x 0.6,,1.1771,1.18032,1.1657,1.1795,0.0023999999999999577,2025-12-11,2025-12-15,2
+6E,Squeeze Play Currency Futures Buy,buy,86%,12/10/25,Target Hit,,ATR5 x 0.6,,1.1771,1.18032,1.1668,1.1795,0.0023999999999999577,2025-12-11,2025-12-15,2
+6B,TXD Trendlines Currency Futures Buy,buy,82%,01/12/26,Stopped out,,ATR5 x 0.6,,1.35,1.35471,1.3355,1.3479,-0.0020999999999999908,2026-01-13,2026-01-20,4
+6A,TNT 52 Currency Futures Sell,sell,90%,01/14/26,Expired - Entry Not Triggered,,ATR5 x 0.6,,0.6664,0.66391,0.6738,0.7086,-0.042200000000000015,,,Expired
+ES,14.8 Trig Extension Index Futures Sell,sell,,01/20/26,Stopped out,,ATR5 x 0.6,,6856.075,6903.57763,6745.23552,6924.75,-68.67500000000018,2026-01-21,2026-01-22,1
+NQ,14.8 Trig Extension Index Futures Sell,sell,,01/20/26,Stopped out,,ATR5 x 0.6,,25208.275,25444.39097,24657.33773,25077.5,130.77500000000146,2026-01-21,2026-01-22,1
+YM,14.8 Trig Extension Index Futures Sell,sell,,01/20/26,Stopped out,,ATR5 x 0.6,,48826.1,49178.47181,48003.89911,49680.0,-853.9000000000015,2026-01-21,2026-01-22,1
+6A,TXD Trendlines Currency Futures Buy,buy,85%,01/20/26,Target Hit,,ATR5 x 0.6,,0.6758,0.67867,0.6662,0.7086,0.03280000000000005,2026-01-21,2026-01-22,1
+YM,TXD Trendlines Index Futures Sell,sell,,01/20/26,Stopped out,,ATR5 x 0.6,,48826.1,48473.72819,48003.89911,49680.0,-853.9000000000015,2026-01-21,2026-01-22,1
+NQ,D3 Index Futures Buy,buy,84%,01/22/26,Target Hit,,ATR5 x 0.6,,25742.75,25984.92022,25177.68615,25077.5,-665.25,2026-01-23,2026-01-27,2
+6E,Super Bull Currency Futures Buy,buy,90%,01/22/26,Target Hit,,Entry-Stop x 0.4,,1.1795,1.18378,1.1688,1.1795,0.0,2026-01-23,2026-01-26,1
+NQ,T-Lines Index Futures Buy,buy,85%,01/27/26,Stopped out,,ATR5 x 0.6,,26111.25,26347.08355,25560.97171,25077.5,-1033.75,2026-01-28,2026-01-29,1
+6S,Squeeze Play Currency Futures Buy,buy,94%,02/03/26,Expired - Entry Not Triggered,,Entry-Stop x 0.4,,1.2994,1.30778,1.27844,1.2919,-0.007500000000000062,,,Expired
+6E,Squeeze Play Currency Futures Buy,buy,86%,02/03/26,Expired - Entry Not Triggered,,Entry-Stop x 0.4,,1.1868,1.19242,1.17275,1.1795,-0.007300000000000084,,,Expired
+6B,Squeeze Play Currency Futures Buy,buy,53%,02/03/26,Stopped out,,Entry-Stop x 0.4,,1.3721,1.37773,1.35803,1.3479,-0.0242,2026-02-04,2026-02-05,1
+6S,TNT 52 Currency Futures Sell,buy,,02/05/26,Expired - Entry Not Triggered,,ATR5 x 0.6,,1.2883,1.28118,1.2978,1.2919,0.0036000000000000476,,,Expired
+6B,Bear Attack 2 Currency Futures Sell,sell,81%,02/05/26,Expired - Entry Not Triggered,,ATR5 x 0.6,,1.3502,1.34382,1.3742,1.3479,0.0022999999999999687,,,Expired
+6S,Bear Attack Squeeze Currency Futures Sell,sell,,02/05/26,Expired - Entry Not Triggered,,Entry-Stop x 0.4,,1.2878,1.2838,1.2978,1.2919,-0.0040999999999999925,,,Expired
+ES,D3 Index Futures Buy,buy,86%,02/06/26,Open,,ATR5 x 0.6,,6967.5,7048.13869,6741.5,6924.75,-42.75,2026-02-09,,open
+6C,Double ÒDÓ Swing Currency Futures Buy,buy,87%,02/09/26,Open,,ATR5 x 0.6,,0.74,0.74294,0.7288,0.7317,-0.008299999999999974,2026-02-10,,open
+6S,Double ÒDÓ Swing Currency Futures Buy,buy,73%,02/09/26,Open,,ATR5 x 0.6,,1.3122,1.31962,1.2883,1.2919,-0.020299999999999985,2026-02-10,,open
+ES,Bull Run Index Futures Buy,buy,,02/09/26,Stopped out,,ATR5 x 0.6,,7002.5,7076.55095,6829.71444,6924.75,-77.75,2026-02-10,2026-02-13,3
+6B,Bear Attack Squeeze Currency Futures Sell,sell,,02/10/26,Target Hit,,Entry-Stop x 0.4,,1.3623,1.35882,1.371,1.3479,0.014399999999999968,2026-02-11,2026-02-17,3
+6S,TNT 52 Currency Futures Sell,sell,84%,02/11/26,Expired - Entry Not Triggered,,ATR5 x 0.6,,1.2971,1.28973,1.3165,1.2919,0.005199999999999871,,,Expired
+6B,TNT 52 Currency Futures Sell,sell,75%,02/11/26,Target Hit,,ATR5 x 0.6,,1.3594,1.3534,1.3722,1.3479,0.011499999999999844,2026-02-13,2026-02-17,1
+6B,Bear Attack 1 Currency Futures Sell,sell,87%,02/19/26,Expired - Entry Not Triggered,,ATR5 x 0.6,,1.3419,1.33611,1.3592,1.3479,-0.006000000000000005,,,Expired
+RTY,T-Lines Index Futures Buy,buy,80%,02/20/26,Open - Entry Not Triggered,,ATR5 x 0.6,,,,,2668.9,,,,open

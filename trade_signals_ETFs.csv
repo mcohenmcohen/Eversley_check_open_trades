@@ -176,5 +176,13 @@ date,symbol,strategy,direction,frequency
 2/5/26,XLI,ETF Squeeze Sell,Sell,Daily
 2/9/26,SPY,Super Trend Sector Buy,Buy,Daily
 2/9/26,XHB,Donchian T-Lines Buy/Sell,Buy,Daily
-,,,,
-,,,,
+2/10/26,SPY,Donchian T-Lines Buy/Sell,Buy,Daily
+2/10/26,TLT,Donchian T-Lines Buy/Sell,Buy,Daily
+2/10/26,TLT,Donchian Hook Buy,Buy,Daily
+2/12/26,VWO,ETF Squeeze Sell,Sell,Daily
+2/12/26,XLI,ETF Squeeze Sell,Sell,Daily
+2/17/26,XLB,ETF Squeeze Sell,Sell,Daily
+2/18/26,XLI,ETF Squeeze Sell,Sell,Daily
+2/19/26,IWM,Donchian T-Lines Buy/Sell,Buy,Daily
+2/20/26,GDX,Donchian T-Lines Buy/Sell,Buy,Daily
+2/20/26,IBB,Weekly Turbo Hook Buy,Buy,Weekly

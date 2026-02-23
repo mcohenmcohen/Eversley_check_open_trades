@@ -1153,12 +1153,6 @@ def run_evaluation(mode, debug=False, etf_source="polygon"):
     for _, row in df_signals.iterrows():
         symbol = str(row['symbol']).strip()
 
-        # The "buy or sell" and "frequency" columns are only in the trade_signals_ETFs file,
-        # so this code sets values for when runing on futures
-        # Safely parse 'frequency'
-        freq_raw = row.get("frequency", "Daily")
-        freq = str(freq_raw).strip().capitalize() if pd.notna(freq_raw) else "Daily"
-
         # Safely parse 'buy or sell' as direction
         direction_raw = row.get("direction", "")
         if pd.isna(direction_raw) or not direction_raw:
@@ -1166,23 +1160,15 @@ def run_evaluation(mode, debug=False, etf_source="polygon"):
             continue
         direction = str(direction_raw).strip().lower()
 
-        # For ETFs, try to use actual strategy name first, then fall back to generic
+        # For ETFs, resolve strategy name based on whether "Weekly" is in the name.
+        # Weekly strategies have exact matches in strategies_complete.json.
+        # All other (daily) strategies map to the generic "Daily ETF Options Buy/Sell".
         raw_strategy_name = str(row.get("strategy", "")).strip()
 
-        # List of known daily ETF strategy patterns that should map to generic daily strategies
-        daily_etf_patterns = [
-            "Donchian", "Ichimoku", "ETF Squeeze", "Squeeze Play", "Stochastics",
-            "20.8 Trigger", "Gap and Go", "Put/Call Buy"
-        ]
-
-        # Check if raw name matches any daily pattern and frequency is Daily
-        is_daily_strategy = freq.lower() == "daily" and any(pattern in raw_strategy_name for pattern in daily_etf_patterns)
-
-        if is_daily_strategy:
-            resolved_name = f"{freq} ETF Options {direction.capitalize()}"
+        if "Weekly" in raw_strategy_name:
+            resolved_name = raw_strategy_name
         else:
-            # Use actual name for Weekly strategies or exact matches
-            resolved_name = raw_strategy_name if raw_strategy_name else f"{freq} ETF Options {direction.capitalize()}"
+            resolved_name = f"Daily ETF Options {direction.capitalize()}"
 
         try:
             # signal_date = pd.to_datetime(row['date'], format='%m/%d/%y')

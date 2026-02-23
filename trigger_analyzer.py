@@ -11,7 +11,7 @@ Usage:
   python trigger_analyzer.py                              # Scan 29 ETFs for today, save CSV
   python trigger_analyzer.py --symbols AAPL MSFT GOOGL    # Scan custom symbols
   python trigger_analyzer.py --date 2025-06-15            # Scan for historical date
-  python trigger_analyzer.py --include-internals          # Include Put/Call strategies
+  python trigger_analyzer.py --no-internals               # Exclude Put/Call & internals strategies
   python trigger_analyzer.py --output triggers.csv        # Custom output path
   python trigger_analyzer.py --no-save                    # Print to stdout only
   python trigger_analyzer.py --debug                      # Verbose indicator output
@@ -93,6 +93,11 @@ class TriggerAnalyzer:
         self.indicator_engine = IndicatorEngine()
         self.rule_engine = StrategyRuleEngine(load_trigger_config(config_path))
 
+        # Load strategy formulas for target calculation (ATR length, multiplier, timeframe)
+        strategies_path = os.path.join(os.path.dirname(__file__), 'strategies_complete.json')
+        with open(strategies_path) as f:
+            self._strategy_formulas = json.load(f)
+
         # External data (lazy-loaded only if internals enabled)
         self.external_data = {}
 
@@ -115,9 +120,12 @@ class TriggerAnalyzer:
             DataFrame of triggered signals with trade evaluation columns.
         """
         print(f"\nETF Strategy Trigger Analyzer")
-        print(f"Scan date: {self.scan_date}")
-        print(f"Symbols: {len(self.symbols)}")
-        print(f"Include internals: {self.include_internals}")
+        print(f"{'='*60}")
+        print(f"  Scan date:         {self.scan_date}")
+        print(f"  Symbols:           {len(self.symbols)} ({', '.join(self.symbols[:5])}{'...' if len(self.symbols) > 5 else ''})")
+        print(f"  Include internals: {self.include_internals}")
+        print(f"  Lookback days:     {self.lookback_days}")
+        print(f"  Debug:             {self.debug}")
         print(f"{'='*60}")
 
         # Step 1: Fetch OHLCV data
@@ -141,7 +149,11 @@ class TriggerAnalyzer:
               f"({recent_dates[0]} to {recent_dates[-1]})...")
 
         all_triggers = []
-        for eval_date in recent_dates:
+        total_days = len(recent_dates)
+        for day_idx, eval_date in enumerate(recent_dates, 1):
+            print(f"  Day {day_idx}/{total_days}: {eval_date} "
+                  f"({len(self.daily_ohlcv)} symbols)...", end='\r')
+
             # Compute indicators for this date
             indicators_for_date = {}
             for symbol in self.daily_ohlcv:
@@ -166,8 +178,8 @@ class TriggerAnalyzer:
             # Save ATR values with each trigger (indicators get overwritten per date)
             for t in triggers:
                 sym = t['symbol']
-                tf = t.get('timeframe', 'daily')
-                atr_key = 'atr_5_w' if tf == 'weekly' else 'atr_5_d'
+                params = self._get_target_params(t['strategy'], t['direction'])
+                atr_key = params['atr_key']
                 atr_ind = indicators_for_date.get(sym, {}).get(atr_key)
                 t['_atr_value'] = atr_ind.values.get('value') if atr_ind else None
 
@@ -176,6 +188,7 @@ class TriggerAnalyzer:
 
             all_triggers.extend(triggers)
 
+        print()  # Clear carriage return line
         print(f"  Raw triggers found: {len(all_triggers)}")
 
         # Deduplicate: same symbol+strategy on consecutive trading days = same signal
@@ -314,24 +327,21 @@ class TriggerAnalyzer:
         for trigger in triggers:
             symbol = trigger['symbol']
             direction = trigger['direction']
-            timeframe = trigger.get('timeframe', 'daily')
             signal_date_val = date.fromisoformat(trigger['scan_date'])
 
             df = self.daily_ohlcv.get(symbol)
             if df is None or df.empty:
-                self._set_na_trade_fields(trigger, timeframe)
+                self._set_na_trade_fields(trigger)
                 continue
+
+            # Get target params from strategies_complete.json
+            strategy_name = trigger['strategy']
+            params = self._get_target_params(strategy_name, direction)
+            multiplier = params['multiplier']
+            target_type = params['target_type']
 
             # ATR value saved during scanning loop
             atr_value = trigger.get('_atr_value')
-
-            # Target type and multiplier
-            if timeframe == 'weekly':
-                target_type = 'Weekly ATR5 x 0.55'
-                multiplier = 0.55
-            else:
-                target_type = 'ATR5 x 1.0'
-                multiplier = 1.0
 
             trigger['target_type'] = target_type
             trigger['atr'] = round(atr_value, 4) if atr_value else ''
@@ -425,10 +435,11 @@ class TriggerAnalyzer:
             else:
                 trigger['diff_from_entry'] = round(entry_price - last_close, 2)
 
-    def _set_na_trade_fields(self, trigger: dict, timeframe: str):
+    def _set_na_trade_fields(self, trigger: dict):
         """Set trade fields to n/a when no OHLCV data available."""
+        params = self._get_target_params(trigger['strategy'], trigger['direction'])
         trigger['signal_date'] = trigger['scan_date']
-        trigger['target_type'] = 'Weekly ATR5 x 0.55' if timeframe == 'weekly' else 'ATR5 x 1.0'
+        trigger['target_type'] = params['target_type']
         trigger['atr'] = 'n/a'
         trigger['entry_price'] = 'n/a'
         trigger['target_price'] = 'n/a'
@@ -441,6 +452,51 @@ class TriggerAnalyzer:
         trigger['last_close_price'] = ''
         trigger['diff_from_entry'] = ''
         trigger['win_rate'] = ''
+
+    def _get_target_params(self, strategy_name: str, direction: str):
+        """Resolve trigger config strategy name to target params from strategies_complete.json.
+
+        Returns dict with keys: atr_length, multiplier, timeframe, target_type, atr_key.
+        Uses same logic as trade_evaluator: 'Weekly' in name → exact match,
+        otherwise → 'Daily ETF Options Buy/Sell'.
+        """
+        if "Weekly" in strategy_name:
+            # Weekly strategies have exact matches (or map via WIN_RATE_STRATEGY_MAP)
+            # Try exact match first, then mapped name
+            formula_key = strategy_name
+            if formula_key not in self._strategy_formulas:
+                mapped = WIN_RATE_STRATEGY_MAP.get(strategy_name, strategy_name)
+                if mapped in self._strategy_formulas:
+                    formula_key = mapped
+        else:
+            formula_key = f"Daily ETF Options {direction.capitalize()}"
+
+        strategy_def = self._strategy_formulas.get(formula_key, {})
+        target_formula = strategy_def.get('target', {}).get('formula', {})
+
+        atr_length = target_formula.get('atr_length', 5)
+        multiplier = target_formula.get('multiplier', 1.0)
+        timeframe = target_formula.get('timeframe', 'daily')
+
+        # Build target type label matching _map_target_type_to_key expectations
+        if timeframe == 'weekly':
+            target_type = f"Weekly ATR{atr_length} x {multiplier}"
+        else:
+            target_type = f"ATR{atr_length} x {multiplier}"
+
+        # ATR indicator key used during scanning
+        if timeframe == 'weekly':
+            atr_key = f"atr_{atr_length}_w"
+        else:
+            atr_key = f"atr_{atr_length}_d"
+
+        return {
+            'atr_length': atr_length,
+            'multiplier': multiplier,
+            'timeframe': timeframe,
+            'target_type': target_type,
+            'atr_key': atr_key,
+        }
 
     def _lookup_win_rate(self, strategy_name: str, symbol: str,
                          direction: str, target_type: str) -> str:
@@ -507,8 +563,8 @@ def parse_args():
         help='Scan date YYYY-MM-DD (default: today)'
     )
     parser.add_argument(
-        '--include-internals', action='store_true',
-        help='Include Put/Call and internals strategies (requires CBOE data)'
+        '--no-internals', action='store_true',
+        help='Exclude Put/Call and internals strategies (enabled by default)'
     )
     parser.add_argument(
         '--debug', action='store_true',
@@ -543,10 +599,12 @@ def main():
     scan_date = (datetime.strptime(args.date, '%Y-%m-%d').date()
                  if args.date else date.today())
 
+    include_internals = not args.no_internals
+
     analyzer = TriggerAnalyzer(
         symbols=symbols,
         scan_date=scan_date,
-        include_internals=args.include_internals,
+        include_internals=include_internals,
         debug=args.debug,
         lookback_days=args.lookback_days,
         config_path=args.config
