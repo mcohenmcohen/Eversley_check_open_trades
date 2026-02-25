@@ -70,8 +70,17 @@ def get_result_columns(mode):
         raise ValueError(f"Unknown mode: {mode}")
 
 def resolve_strategy_name(input_name, strategy_names):
+    # Exact match first
+    if input_name in strategy_names:
+        return input_name
+    # Fuzzy fallback — only accept near-exact matches (typos, spacing, minor omissions)
     match, score, _ = process.extractOne(input_name, strategy_names)
-    return match if score > 80 else None
+    if score < 95:
+        print(f"  ⚠️ No match for '{input_name}' (best: '{match}', score: {score})")
+        return None
+    if score < 100:
+        print(f"  ℹ️ Fuzzy match: '{input_name}' → '{match}' (score: {score})")
+    return match
 
 # Load strategy definitions from the given JSON path
 def load_strategies(path):
@@ -434,7 +443,14 @@ def evaluate_formula(formula, df, signal_date, symbol, entry_price=None, stop_pr
         atr_length = formula.get("atr_length", 5)
         atr_mult = formula.get("atr_multiplier", 1.4)
 
-        base_low = df.loc[signal_date]["Low"]
+        # Support multi-day lookback for low (same logic as low_offset)
+        days = formula.get("lookback_days", 1)
+        include_signal = formula.get("include_signal_day", True)
+        end_idx = df.index.get_loc(signal_date)
+        start_idx = end_idx - days + (1 if include_signal else 0)
+        sub_df = df.iloc[start_idx:end_idx + 1] if include_signal else df.iloc[start_idx:end_idx]
+        base_low = sub_df["Low"].min()
+
         offset_stop = base_low - offset_ticks * offset_multiplier
 
         atr = wilders_atr(df, atr_length).loc[signal_date]
@@ -1201,10 +1217,12 @@ def run_evaluation(mode, debug=False, etf_source="polygon"):
         # Resolve strategy name for futures mode
         if mode == "futures":
             raw_name = str(row["strategy"]).strip()
+            # Normalize curly/smart quotes from ISO-8859-1 encoding to straight quotes
+            raw_name = raw_name.replace('\u00d2', '"').replace('\u00d3', '"').replace('\u201c', '"').replace('\u201d', '"')
             resolved_name = resolve_strategy_name(raw_name, list(strategies.keys()))
 
         if not resolved_name or resolved_name not in strategies:
-            print(f"⚠️ Could not resolve strategy name: '{resolved_name}'")
+            print(f"⚠️ Strategy not found or resolved for '{raw_name}'. Skipping.")
             results.append({
                 "symbol": symbol,
                 "strategy": resolved_name,
@@ -1234,7 +1252,19 @@ def run_evaluation(mode, debug=False, etf_source="polygon"):
         # print('sym data for',symbol)
         # print(df.tail)
         # print('Close:',df['Close'].iloc[-1])
-        result = simulate_trade(strategies[resolved_name], symbol, df, signal_date, resolved_name, direction=direction, trading_strategy=trading_strategy)
+        try:
+            result = simulate_trade(strategies[resolved_name], symbol, df, signal_date, resolved_name, direction=direction, trading_strategy=trading_strategy)
+        except (ValueError, KeyError) as e:
+            print(f"⚠️ Strategy config error for [{symbol}] {resolved_name}: {e}. Skipping.")
+            results.append({
+                "symbol": symbol,
+                "strategy": resolved_name,
+                "signal_date": signal_date.strftime('%m/%d/%y'),
+                "status": f"Error - Strategy Config: {e}",
+                "entry_date": "",
+                "exit_date": ""
+            })
+            continue
 
         # Use selected target type from multi-target result if available, otherwise use default strategy target type
         if "selected_target_type" in result and result["selected_target_type"]:

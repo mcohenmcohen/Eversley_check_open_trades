@@ -41,6 +41,8 @@ class IndicatorEngine:
         results = {}
 
         # --- DAILY INDICATORS ---
+        results['donchian_4_d'] = self.donchian_channel(daily_df, period=4,
+                                                         scan_date=scan_date, tf='daily')
         results['donchian_7_d'] = self.donchian_channel(daily_df, period=7,
                                                          scan_date=scan_date, tf='daily')
         results['donchian_14_d'] = self.donchian_channel(daily_df, period=14,
@@ -52,6 +54,7 @@ class IndicatorEngine:
                                                       scan_date=scan_date, tf='daily')
 
         results['sma_14_d'] = self.sma(daily_df, period=14, scan_date=scan_date, tf='daily')
+        results['sma_25_d'] = self.sma(daily_df, period=25, scan_date=scan_date, tf='daily')
         results['sma_40_d'] = self.sma(daily_df, period=40, scan_date=scan_date, tf='daily')
 
         for period, std_dev in [(20, 2.0), (30, 2.0), (30, 1.0), (20, 1.7), (20, 1.8)]:
@@ -67,7 +70,11 @@ class IndicatorEngine:
                                                    scan_date=scan_date, tf='daily')
         results['rsqueeze_4_d'] = self.rsqueeze(daily_df, momentum_length=4,
                                                   scan_date=scan_date, tf='daily')
+        results['rsqueeze_22_d'] = self.rsqueeze(daily_df, momentum_length=22,
+                                                   scan_date=scan_date, tf='daily')
         results['rsqueeze_23_d'] = self.rsqueeze(daily_df, momentum_length=23,
+                                                   scan_date=scan_date, tf='daily')
+        results['rsqueeze_26_d'] = self.rsqueeze(daily_df, momentum_length=26,
                                                    scan_date=scan_date, tf='daily')
 
         # TSSuperTrend daily (14, EMA, 0.78, 5)

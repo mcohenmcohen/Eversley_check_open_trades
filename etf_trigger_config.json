@@ -1103,6 +1103,162 @@
         "price_d.close_prev",
         "atr_5_d.value"
       ]
+    },
+
+    "Bull Run Buy": {
+      "direction": "buy",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "daily",
+      "exclusions": "No trades Dec 1 thru Jan 1. No trades on Rollover week (2nd Friday of Mar/Jun/Sep/Dec). No trades on Quadruple Witching week (3rd Friday of Mar/Jun/Sep/Dec).",
+      "setup_conditions": [
+        {
+          "type": "lookback_any",
+          "indicator": "price_d",
+          "field_series": "low_series",
+          "compare_to": {"indicator": "bb_20_18_d", "field": "lower_series"},
+          "operator": "<=",
+          "lookback": 20,
+          "description": "Price touched lower BollingerBand(1.8,20) within last 20 days"
+        },
+        {
+          "type": "price_comparison",
+          "price_field": "low",
+          "operator": ">",
+          "compare_to": {"indicator": "donchian_7_d", "field": "mean"},
+          "description": "Candle completely above DonchianChannel(7) Mean (Low > Mean)"
+        },
+        {
+          "type": "series_condition",
+          "indicator": "price_d",
+          "field": "low_series",
+          "offset": -1,
+          "operator": "<=",
+          "compare_to": {
+            "indicator": "donchian_7_d",
+            "field": "mean_series",
+            "offset": -1
+          },
+          "description": "Previous day was NOT completely above Donchian(7) Mean (first candle above)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "price_d",
+          "field": "is_up_day",
+          "expected": true,
+          "description": "Signal day must be an up day"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "price_comparison",
+          "price_field": "close",
+          "operator": "<",
+          "compare_to": {"indicator": "bb_20_18_d", "field": "upper"},
+          "description": "Close below upper BollingerBand(1.8,20)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_23_d",
+          "field": "momentum_increasing",
+          "expected": true,
+          "description": "23_RSqueeze histogram increasing from previous day"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_26_d",
+          "field": "momentum_increasing",
+          "expected": true,
+          "description": "26_RSqueeze histogram increasing from previous day"
+        }
+      ],
+      "display_indicators": [
+        "donchian_7_d.mean",
+        "bb_20_18_d.lower",
+        "bb_20_18_d.upper",
+        "rsqueeze_23_d.momentum",
+        "rsqueeze_26_d.momentum",
+        "atr_5_d.value"
+      ]
+    },
+
+    "Super Trend Swing Buy": {
+      "direction": "buy",
+      "symbols": "all",
+      "is_internals": false,
+      "timeframe": "daily",
+      "exclusions": "No trades 1 day before a holiday. No trades on holidays incl Good Friday, Thanksgiving Friday, Dec 1 thru New Years. No trades on Rollover week (2nd Friday of Mar/Jun/Sep/Dec). No trades Quad Witching Wed-Fri (3rd Friday of Mar/Jun/Sep/Dec).",
+      "setup_conditions": [
+        {
+          "type": "lookback_any",
+          "indicator": "price_d",
+          "field_series": "low_series",
+          "compare_to": {"indicator": "bb_20_18_d", "field": "lower_series"},
+          "operator": "<=",
+          "lookback": 20,
+          "description": "Price touched lower BollingerBand(1.8,20) within last 20 days"
+        },
+        {
+          "type": "price_comparison",
+          "price_field": "close",
+          "operator": ">",
+          "compare_to": {"indicator": "donchian_4_d", "field": "mean"},
+          "description": "Close above DonchianChannel(4) Mean (swing high breakout)"
+        },
+        {
+          "type": "series_condition",
+          "indicator": "price_d",
+          "field": "close_series",
+          "offset": -1,
+          "operator": "<=",
+          "compare_to": {
+            "indicator": "donchian_4_d",
+            "field": "mean_series",
+            "offset": -1
+          },
+          "description": "Previous day close was NOT above Donchian(4) Mean (first candle to close above)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "price_d",
+          "field": "is_up_day",
+          "expected": true,
+          "description": "Signal day must be an up day"
+        }
+      ],
+      "trigger_conditions": [
+        {
+          "type": "price_comparison",
+          "price_field": "close",
+          "operator": "<=",
+          "compare_to": {"indicator": "bb_20_18_d", "field": "upper"},
+          "description": "Close on or below upper BollingerBand(1.8,20)"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_22_d",
+          "field": "momentum_increasing",
+          "expected": true,
+          "description": "22_RSqueeze histogram increasing from previous day"
+        },
+        {
+          "type": "indicator_state",
+          "indicator": "rsqueeze_20_d",
+          "field": "momentum_increasing",
+          "expected": true,
+          "description": "20_RSqueeze histogram increasing from previous day"
+        }
+      ],
+      "display_indicators": [
+        "donchian_4_d.mean",
+        "bb_20_18_d.lower",
+        "bb_20_18_d.upper",
+        "rsqueeze_22_d.momentum",
+        "rsqueeze_20_d.momentum",
+        "supertrend_14_078_d.direction",
+        "sma_25_d.value",
+        "atr_5_d.value"
+      ]
     }
 
   }

@@ -612,6 +612,9 @@
     },
     "Bull Run Index Futures Buy": {
       "buy": {}
+    },
+    "Super Trend Swing Index Futures Buy": {
+      "buy": {}
     }
   }
 }

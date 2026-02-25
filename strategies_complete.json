@@ -435,7 +435,6 @@
         },
         "trigger_window_days": 2
     },
-    
     "D3 Index Futures Buy": {
         "entry": {
             "formula": {
@@ -703,6 +702,93 @@
             }
         }
     },
+    "Bull Run Index Futures Buy": {
+        "entry": {
+            "formula": {
+                "type": "high_offset",
+                "offset_by_symbol": {
+                    "ES": 3,
+                    "NQ": 4,
+                    "RTY": 3,
+                    "YM": 30
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "max_of_atr_or_low_offset",
+                "atr_length": 5,
+                "atr_multiplier": 1.3,
+                "offset_by_symbol": {
+                    "ES": 3,
+                    "NQ": 3,
+                    "RTY": 2,
+                    "YM": 20
+                },
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "multi_target",
+                "target_rank": 1,
+                "direction": "buy",
+                "target_options": [
+                    {"type": "atr_percentage", "atr_length": 5, "percentage": 0.6},
+                    {"type": "atr_percentage", "atr_length": 5, "percentage": 0.7},
+                    {"type": "entry_stop_percentage", "percentage": 0.4},
+                    {"type": "entry_stop_percentage", "percentage": 0.45},
+                    {"type": "entry_stop_percentage", "percentage": 0.5}                ]
+            }
+        },
+        "trigger_window_days": 2
+    },
+
+    "Super Trend Swing Index Futures Buy": {
+        "entry": {
+            "formula": {
+                "type": "high_offset",
+                "offset_by_symbol": {
+                    "ES": 3,
+                    "NQ": 4,
+                    "RTY": 4,
+                    "YM": 30
+                }
+            }
+        },
+        "stop": {
+            "formula": {
+                "type": "max_of_atr_or_low_offset",
+                "atr_length": 5,
+                "atr_multiplier": 1.3,
+                "offset_by_symbol": {
+                    "ES": 3,
+                    "NQ": 4,
+                    "RTY": 2,
+                    "YM": 20
+                },
+                "lookback_days": 2,
+                "include_signal_day": true
+            }
+        },
+        "target": {
+            "formula": {
+                "type": "multi_target",
+                "target_rank": 1,
+                "direction": "buy",
+                "target_options": [
+                    {"type": "atr_percentage", "atr_length": 5, "percentage": 0.6},
+                    {"type": "atr_percentage", "atr_length": 5, "percentage": 0.7},
+                    {"type": "entry_stop_percentage", "percentage": 0.4},
+                    {"type": "entry_stop_percentage", "percentage": 0.45},
+                    {"type": "entry_stop_percentage", "percentage": 0.5}
+                ]
+            }
+        },
+        "trigger_window_days": 2
+    },
+
     "Daily ETF Options Sell": {
         "entry": {
             "formula": {
