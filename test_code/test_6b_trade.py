@@ -9,12 +9,15 @@ Strategy:
 - Target: Multi-target, rank 1 (closest)
 """
 
+import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 from datetime import datetime
 from pathlib import Path
 
 # Load 6B data
-data_file = Path("data/6B.csv")
+data_file = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))) / "data" / "6B.csv"
 df = pd.read_csv(data_file, parse_dates=['Date'])
 df.set_index('Date', inplace=True)
 

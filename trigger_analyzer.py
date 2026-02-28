@@ -626,7 +626,9 @@ def main():
             # Default filename using most recent trading day
             trade_date = analyzer.last_trading_day or scan_date
             suffix = "custom" if args.symbols else "ETFs"
-            output_path = f"trigger_analyzer_results_{trade_date}_{suffix}.csv"
+            results_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "trigger_analyzer_results")
+            os.makedirs(results_dir, exist_ok=True)
+            output_path = os.path.join(results_dir, f"trigger_analyzer_results_{trade_date}_{suffix}.csv")
         results.to_csv(output_path, index=False)
         print(f"\nResults saved to {output_path}")
 

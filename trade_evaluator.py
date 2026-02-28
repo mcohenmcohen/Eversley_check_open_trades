@@ -1142,9 +1142,11 @@ def run_evaluation(mode, debug=False, etf_source="polygon"):
     print(f"{'='*60}")
 
     # Choose file based on mode
-    input_file = "trade_signals_futures.csv" if mode == "futures" else "trade_signals_ETFs.csv"
+    signals_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "trade_evaluator_signals_results")
+    os.makedirs(signals_dir, exist_ok=True)
+    input_file = os.path.join(signals_dir, "trade_signals_futures.csv" if mode == "futures" else "trade_signals_ETFs.csv")
     strategy_path = "strategies_complete.json"
-    output_file = "trade_results_futures.csv" if mode == "futures" else "trade_results_ETFs.csv"
+    output_file = os.path.join(signals_dir, "trade_results_futures.csv" if mode == "futures" else "trade_results_ETFs.csv")
 
     strategies = load_strategies(strategy_path)
     win_rates = load_win_rates()

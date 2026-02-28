@@ -5,6 +5,8 @@ Verify entry and stop calculations
 """
 
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 from datetime import datetime, timedelta
 from data_sources import DataSourceManager
@@ -87,7 +89,7 @@ def test_6e_trade():
         # Check the signal file to see what strategy
         print("Checking trade signals file for strategy...")
         try:
-            signals_df = pd.read_csv('trade_signals_futures.csv')
+            signals_df = pd.read_csv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'trade_evaluator_signals_results', 'trade_signals_futures.csv'))
             signals_df.columns = signals_df.columns.str.strip()
             signals_df['date'] = pd.to_datetime(signals_df['date'])
 

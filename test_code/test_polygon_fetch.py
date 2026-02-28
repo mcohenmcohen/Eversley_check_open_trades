@@ -6,6 +6,8 @@ Usage: python test_polygon_fetch.py --symbol ES --start 2025-10-20 --end 2025-10
 
 import argparse
 import os
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from datetime import datetime
 import pandas as pd
 from data_sources import DataSourceManager

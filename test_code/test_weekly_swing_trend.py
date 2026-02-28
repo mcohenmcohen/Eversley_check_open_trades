@@ -5,11 +5,13 @@ Symbol: XLE
 Signal Date: 11/28/25
 """
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 from data_sources import DataSourceManager, fetch_price_data
-import os
 
 def calculate_atr(df, period=5, timeframe='weekly'):
     """Calculate ATR for the given timeframe"""

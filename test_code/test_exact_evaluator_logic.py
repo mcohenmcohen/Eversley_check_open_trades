@@ -3,10 +3,12 @@
 Test to exactly replicate the trade evaluator's ATR calculation logic
 """
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 from datetime import datetime, timedelta
 from data_sources import DataSourceManager, fetch_price_data
-import os
 
 def wilders_atr(df, period):
     """Exact copy of trade evaluator's wilders_atr function"""
